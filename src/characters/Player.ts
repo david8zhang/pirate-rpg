@@ -9,6 +9,8 @@ declare global {
 }
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
+  public isCollidingWithStaticObj: boolean = false
+
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture)
     this.anims.play('player-idle-down')
@@ -19,20 +21,22 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       return
     }
 
-    const speed = 100
+    const speed = this.isCollidingWithStaticObj ? 0 : 100
     const leftDown = cursors.left?.isDown
     const rightDown = cursors.right?.isDown
     const upDown = cursors.up?.isDown
     const downDown = cursors.down?.isDown
+    const spaceDown = cursors.space?.isDown
+
     if (leftDown) {
       this.anims.play('player-run-side', true)
       this.scaleX = -1
-      this.body.offset.x = 30
+      this.body.offset.x = 27
       this.setVelocity(-speed, 0)
     } else if (rightDown) {
       this.anims.play('player-run-side', true)
       this.scaleX = 1
-      this.body.offset.x = 10
+      this.body.offset.x = 12
       this.setVelocity(speed, 0)
     } else if (upDown) {
       this.anims.play('player-run-up', true)
@@ -62,7 +66,7 @@ Phaser.GameObjects.GameObjectFactory.register(
     this.updateList.add(sprite)
 
     this.scene.physics.world.enableBody(sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
-    sprite.body.setSize(sprite.width * 0.5, sprite.height * 0.4)
+    sprite.body.setSize(sprite.width * 0.4, sprite.height * 0.4)
     sprite.body.offset.y = 22
     return sprite
   }

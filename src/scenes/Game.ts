@@ -50,7 +50,7 @@ export default class Game extends Phaser.Scene {
     const sortedByY = plantsLayer.objects.sort((a, b) => {
       return a.y! - b.y!
     })
-    this.trees = this.physics.add.staticGroup({
+    this.trees = this.physics.add.group({
       classType: PalmTree,
     })
     sortedByY.forEach((plantObj) => {
@@ -58,7 +58,17 @@ export default class Game extends Phaser.Scene {
       const yPos = plantObj.y! - plantObj.height! * 0.5
       this.trees.get(xPos, yPos, 'palm-trees', 1)
     })
-    this.physics.add.collider(this.player, this.trees)
+    this.physics.add.collider(
+      this.player,
+      this.trees,
+      this.handlePlayerTreeCollision,
+      undefined,
+      this
+    )
+  }
+
+  handlePlayerTreeCollision() {
+    console.log('Went here')
   }
 
   update() {
