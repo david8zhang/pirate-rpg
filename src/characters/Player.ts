@@ -1,4 +1,9 @@
 import Phaser from 'phaser'
+import { AttackState } from '~/lib/states/AttackState'
+import { IdleState } from '~/lib/states/IdleState'
+import { MoveState } from '~/lib/states/MoveState'
+import Game from '../scenes/Game'
+import { StateMachine } from '../lib/StateMachine'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -8,47 +13,44 @@ declare global {
   }
 }
 
+export enum Direction {
+  DOWN = 'down',
+  UP = 'up',
+  LEFT = 'left',
+  RIGHT = 'right',
+}
+
 export default class Player extends Phaser.Physics.Arcade.Sprite {
-  public isCollidingWithStaticObj: boolean = false
+  public stateMachine: StateMachine
+  public direction: Direction = Direction.DOWN
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture)
     this.anims.play('player-idle-down')
+    this.stateMachine = new StateMachine(
+      'idle',
+      {
+        idle: new IdleState(),
+        attack: new AttackState(),
+        move: new MoveState(),
+      },
+      [(scene as Game).cursors, this]
+    )
   }
 
-  update(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
-    if (!cursors || !this) {
-      return
-    }
+  getCurrState(): string {
+    return this.stateMachine.getState()
+  }
 
-    const speed = this.isCollidingWithStaticObj ? 0 : 100
-    const leftDown = cursors.left?.isDown
-    const rightDown = cursors.right?.isDown
-    const upDown = cursors.up?.isDown
-    const downDown = cursors.down?.isDown
-    const spaceDown = cursors.space?.isDown
+  update() {
+    this.stateMachine.step()
+  }
 
-    if (leftDown) {
-      this.anims.play('player-run-side', true)
-      this.scaleX = -1
-      this.body.offset.x = 27
-      this.setVelocity(-speed, 0)
-    } else if (rightDown) {
-      this.anims.play('player-run-side', true)
-      this.scaleX = 1
-      this.body.offset.x = 12
-      this.setVelocity(speed, 0)
-    } else if (upDown) {
-      this.anims.play('player-run-up', true)
-      this.setVelocity(0, -speed)
-    } else if (downDown) {
-      this.anims.play('player-run-down', true)
-      this.setVelocity(0, speed)
-    } else {
-      const parts = this.anims.currentAnim.key.split('-')
-      this.anims.play(`player-idle-${parts[2]}`, true)
-      this.setVelocity(0, 0)
+  getAnimDirection(dir: Direction) {
+    if (dir === Direction.LEFT || dir === Direction.RIGHT) {
+      return 'side'
     }
+    return dir
   }
 }
 

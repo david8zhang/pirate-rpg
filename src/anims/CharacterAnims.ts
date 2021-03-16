@@ -12,7 +12,7 @@ export const createCharacterAnims = (anims: Phaser.Animations.AnimationManager) 
     frameRate: 10,
   })
   anims.create({
-    key: 'player-run-side',
+    key: 'player-walk-side',
     frames: anims.generateFrameNames('player', {
       start: 0,
       end: 3,
@@ -23,7 +23,7 @@ export const createCharacterAnims = (anims: Phaser.Animations.AnimationManager) 
   })
 
   anims.create({
-    key: 'player-run-down',
+    key: 'player-walk-down',
     frames: anims.generateFrameNames('player', {
       start: 7,
       end: 10,
@@ -34,7 +34,7 @@ export const createCharacterAnims = (anims: Phaser.Animations.AnimationManager) 
   })
 
   anims.create({
-    key: 'player-run-up',
+    key: 'player-walk-up',
     frames: anims.generateFrameNames('player', {
       start: 20,
       end: 23,
@@ -63,6 +63,39 @@ export const createCharacterAnims = (anims: Phaser.Animations.AnimationManager) 
       suffix: '.png',
     }),
     repeat: -1,
+    frameRate: 10,
+  })
+
+  anims.create({
+    key: 'player-punch-side',
+    frames: anims.generateFrameNames('player', {
+      start: 24,
+      end: 27,
+      suffix: '.png',
+    }),
+    repeat: 0,
+    frameRate: 10,
+  })
+
+  anims.create({
+    key: 'player-punch-up',
+    frames: anims.generateFrameNames('player', {
+      start: 32,
+      end: 35,
+      suffix: '.png',
+    }),
+    repeat: 0,
+    frameRate: 10,
+  })
+
+  anims.create({
+    key: 'player-punch-down',
+    frames: anims.generateFrameNames('player', {
+      start: 28,
+      end: 31,
+      suffix: '.png',
+    }),
+    repeat: 0,
     frameRate: 10,
   })
 }

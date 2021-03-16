@@ -7,7 +7,7 @@ import Player from '../characters/Player'
 
 export default class Game extends Phaser.Scene {
   private player!: Player
-  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
+  public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private trees!: Phaser.GameObjects.Group
   private oceanLayer!: Phaser.Tilemaps.TilemapLayer
   private map!: Phaser.Tilemaps.Tilemap
@@ -68,11 +68,12 @@ export default class Game extends Phaser.Scene {
   }
 
   handlePlayerTreeCollision() {
-    console.log('Went here')
+    if (this.player.getCurrState() === 'attack') {
+    }
   }
 
   update() {
-    this.player.update(this.cursors)
+    this.player.update()
     this.trees.getChildren().forEach((child: GameObjects.GameObject) => {
       const palmTree = child as PalmTree
       if (palmTree.y + 10 < this.player.y) {
