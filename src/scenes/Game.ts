@@ -1,4 +1,4 @@
-import Phaser, { GameObjects } from 'phaser'
+import Phaser, { GameObjects, Physics } from 'phaser'
 import PalmTree from '~/plants/PalmTree'
 import { Constants } from '~/utils/Constants'
 import { createCharacterAnims } from '../anims/CharacterAnims'
@@ -11,6 +11,10 @@ export default class Game extends Phaser.Scene {
   private trees!: Phaser.GameObjects.Group
   private oceanLayer!: Phaser.Tilemaps.TilemapLayer
   private map!: Phaser.Tilemaps.Tilemap
+
+  // colliders
+  public playerTreeCollider!: Physics.Arcade.Collider
+  public treeBeingHit!: PalmTree
 
   constructor() {
     super('game')
@@ -58,7 +62,8 @@ export default class Game extends Phaser.Scene {
       const yPos = plantObj.y! - plantObj.height! * 0.5
       this.trees.get(xPos, yPos, 'palm-trees', 1)
     })
-    this.physics.add.collider(
+
+    this.playerTreeCollider = this.physics.add.collider(
       this.player,
       this.trees,
       this.handlePlayerTreeCollision,
@@ -67,8 +72,17 @@ export default class Game extends Phaser.Scene {
     )
   }
 
-  handlePlayerTreeCollision() {
-    if (this.player.getCurrState() === 'attack') {
+  handlePlayerTreeCollision(
+    obj1: Phaser.GameObjects.GameObject,
+    obj2: Phaser.GameObjects.GameObject
+  ) {
+    this.treeBeingHit = obj2 as PalmTree
+    if (!this.treeBeingHit.isBeingHit && this.player.getCurrState() === 'attack') {
+      this.treeBeingHit.takeDamage(10)
+      this.treeBeingHit.isBeingHit = true
+      this.time.delayedCall(Constants.ATTACK_DURATION, () => {
+        this.treeBeingHit.isBeingHit = false
+      })
     }
   }
 

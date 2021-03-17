@@ -1,14 +1,38 @@
-import Player from '../../characters/Player'
+import Player, { Direction } from '../../characters/Player'
 import { State } from '../StateMachine'
 
 export class AttackState extends State {
   enter(cursors: Phaser.Types.Input.Keyboard.CursorKeys, player: Player) {
     player.setVelocity(0)
     player.anims.play(`player-punch-${player.getAnimDirection(player.direction)}`)
-    player.body.offset.x += 10
-    player.once('animationcomplete', () => {
-      player.body.offset.x = 12
-      this.stateMachine.transition('idle')
-    })
+    this.adjustColliderOffset(player)
+  }
+
+  adjustColliderOffset(player: Player) {
+    switch (player.direction) {
+      case Direction.DOWN: {
+        player.body.offset.y += 10
+        player.once('animationcomplete', () => {
+          player.body.offset.y -= 10
+          this.stateMachine.transition('idle')
+        })
+        break
+      }
+      case Direction.UP: {
+        player.body.offset.y -= 10
+        player.once('animationcomplete', () => {
+          player.body.offset.y += 10
+          this.stateMachine.transition('idle')
+        })
+        break
+      }
+      default:
+        player.body.offset.x += 10
+        player.once('animationcomplete', () => {
+          player.body.offset.x -= 10
+          this.stateMachine.transition('idle')
+        })
+        break
+    }
   }
 }

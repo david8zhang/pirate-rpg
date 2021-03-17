@@ -8,4 +8,7 @@ export class Constants {
   static get BG_WIDTH() {
     return 150 * Constants.TILE_SIZE
   }
+  static get ATTACK_DURATION() {
+    return 400
+  }
 }

@@ -1,7 +1,11 @@
 import Phaser from 'phaser'
+import { Constants } from '../utils/Constants'
 
 export default class PalmTree extends Phaser.Physics.Arcade.Sprite {
+  private static _FULL_HEALTH = 100
   public hasCoconuts: boolean = true
+  public health: number = PalmTree._FULL_HEALTH
+  public isBeingHit = false
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture, frame)
@@ -11,5 +15,13 @@ export default class PalmTree extends Phaser.Physics.Arcade.Sprite {
     this.setPushable(false)
   }
 
-  create() {}
+  takeDamage(damage: number) {
+    if (this.health === PalmTree._FULL_HEALTH) {
+      this.hasCoconuts = false
+      this.setFrame(0)
+    }
+    this.health -= damage
+    this.health = Math.max(0, this.health)
+    this.scene.cameras.main.shake(Constants.ATTACK_DURATION / 2, 0.002)
+  }
 }

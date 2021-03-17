@@ -79,22 +79,48 @@ export const createCharacterAnims = (anims: Phaser.Animations.AnimationManager) 
 
   anims.create({
     key: 'player-punch-up',
-    frames: anims.generateFrameNames('player', {
-      start: 32,
-      end: 35,
-      suffix: '.png',
-    }),
+    frames: [
+      {
+        key: 'player',
+        frame: '35.png',
+      },
+      {
+        key: 'player',
+        frame: '35.png',
+      },
+      {
+        key: 'player',
+        frame: '32.png',
+      },
+      {
+        key: 'player',
+        frame: '32.png',
+      },
+    ],
     repeat: 0,
     frameRate: 10,
   })
 
   anims.create({
     key: 'player-punch-down',
-    frames: anims.generateFrameNames('player', {
-      start: 28,
-      end: 31,
-      suffix: '.png',
-    }),
+    frames: [
+      {
+        key: 'player',
+        frame: '31.png',
+      },
+      {
+        key: 'player',
+        frame: '30.png',
+      },
+      {
+        key: 'player',
+        frame: '29.png',
+      },
+      {
+        key: 'player',
+        frame: '28.png',
+      },
+    ],
     repeat: 0,
     frameRate: 10,
   })

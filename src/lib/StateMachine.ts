@@ -41,4 +41,5 @@ export class State {
   public stateMachine!: StateMachine
   enter(...args: any[]) {}
   execute(...args: any) {}
+  exit(...args: any[]) {}
 }
