@@ -1,12 +1,13 @@
 import Phaser, { GameObjects, Physics } from 'phaser'
-import PalmTree from '~/plants/PalmTree'
-import { Constants } from '~/utils/Constants'
+import PalmTree from '../plants/PalmTree'
+import { Constants } from '../utils/Constants'
 import { createCharacterAnims } from '../anims/CharacterAnims'
 import '../characters/Player'
 import Player from '../characters/Player'
+import { Coconut } from '../plants/Coconut'
 
 export default class Game extends Phaser.Scene {
-  private player!: Player
+  public player!: Player
   public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private trees!: Phaser.GameObjects.Group
   private oceanLayer!: Phaser.Tilemaps.TilemapLayer
@@ -15,6 +16,7 @@ export default class Game extends Phaser.Scene {
   // colliders
   public playerTreeCollider!: Physics.Arcade.Collider
   public treeBeingHit!: PalmTree
+  public coconuts: Coconut[] = []
 
   constructor() {
     super('game')
@@ -70,6 +72,7 @@ export default class Game extends Phaser.Scene {
       undefined,
       this
     )
+    console.log(this.sys.displayList.getChildren())
   }
 
   handlePlayerTreeCollision(
@@ -88,12 +91,28 @@ export default class Game extends Phaser.Scene {
 
   update() {
     this.player.update()
+    this.updateSortingLayers()
     this.trees.getChildren().forEach((child: GameObjects.GameObject) => {
       const palmTree = child as PalmTree
       if (palmTree.y + 10 < this.player.y) {
         palmTree.setDepth(this.player.depth - 1)
       } else {
         palmTree.setDepth(this.player.depth + 1)
+      }
+    })
+  }
+
+  updateSortingLayers() {
+    let lowestLayer = 1
+    const sortedByY = this.sys.displayList
+      .getChildren()
+      .filter((child: any) => {
+        return child.y && this.cameras.main.worldView.contains(child.x, child.y)
+      })
+      .sort((a: any, b: any) => b.y - a.y)
+    sortedByY.forEach((c: any, index: number) => {
+      if (c.setDepth) {
+        c.setDepth(lowestLayer + index)
       }
     })
   }
