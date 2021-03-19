@@ -72,7 +72,6 @@ export default class Game extends Phaser.Scene {
       undefined,
       this
     )
-    console.log(this.sys.displayList.getChildren())
   }
 
   handlePlayerTreeCollision(
@@ -92,14 +91,6 @@ export default class Game extends Phaser.Scene {
   update() {
     this.player.update()
     this.updateSortingLayers()
-    this.trees.getChildren().forEach((child: GameObjects.GameObject) => {
-      const palmTree = child as PalmTree
-      if (palmTree.y + 10 < this.player.y) {
-        palmTree.setDepth(this.player.depth - 1)
-      } else {
-        palmTree.setDepth(this.player.depth + 1)
-      }
-    })
   }
 
   updateSortingLayers() {
@@ -107,9 +98,18 @@ export default class Game extends Phaser.Scene {
     const sortedByY = this.sys.displayList
       .getChildren()
       .filter((child: any) => {
-        return child.y && this.cameras.main.worldView.contains(child.x, child.y)
+        return (
+          child.y &&
+          this.cameras.main.worldView.contains(child.x, child.y) &&
+          child.name !== 'InAir'
+        )
       })
-      .sort((a: any, b: any) => b.y - a.y)
+      .sort((a: any, b: any) => {
+        const aY = a.y + a.height / 2
+        const bY = b.y + b.height / 2
+        return aY - bY
+      })
+
     sortedByY.forEach((c: any, index: number) => {
       if (c.setDepth) {
         c.setDepth(lowestLayer + index)

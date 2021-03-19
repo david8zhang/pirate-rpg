@@ -30,8 +30,11 @@ export default class PalmTree extends Phaser.Physics.Arcade.Sprite {
   }
 
   dropCoconuts() {
-    this.droppedCoconuts.push(
-      new Coconut(this.scene as Game, this.x, this.y + this.height / 2 + 10)
+    const coconut = new Coconut(this.scene as Game, this.x, this.y - this.height / 2 + 10)
+    coconut.drop(
+      { x: this.x, y: this.y - this.height / 2 },
+      { x: this.x, y: this.y + this.height / 2 }
     )
+    this.droppedCoconuts.push(coconut)
   }
 }

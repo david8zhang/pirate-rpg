@@ -23,6 +23,7 @@ export enum Direction {
 export default class Player extends Phaser.Physics.Arcade.Sprite {
   public stateMachine: StateMachine
   public direction: Direction = Direction.DOWN
+  public inventory: any[] = []
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture)
@@ -44,6 +45,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   update() {
     this.stateMachine.step()
+  }
+
+  addItem(item: any) {
+    this.inventory.push(item)
   }
 
   getAnimDirection(dir: Direction) {
