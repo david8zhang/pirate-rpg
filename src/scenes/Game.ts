@@ -1,10 +1,10 @@
-import Phaser, { GameObjects, Physics } from 'phaser'
-import PalmTree from '../plants/PalmTree'
+import Phaser, { Physics } from 'phaser'
+import PalmTree from '../Items/PalmTree'
 import { Constants } from '../utils/Constants'
 import { createCharacterAnims } from '../anims/CharacterAnims'
 import '../characters/Player'
 import Player from '../characters/Player'
-import { Coconut } from '../plants/Coconut'
+import { Coconut } from '../Items/Coconut'
 
 export default class Game extends Phaser.Scene {
   public player!: Player

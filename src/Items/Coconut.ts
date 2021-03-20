@@ -3,7 +3,6 @@ import { Item } from './Item'
 
 export class Coconut extends Item {
   private scene: Game
-  public sprite: Phaser.Physics.Arcade.Sprite
   constructor(scene: Game, x: number, y: number) {
     super()
     this.itemType = 'Coconut'
