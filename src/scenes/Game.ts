@@ -1,10 +1,12 @@
 import Phaser, { Physics } from 'phaser'
-import PalmTree from '../Items/PalmTree'
+import PalmTree from '../items/PalmTree'
 import { Constants } from '../utils/Constants'
 import { createCharacterAnims } from '../anims/CharacterAnims'
 import '../characters/Player'
+import '../mobs/GiantCrab'
 import Player from '../characters/Player'
-import { Coconut } from '../Items/Coconut'
+import { Coconut } from '../items/Coconut'
+import { createGiantCrabAnims } from '~/anims/GiantCrabAnims'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -27,8 +29,8 @@ export default class Game extends Phaser.Scene {
   }
 
   create(): void {
-    this.scale.scaleMode = Phaser.Scale.FIT
     createCharacterAnims(this.anims)
+    createGiantCrabAnims(this.anims)
     this.initTilemap()
     this.initPlayer()
     this.initPlants()
@@ -43,6 +45,7 @@ export default class Game extends Phaser.Scene {
   }
 
   initPlayer() {
+    this.add.giantCrab(345, 500, 'giantCrab')
     this.player = this.add.player(256, 256, 'player')
     this.player.setDepth(1)
     this.physics.add.collider(this.player, this.oceanLayer)

@@ -5,7 +5,7 @@ import { MoveState } from '../lib/states/MoveState'
 import Game from '../scenes/Game'
 import { StateMachine } from '../lib/StateMachine'
 import UIScene from '../scenes/UIScene'
-import { Item } from '../Items/Item'
+import { Item } from '../items/Item'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -88,6 +88,7 @@ Phaser.GameObjects.GameObjectFactory.register(
     const sprite = new Player(this.scene, x, y, texture, frame)
     this.displayList.add(sprite)
     this.updateList.add(sprite)
+    sprite.setScale(1)
 
     this.scene.physics.world.enableBody(sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     sprite.setPushable(false)

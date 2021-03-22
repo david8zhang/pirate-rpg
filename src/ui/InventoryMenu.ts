@@ -1,7 +1,4 @@
-import { Physics } from 'phaser'
-import Player, { Inventory } from '~/characters/Player'
-import { Coconut } from '~/Items/Coconut'
-import { Item } from '../Items/Item'
+import { Inventory } from '~/characters/Player'
 
 class ItemBox {
   // Dimensions
