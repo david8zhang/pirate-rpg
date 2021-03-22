@@ -9,7 +9,7 @@ declare global {
 export class GiantCrab extends Phaser.Physics.Arcade.Sprite {
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture)
-    this.anims.play('crab-idle')
+    this.anims.play('giant-crab-idle')
   }
 }
 
