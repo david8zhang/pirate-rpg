@@ -10,7 +10,7 @@ export default class UIScene extends Phaser.Scene {
 
   create() {
     this.inventoryMenu = new InventoryMenu(this)
-    this.inventoryMenu.display()
+    this.inventoryMenu.initialize()
   }
 
   public static get instance() {

@@ -1,9 +1,11 @@
 import Phaser from 'phaser'
-import { AttackState } from '~/lib/states/AttackState'
-import { IdleState } from '~/lib/states/IdleState'
-import { MoveState } from '~/lib/states/MoveState'
+import { AttackState } from '../lib/states/AttackState'
+import { IdleState } from '../lib/states/IdleState'
+import { MoveState } from '../lib/states/MoveState'
 import Game from '../scenes/Game'
 import { StateMachine } from '../lib/StateMachine'
+import UIScene from '../scenes/UIScene'
+import { Item } from '../Items/Item'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -20,10 +22,17 @@ export enum Direction {
   RIGHT = 'right',
 }
 
+export interface Inventory {
+  [key: string]: {
+    count: number
+    texture: string
+  }
+}
+
 export default class Player extends Phaser.Physics.Arcade.Sprite {
   public stateMachine: StateMachine
   public direction: Direction = Direction.DOWN
-  public inventory: any[] = []
+  public inventory: Inventory
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture)
@@ -37,6 +46,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       },
       [(scene as Game).cursors, this]
     )
+    this.inventory = {}
   }
 
   getCurrState(): string {
@@ -47,8 +57,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.stateMachine.step()
   }
 
-  addItem(item: any) {
-    this.inventory.push(item)
+  addItem(item: Item) {
+    if (!this.inventory[item.itemType]) {
+      this.inventory[item.itemType] = {
+        count: 0,
+        texture: item.sprite.texture.key,
+      }
+    }
+    this.inventory[item.itemType].count++
+    UIScene.instance.inventoryMenu.updateInventoryMenu(this.inventory)
   }
 
   getAnimDirection(dir: Direction) {
@@ -73,6 +90,7 @@ Phaser.GameObjects.GameObjectFactory.register(
     this.updateList.add(sprite)
 
     this.scene.physics.world.enableBody(sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
+    sprite.setPushable(false)
     sprite.body.setSize(sprite.width * 0.4, sprite.height * 0.4)
     sprite.body.offset.y = 22
     return sprite

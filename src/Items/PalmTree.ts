@@ -14,7 +14,7 @@ export default class PalmTree extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, texture, frame)
     this.scene.physics.world.enableBody(this, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.body.setSize(this.width * 0.2, this.height * 0.1)
-    this.body.offset.y = 57
+    this.body.offset.y = 53
     this.setPushable(false)
   }
 
@@ -31,10 +31,7 @@ export default class PalmTree extends Phaser.Physics.Arcade.Sprite {
 
   dropCoconuts() {
     const coconut = new Coconut(this.scene as Game, this.x, this.y - this.height / 2 + 10)
-    coconut.drop(
-      { x: this.x, y: this.y - this.height / 2 },
-      { x: this.x, y: this.y + this.height / 2 }
-    )
+    coconut.drop()
     this.droppedCoconuts.push(coconut)
   }
 }

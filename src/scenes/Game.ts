@@ -27,6 +27,7 @@ export default class Game extends Phaser.Scene {
   }
 
   create(): void {
+    this.scale.scaleMode = Phaser.Scale.FIT
     createCharacterAnims(this.anims)
     this.initTilemap()
     this.initPlayer()

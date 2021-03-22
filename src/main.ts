@@ -5,10 +5,11 @@ import Game from './scenes/Game'
 import Preloader from './scenes/Preloader'
 import UIScene from './scenes/UIScene'
 
-const config: Phaser.Types.Core.GameConfig = {
+const config: any = {
   type: Phaser.AUTO,
-  width: 400,
-  height: 300,
+  width: 600,
+  height: 400,
+  pixelArt: true,
   physics: {
     default: 'arcade',
     arcade: {
