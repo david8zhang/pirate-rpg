@@ -7,6 +7,9 @@ import '../mobs/GiantCrab'
 import Player from '../characters/Player'
 import { Coconut } from '../items/Coconut'
 import { createGiantCrabAnims } from '~/anims/GiantCrabAnims'
+import { GiantCrab } from '../mobs/GiantCrab'
+import { Crab } from '../mobs/Crab'
+import { createCrabAnims } from '~/anims/CrabAnims'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -31,6 +34,7 @@ export default class Game extends Phaser.Scene {
   create(): void {
     createCharacterAnims(this.anims)
     createGiantCrabAnims(this.anims)
+    createCrabAnims(this.anims)
     this.initTilemap()
     this.initPlayer()
     this.initPlants()
@@ -45,7 +49,9 @@ export default class Game extends Phaser.Scene {
   }
 
   initPlayer() {
-    this.add.giantCrab(345, 500, 'giantCrab')
+    const crab = new Crab(this, { x: 300, y: 300, textureKey: 'crab' })
+    const crab2 = new Crab(this, { x: 600, y: 300, textureKey: 'crab' })
+    const giantCrab = new GiantCrab(this, { x: 350, y: 350, textureKey: 'giantCrab' })
     this.player = this.add.player(256, 256, 'player')
     this.player.setDepth(1)
     this.physics.add.collider(this.player, this.oceanLayer)

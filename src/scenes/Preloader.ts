@@ -12,11 +12,6 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('panel', 'ui/grey_panel.png')
     this.load.tilemapTiledJSON('starter-island', 'tiles/starter-island.json')
     this.load.atlas('player', 'character/player.png', 'character/player.json')
-    this.load.atlas(
-      'giantCrab',
-      'mobs/giant-crab/giant_crab_atlas.png',
-      'mobs/giant-crab/giant_crab_atlas.json'
-    )
     this.load.image('coconut', 'plants/coconut.png')
     this.load.spritesheet('palm-trees', 'plants/palm-trees.png', {
       frameHeight: 64,
@@ -24,6 +19,14 @@ export default class Preloader extends Phaser.Scene {
       startFrame: 0,
       endFrame: 1,
     })
+
+    // Mobs
+    this.load.atlas(
+      'giantCrab',
+      'mobs/giant-crab/giant_crab_atlas.png',
+      'mobs/giant-crab/giant_crab_atlas.json'
+    )
+    this.load.atlas('crab', 'mobs/crab/crab.png', 'mobs/crab/crab.json')
   }
   create() {
     this.scene.start('game')
