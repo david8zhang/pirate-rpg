@@ -22,8 +22,6 @@ export class RandomMovementScript implements MovementScript {
   public direction = Direction.RIGHT
   public moveEvent!: Phaser.Time.TimerEvent
   public state: MoveState = MoveState.MOVING
-  public moveAnimKey!: string
-  public stopAnimKey!: string
 
   constructor(
     sprite: Phaser.Physics.Arcade.Sprite,
@@ -49,11 +47,9 @@ export class RandomMovementScript implements MovementScript {
   randomMoveOrStop(animations: { move: string; idle: string }) {
     this.state = [MoveState.MOVING, MoveState.STOPPED][Math.floor(Math.random() * 2)]
     if (this.state === MoveState.MOVING) {
-      console.log('moving!')
       this.sprite.anims.play(animations.move)
       this.direction = randomDirection(this.direction)
     } else {
-      console.log('stopped!')
       this.sprite.anims.play(animations.idle)
     }
   }
