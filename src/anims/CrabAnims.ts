@@ -9,4 +9,14 @@ export const createCrabAnims = (anims: Phaser.Animations.AnimationManager) => {
     repeat: -1,
     frameRate: 10,
   })
+  anims.create({
+    key: 'crab-walk-side',
+    frames: anims.generateFrameNames('crab', {
+      start: 4,
+      end: 6,
+      suffix: '.png',
+    }),
+    repeat: -1,
+    frameRate: 10,
+  })
 }

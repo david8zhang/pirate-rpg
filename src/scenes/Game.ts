@@ -10,11 +10,13 @@ import { createGiantCrabAnims } from '~/anims/GiantCrabAnims'
 import { GiantCrab } from '../mobs/GiantCrab'
 import { Crab } from '../mobs/Crab'
 import { createCrabAnims } from '~/anims/CrabAnims'
+import { Item } from '~/items/Item'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
   public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private trees!: Phaser.GameObjects.Group
+  private items!: Phaser.GameObjects.Group
   private oceanLayer!: Phaser.Tilemaps.TilemapLayer
   private map!: Phaser.Tilemaps.Tilemap
 
@@ -22,6 +24,7 @@ export default class Game extends Phaser.Scene {
   public playerTreeCollider!: Physics.Arcade.Collider
   public treeBeingHit!: PalmTree
   public coconuts: Coconut[] = []
+  private crab!: Crab
 
   constructor() {
     super('game')
@@ -49,9 +52,7 @@ export default class Game extends Phaser.Scene {
   }
 
   initPlayer() {
-    const crab = new Crab(this, { x: 300, y: 300, textureKey: 'crab' })
-    const crab2 = new Crab(this, { x: 600, y: 300, textureKey: 'crab' })
-    const giantCrab = new GiantCrab(this, { x: 350, y: 350, textureKey: 'giantCrab' })
+    this.crab = new Crab(this, { x: 300, y: 300, textureKey: 'crab' })
     this.player = this.add.player(256, 256, 'player')
     this.player.setDepth(1)
     this.physics.add.collider(this.player, this.oceanLayer)
@@ -100,6 +101,7 @@ export default class Game extends Phaser.Scene {
 
   update() {
     this.player.update()
+    this.crab.update()
     this.updateSortingLayers()
   }
 
