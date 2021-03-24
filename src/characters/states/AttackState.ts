@@ -1,5 +1,5 @@
-import Player, { Direction } from '../../characters/Player'
-import { State } from '../StateMachine'
+import Player, { Direction } from '../Player'
+import { State } from '../../lib/StateMachine'
 
 export class AttackState extends State {
   enter(cursors: Phaser.Types.Input.Keyboard.CursorKeys, player: Player) {

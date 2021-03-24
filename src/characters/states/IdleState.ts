@@ -1,5 +1,5 @@
-import Player from '../../characters/Player'
-import { State } from '../StateMachine'
+import Player from '../Player'
+import { State } from '../../lib/StateMachine'
 
 export class IdleState extends State {
   enter(cursors: Phaser.Types.Input.Keyboard.CursorKeys, player: Player) {
