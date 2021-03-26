@@ -88,7 +88,6 @@ Phaser.GameObjects.GameObjectFactory.register(
     const sprite = new Player(this.scene, x, y, texture, frame)
     this.displayList.add(sprite)
     this.updateList.add(sprite)
-    sprite.setScale(1)
 
     this.scene.physics.world.enableBody(sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     sprite.setPushable(false)

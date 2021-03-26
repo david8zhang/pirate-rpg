@@ -9,7 +9,6 @@ export class Coconut extends Item {
     this.itemType = 'Coconut'
     this.scene = scene
     this.sprite = this.scene.physics.add.sprite(x, y, 'coconut')
-    // this.sprite.setPushable(false)
     this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.collider = this.scene.physics.add.collider(
       this.scene.player,

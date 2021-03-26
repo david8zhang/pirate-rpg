@@ -1,16 +1,15 @@
 import Phaser, { Physics } from 'phaser'
 import PalmTree from '../items/PalmTree'
 import { Constants } from '../utils/Constants'
-import { createCharacterAnims } from '../anims/CharacterAnims'
 import '../characters/Player'
 import '../mobs/GiantCrab'
 import Player from '../characters/Player'
 import { Coconut } from '../items/Coconut'
-import { createGiantCrabAnims } from '~/anims/GiantCrabAnims'
-import { GiantCrab } from '../mobs/GiantCrab'
 import { Crab } from '../mobs/Crab'
 import { createCrabAnims } from '~/anims/CrabAnims'
-import { Item } from '~/items/Item'
+import { createCharacterAnims } from '../anims/CharacterAnims'
+import { createGiantCrabAnims } from '../anims/GiantCrabAnims'
+import { Mob } from '~/mobs/Mob'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -41,6 +40,7 @@ export default class Game extends Phaser.Scene {
     this.initTilemap()
     this.initPlayer()
     this.initPlants()
+    this.initMobs()
   }
 
   initTilemap() {
@@ -52,7 +52,6 @@ export default class Game extends Phaser.Scene {
   }
 
   initPlayer() {
-    this.crab = new Crab(this, { x: 300, y: 300, textureKey: 'crab' })
     this.player = this.add.player(256, 256, 'player')
     this.player.setDepth(1)
     this.physics.add.collider(this.player, this.oceanLayer)
@@ -83,6 +82,15 @@ export default class Game extends Phaser.Scene {
       undefined,
       this
     )
+  }
+
+  initMobs() {
+    const mobsGroup = this.physics.add.group({
+      classType: Mob,
+    })
+    this.crab = new Crab(this, { x: 200, y: 300, textureKey: 'crab' })
+    mobsGroup.add(this.crab.sprite)
+    this.physics.add.collider(mobsGroup, this.oceanLayer)
   }
 
   handlePlayerTreeCollision(

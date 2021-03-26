@@ -27,14 +27,16 @@ export class RandomMovementScript implements MovementScript {
     sprite: Phaser.Physics.Arcade.Sprite,
     scene: Phaser.Scene,
     animations: {
-      move: string
-      idle: string
+      moveFront: string
+      moveSide: string
+      idleFront: string
+      idleSide: string
     }
   ) {
     this.sprite = sprite
     this.scene = scene
-    this.sprite.body.onCollide = true
-    this.sprite.anims.play(animations.idle)
+    this.sprite.anims.play(animations.idleFront)
+
     this.moveEvent = this.scene.time.addEvent({
       delay: 2000,
       callback: () => {
@@ -42,15 +44,46 @@ export class RandomMovementScript implements MovementScript {
       },
       loop: true,
     })
+    scene.physics.world.on(
+      Phaser.Physics.Arcade.Events.TILE_COLLIDE,
+      (go: Phaser.GameObjects.GameObject, tile: Phaser.Tilemaps.Tile) => {
+        this.handleTileCollision(go, tile, animations)
+      },
+      this
+    )
   }
 
-  randomMoveOrStop(animations: { move: string; idle: string }) {
+  handleTileCollision(
+    go: Phaser.GameObjects.GameObject,
+    tile: Phaser.Tilemaps.Tile,
+    animations: any
+  ) {
+    if (go !== this.sprite) {
+      return
+    }
+    this.randomMoveOrStop(animations)
+  }
+
+  randomMoveOrStop(animations: {
+    moveSide: string
+    moveFront: string
+    idleFront: string
+    idleSide: string
+  }) {
     this.state = [MoveState.MOVING, MoveState.STOPPED][Math.floor(Math.random() * 2)]
     if (this.state === MoveState.MOVING) {
-      this.sprite.anims.play(animations.move)
       this.direction = randomDirection(this.direction)
+      if (this.direction === Direction.UP || this.direction === Direction.DOWN) {
+        this.sprite.anims.play(animations.moveSide)
+      } else {
+        this.sprite.anims.play(animations.moveFront)
+      }
     } else {
-      this.sprite.anims.play(animations.idle)
+      if (this.direction === Direction.UP || this.direction === Direction.DOWN) {
+        this.sprite.anims.play(animations.idleSide)
+      } else {
+        this.sprite.anims.play(animations.idleFront)
+      }
     }
   }
 
@@ -67,10 +100,12 @@ export class RandomMovementScript implements MovementScript {
           break
         }
         case Direction.LEFT: {
+          this.sprite.scaleX = -1
           this.sprite.setVelocity(-speed, 0)
           break
         }
         case Direction.RIGHT: {
+          this.sprite.scaleX = 1
           this.sprite.setVelocity(speed, 0)
           break
         }
