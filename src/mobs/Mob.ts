@@ -1,5 +1,6 @@
 import { MovementScript } from '~/lib/components/MovementScript'
 import { RandomMovementScript } from '~/lib/components/RandomMovementScript'
+import Game from '~/scenes/Game'
 
 export interface MobConfig {
   textureKey: string
@@ -7,14 +8,16 @@ export interface MobConfig {
   y: number
 }
 
-export class Mob {
+export abstract class Mob {
   scene: Phaser.Scene
   x: number
   y: number
+  maxHealth: number
+  health: number
   sprite: Phaser.Physics.Arcade.Sprite
 
   // Components
-  randMoveComp: MovementScript
+  moveComp: MovementScript
 
   constructor(
     scene: Phaser.Scene,
@@ -25,13 +28,23 @@ export class Mob {
     this.scene = scene
     this.x = x
     this.y = y
+    this.maxHealth = 100
+    this.health = 100
     this.sprite = scene.physics.add.sprite(x, y, textureKey)
-    this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.STATIC_BODY)
+    this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.sprite.body.onCollide = true
-    this.randMoveComp = new RandomMovementScript(this.sprite, scene, animations)
+    this.sprite.setPushable(false)
+    this.moveComp = new RandomMovementScript(this.sprite, scene, animations)
+  }
+
+  abstract die(): void
+
+  takeDamage(damage: number) {
+    this.health -= damage
+    this.health = Math.max(0, this.health)
   }
 
   update() {
-    this.randMoveComp.update()
+    this.moveComp.update()
   }
 }

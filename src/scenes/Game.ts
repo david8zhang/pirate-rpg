@@ -15,7 +15,6 @@ export default class Game extends Phaser.Scene {
   public player!: Player
   public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private trees!: Phaser.GameObjects.Group
-  private items!: Phaser.GameObjects.Group
   private oceanLayer!: Phaser.Tilemaps.TilemapLayer
   private map!: Phaser.Tilemaps.Tilemap
 
@@ -23,7 +22,9 @@ export default class Game extends Phaser.Scene {
   public playerTreeCollider!: Physics.Arcade.Collider
   public treeBeingHit!: PalmTree
   public coconuts: Coconut[] = []
-  private crab!: Crab
+
+  // Mobs
+  public mobsList: Mob[] = []
 
   constructor() {
     super('game')
@@ -88,8 +89,9 @@ export default class Game extends Phaser.Scene {
     const mobsGroup = this.physics.add.group({
       classType: Mob,
     })
-    this.crab = new Crab(this, { x: 200, y: 300, textureKey: 'crab' })
-    mobsGroup.add(this.crab.sprite)
+    const crab = new Crab(this, { x: 200, y: 300, textureKey: 'crab' })
+    mobsGroup.add(crab.sprite)
+    this.mobsList.push(crab)
     this.physics.add.collider(mobsGroup, this.oceanLayer)
   }
 
@@ -109,7 +111,9 @@ export default class Game extends Phaser.Scene {
 
   update() {
     this.player.update()
-    this.crab.update()
+    this.mobsList.forEach((mob: Mob) => {
+      mob.update()
+    })
     this.updateSortingLayers()
   }
 

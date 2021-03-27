@@ -41,4 +41,36 @@ export const createCrabAnims = (anims: Phaser.Animations.AnimationManager) => {
     repeat: -1,
     frameRate: 10,
   })
+  anims.create({
+    key: 'crab-hurt-front',
+    frames: anims.generateFrameNames('crab', {
+      start: 8,
+      end: 8,
+      suffix: '.png',
+    }),
+    repeat: 0,
+    frameRate: 10,
+  })
+
+  anims.create({
+    key: 'crab-die-front',
+    frames: anims.generateFrameNames('crab', {
+      start: 7,
+      end: 9,
+      suffix: '.png',
+    }),
+    repeat: 0,
+    frameRate: 5,
+  })
+
+  anims.create({
+    key: 'crab-die-side',
+    frames: anims.generateFrameNames('crab', {
+      start: 16,
+      end: 18,
+      suffix: '.png',
+    }),
+    repeat: 0,
+    frameRate: 5,
+  })
 }

@@ -10,4 +10,6 @@ export class GiantCrab extends Mob {
     })
     this.sprite.anims.play('giant-crab-idle')
   }
+
+  die() {}
 }

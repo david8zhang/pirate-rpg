@@ -1,11 +1,4 @@
-import { MovementScript, MoveState } from './MovementScript'
-
-enum Direction {
-  UP,
-  DOWN,
-  LEFT,
-  RIGHT,
-}
+import { MovementScript, MoveState, Direction } from './MovementScript'
 
 const randomDirection = (exclude: Direction) => {
   let newDirection = Phaser.Math.Between(0, 3)
@@ -22,6 +15,8 @@ export class RandomMovementScript implements MovementScript {
   public direction = Direction.RIGHT
   public moveEvent!: Phaser.Time.TimerEvent
   public state: MoveState = MoveState.MOVING
+  private onMove?: Function
+  private isStopped: boolean = false
 
   constructor(
     sprite: Phaser.Physics.Arcade.Sprite,
@@ -31,7 +26,8 @@ export class RandomMovementScript implements MovementScript {
       moveSide: string
       idleFront: string
       idleSide: string
-    }
+    },
+    onMoveFn?: Function
   ) {
     this.sprite = sprite
     this.scene = scene
@@ -51,6 +47,9 @@ export class RandomMovementScript implements MovementScript {
       },
       this
     )
+    if (onMoveFn) {
+      this.onMove = onMoveFn
+    }
   }
 
   handleTileCollision(
@@ -87,25 +86,45 @@ export class RandomMovementScript implements MovementScript {
     }
   }
 
+  destroy() {
+    this.moveEvent.destroy()
+  }
+
+  start() {
+    this.isStopped = false
+  }
+
+  stop() {
+    this.isStopped = true
+  }
+
   update() {
     const speed = 50
+    if (this.isStopped) {
+      if (this.sprite.active && this.sprite.setVelocity) {
+        this.sprite.setVelocity(0)
+      }
+      return
+    }
     if (this.state === MoveState.MOVING) {
       switch (this.direction) {
         case Direction.UP: {
+          if (this.onMove) this.onMove(this.direction)
           this.sprite.setVelocity(0, -speed)
           break
         }
         case Direction.DOWN: {
+          if (this.onMove) this.onMove(this.direction)
           this.sprite.setVelocity(0, speed)
           break
         }
         case Direction.LEFT: {
-          this.sprite.scaleX = -1
+          if (this.onMove) this.onMove(this.direction)
           this.sprite.setVelocity(-speed, 0)
           break
         }
         case Direction.RIGHT: {
-          this.sprite.scaleX = 1
+          if (this.onMove) this.onMove(this.direction)
           this.sprite.setVelocity(speed, 0)
           break
         }
