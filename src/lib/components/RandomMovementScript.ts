@@ -32,7 +32,7 @@ export class RandomMovementScript implements MovementScript {
     this.sprite = sprite
     this.scene = scene
     this.sprite.anims.play(animations.idleFront)
-
+    this.direction = randomDirection(Direction.RIGHT)
     this.moveEvent = this.scene.time.addEvent({
       delay: 2000,
       callback: () => {

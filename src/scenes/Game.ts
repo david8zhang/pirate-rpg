@@ -15,8 +15,11 @@ export default class Game extends Phaser.Scene {
   public player!: Player
   public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private trees!: Phaser.GameObjects.Group
-  private oceanLayer!: Phaser.Tilemaps.TilemapLayer
   private map!: Phaser.Tilemaps.Tilemap
+
+  // Tilemap layers
+  private oceanLayer!: Phaser.Tilemaps.TilemapLayer
+  private grassLayer!: Phaser.Tilemaps.TilemapLayer
 
   // colliders
   public playerTreeCollider!: Physics.Arcade.Collider
@@ -45,11 +48,13 @@ export default class Game extends Phaser.Scene {
   }
 
   initTilemap() {
-    this.map = this.make.tilemap({ key: 'starter-island' })
+    this.map = this.make.tilemap({ key: 'starter-island-2' })
     const tileset = this.map.addTilesetImage('beach-tiles', 'tiles')
     this.oceanLayer = this.map.createLayer('Ocean', tileset)
     this.oceanLayer.setCollisionByProperty({ collides: true })
-    this.map.createLayer('Ground', tileset)
+    this.map.createLayer('Sand', tileset)
+    this.grassLayer = this.map.createLayer('Grass', tileset)
+    this.grassLayer.setCollisionByProperty({ collides: true })
   }
 
   initPlayer() {
@@ -86,13 +91,19 @@ export default class Game extends Phaser.Scene {
   }
 
   initMobs() {
+    const mobsLayer = this.map.getObjectLayer('Mobs')
     const mobsGroup = this.physics.add.group({
       classType: Mob,
     })
-    const crab = new Crab(this, { x: 200, y: 300, textureKey: 'crab' })
-    mobsGroup.add(crab.sprite)
-    this.mobsList.push(crab)
+    mobsLayer.objects.forEach((mobObj) => {
+      const xPos = mobObj.x! + mobObj.width! * 0.5
+      const yPos = mobObj.y! - mobObj.height! * 0.5
+      const crab = new Crab(this, { x: xPos, y: yPos, textureKey: 'crab' })
+      this.mobsList.push(crab)
+      mobsGroup.add(crab.sprite)
+    })
     this.physics.add.collider(mobsGroup, this.oceanLayer)
+    this.physics.add.collider(mobsGroup, this.grassLayer)
   }
 
   handlePlayerTreeCollision(

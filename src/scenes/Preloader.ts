@@ -11,6 +11,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('tiles', 'tiles/beach-tiles.png')
     this.load.image('panel', 'ui/grey_panel.png')
     this.load.tilemapTiledJSON('starter-island', 'tiles/starter-island.json')
+    this.load.tilemapTiledJSON('starter-island-2', 'tiles/starter-island-2.json')
     this.load.atlas('player', 'character/player.png', 'character/player.json')
     this.load.image('coconut', 'plants/coconut.png')
     this.load.spritesheet('palm-trees', 'plants/palm-trees.png', {
