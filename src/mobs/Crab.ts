@@ -1,14 +1,18 @@
 import Game from '../scenes/Game'
 import { Direction } from '../lib/components/MovementScript'
 
+import { CrabClaw } from '../items/CrabClaw'
 import { Mob, MobConfig } from './Mob'
 import { PlayerMobCollision } from '../lib/components/PlayerMobCollision'
+import { HealthBar } from '~/ui/HealthBar'
 
 const CRAB_ANIMATIONS = {
   moveFront: 'crab-walk-front',
   moveSide: 'crab-walk-side',
   idleFront: 'crab-idle-front',
   idleSide: 'crab-idle-side',
+  dieFront: 'crab-die-front',
+  dieSide: 'crab-die-side',
 }
 
 export class Crab extends Mob {
@@ -20,6 +24,8 @@ export class Crab extends Mob {
     this.health = 20
     this.maxHealth = 20
     this.playerMobCollision = new PlayerMobCollision(scene as Game, this)
+    this.healthBar.maxValue = this.maxHealth
+    this.healthBar.currValue = this.health
   }
 
   update() {
@@ -29,13 +35,10 @@ export class Crab extends Mob {
   die() {
     this.sprite.on('animationcomplete', () => {
       this.sprite.destroy()
+      const gameScene = this.scene as Game
+      const crabClaw = new CrabClaw(gameScene, this.sprite.x, this.sprite.y)
+      crabClaw.drop()
     })
-    this.sprite.setVelocity(0)
-    if (this.moveComp.direction === Direction.UP || this.moveComp.direction === Direction.DOWN) {
-      this.sprite.anims.play('crab-die-side')
-    } else {
-      this.sprite.anims.play('crab-die-front')
-    }
-    this.moveComp.destroy()
+    super.die()
   }
 }

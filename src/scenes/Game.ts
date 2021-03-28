@@ -9,7 +9,8 @@ import { Crab } from '../mobs/Crab'
 import { createCrabAnims } from '~/anims/CrabAnims'
 import { createCharacterAnims } from '../anims/CharacterAnims'
 import { createGiantCrabAnims } from '../anims/GiantCrabAnims'
-import { Mob } from '~/mobs/Mob'
+import { Mob } from '../mobs/Mob'
+import { HealthBar } from '../ui/HealthBar'
 
 export default class Game extends Phaser.Scene {
   public player!: Player

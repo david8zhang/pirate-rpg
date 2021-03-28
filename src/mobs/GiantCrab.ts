@@ -7,9 +7,9 @@ export class GiantCrab extends Mob {
       moveFront: 'giant-crab-idle',
       idleSide: '',
       moveSide: '',
+      dieFront: '',
+      dieSide: '',
     })
     this.sprite.anims.play('giant-crab-idle')
   }
-
-  die() {}
 }
