@@ -70,7 +70,6 @@ class ItemBox {
 
 export class InventoryMenu {
   private scene: Phaser.Scene
-  private isExpanded: boolean = false
   private numRows: number = 1
   private numCols: number = 5
 

@@ -1,4 +1,4 @@
-# Pirate RPG
+# Avast!
 
 A top down pirate themed RPG game build using Phaser 3
 

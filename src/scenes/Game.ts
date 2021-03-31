@@ -11,6 +11,8 @@ import { createCharacterAnims } from '../anims/CharacterAnims'
 import { createGiantCrabAnims } from '../anims/GiantCrabAnims'
 import { Mob } from '../mobs/Mob'
 import { HealthBar } from '../ui/HealthBar'
+import { Monkey } from '~/mobs/Monkey'
+import { createmonkeyAnims } from '~/anims/MonkeyAnims'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -42,6 +44,7 @@ export default class Game extends Phaser.Scene {
     createCharacterAnims(this.anims)
     createGiantCrabAnims(this.anims)
     createCrabAnims(this.anims)
+    createmonkeyAnims(this.anims)
     this.initTilemap()
     this.initPlayer()
     this.initPlants()
@@ -105,6 +108,12 @@ export default class Game extends Phaser.Scene {
     })
     this.physics.add.collider(mobsGroup, this.oceanLayer)
     this.physics.add.collider(mobsGroup, this.grassLayer)
+    const monkey = new Monkey(this, {
+      x: 300,
+      y: 300,
+      textureKey: 'monkey',
+    })
+    this.mobsList.push(monkey)
   }
 
   handlePlayerTreeCollision(

@@ -1,18 +1,19 @@
 import Game from '../scenes/Game'
-import { Direction } from '../lib/components/MovementScript'
 
 import { CrabClaw } from '../items/CrabClaw'
 import { Mob, MobConfig } from './Mob'
 import { PlayerMobCollision } from '../lib/components/PlayerMobCollision'
-import { HealthBar } from '~/ui/HealthBar'
 
 const CRAB_ANIMATIONS = {
   moveFront: 'crab-walk-front',
   moveSide: 'crab-walk-side',
+  moveBack: 'crab-walk-front',
   idleFront: 'crab-idle-front',
   idleSide: 'crab-idle-side',
+  idleBack: 'crab-idle-front',
   dieFront: 'crab-die-front',
   dieSide: 'crab-die-side',
+  dieBack: 'crab-die-front',
 }
 
 export class Crab extends Mob {

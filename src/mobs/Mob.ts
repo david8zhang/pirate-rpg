@@ -1,3 +1,4 @@
+import { DamageNumber } from '~/ui/DamageNumber'
 import { Direction, MovementScript } from '../lib/components/MovementScript'
 import { RandomMovementScript } from '../lib/components/RandomMovementScript'
 import { HealthBar } from '../ui/HealthBar'
@@ -71,6 +72,7 @@ export abstract class Mob {
     this.health = Math.max(0, this.health)
     this.healthBar.decrease(damage)
     this.healthBar.setVisible(true)
+    DamageNumber.createDamageNumber(damage, this.scene, this.sprite.x, this.sprite.y - 10)
   }
 
   update() {

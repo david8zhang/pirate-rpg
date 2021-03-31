@@ -21,12 +21,7 @@ export class RandomMovementScript implements MovementScript {
   constructor(
     sprite: Phaser.Physics.Arcade.Sprite,
     scene: Phaser.Scene,
-    animations: {
-      moveFront: string
-      moveSide: string
-      idleFront: string
-      idleSide: string
-    },
+    animations: any,
     onMoveFn?: Function
   ) {
     this.sprite = sprite
@@ -63,25 +58,29 @@ export class RandomMovementScript implements MovementScript {
     this.randomMoveOrStop(animations)
   }
 
-  randomMoveOrStop(animations: {
-    moveSide: string
-    moveFront: string
-    idleFront: string
-    idleSide: string
-  }) {
+  randomMoveOrStop(animations: any) {
     this.state = [MoveState.MOVING, MoveState.STOPPED][Math.floor(Math.random() * 2)]
     if (this.state === MoveState.MOVING) {
       this.direction = randomDirection(this.direction)
-      if (this.direction === Direction.UP || this.direction === Direction.DOWN) {
-        this.sprite.anims.play(animations.moveSide)
-      } else {
-        this.sprite.anims.play(animations.moveFront)
+    }
+    this.playAnimsBasedOnDirection(animations)
+  }
+
+  playAnimsBasedOnDirection(animations: any) {
+    const isMoving = this.state === MoveState.MOVING
+    switch (this.direction) {
+      case Direction.UP: {
+        this.sprite.anims.play(isMoving ? animations.moveBack : animations.idleBack)
+        break
       }
-    } else {
-      if (this.direction === Direction.UP || this.direction === Direction.DOWN) {
-        this.sprite.anims.play(animations.idleSide)
-      } else {
-        this.sprite.anims.play(animations.idleFront)
+      case Direction.DOWN: {
+        this.sprite.anims.play(isMoving ? animations.moveFront : animations.idleFront)
+        break
+      }
+      case Direction.RIGHT:
+      case Direction.LEFT: {
+        this.sprite.anims.play(isMoving ? animations.moveSide : animations.idleSide)
+        break
       }
     }
   }
