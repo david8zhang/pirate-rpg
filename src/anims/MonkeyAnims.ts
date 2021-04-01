@@ -87,7 +87,7 @@ export const createmonkeyAnims = (anims: Phaser.Animations.AnimationManager) => 
       suffix: '.png',
     }),
     repeat: 0,
-    frameRate: 5,
+    frameRate: 10,
   })
 
   anims.create({
@@ -98,7 +98,7 @@ export const createmonkeyAnims = (anims: Phaser.Animations.AnimationManager) => 
       suffix: '.png',
     }),
     repeat: 0,
-    frameRate: 5,
+    frameRate: 10,
   })
 
   // Death animations

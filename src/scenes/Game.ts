@@ -13,6 +13,7 @@ import { Mob } from '../mobs/Mob'
 import { HealthBar } from '../ui/HealthBar'
 import { Monkey } from '~/mobs/Monkey'
 import { createmonkeyAnims } from '~/anims/MonkeyAnims'
+import { debugDraw } from '~/utils/debug'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -21,8 +22,9 @@ export default class Game extends Phaser.Scene {
   private map!: Phaser.Tilemaps.Tilemap
 
   // Tilemap layers
-  private oceanLayer!: Phaser.Tilemaps.TilemapLayer
-  private grassLayer!: Phaser.Tilemaps.TilemapLayer
+  public oceanLayer!: Phaser.Tilemaps.TilemapLayer
+  public grassLayer!: Phaser.Tilemaps.TilemapLayer
+  public sandLayer!: Phaser.Tilemaps.TilemapLayer
 
   // colliders
   public playerTreeCollider!: Physics.Arcade.Collider
@@ -55,9 +57,10 @@ export default class Game extends Phaser.Scene {
     this.map = this.make.tilemap({ key: 'starter-island-2' })
     const tileset = this.map.addTilesetImage('beach-tiles', 'tiles')
     this.oceanLayer = this.map.createLayer('Ocean', tileset)
-    this.oceanLayer.setCollisionByProperty({ collides: true })
-    this.map.createLayer('Sand', tileset)
+    this.sandLayer = this.map.createLayer('Sand', tileset)
     this.grassLayer = this.map.createLayer('Grass', tileset)
+    this.sandLayer.setCollisionByProperty({ collides: true })
+    this.oceanLayer.setCollisionByProperty({ collides: true })
     this.grassLayer.setCollisionByProperty({ collides: true })
   }
 
@@ -95,19 +98,17 @@ export default class Game extends Phaser.Scene {
   }
 
   initMobs() {
-    const mobsLayer = this.map.getObjectLayer('Mobs')
-    const mobsGroup = this.physics.add.group({
-      classType: Mob,
-    })
-    mobsLayer.objects.forEach((mobObj) => {
-      const xPos = mobObj.x! + mobObj.width! * 0.5
-      const yPos = mobObj.y! - mobObj.height! * 0.5
-      const crab = new Crab(this, { x: xPos, y: yPos, textureKey: 'crab' })
-      this.mobsList.push(crab)
-      mobsGroup.add(crab.sprite)
-    })
-    this.physics.add.collider(mobsGroup, this.oceanLayer)
-    this.physics.add.collider(mobsGroup, this.grassLayer)
+    // const mobsLayer = this.map.getObjectLayer('Mobs')
+    // const mobsGroup = this.physics.add.group({
+    //   classType: Mob,
+    // })
+    // mobsLayer.objects.forEach((mobObj) => {
+    //   const xPos = mobObj.x! + mobObj.width! * 0.5
+    //   const yPos = mobObj.y! - mobObj.height! * 0.5
+    //   const crab = new Crab(this, { x: xPos, y: yPos, textureKey: 'crab' })
+    //   this.mobsList.push(crab)
+    //   mobsGroup.add(crab.sprite)
+    // })
     const monkey = new Monkey(this, {
       x: 300,
       y: 300,

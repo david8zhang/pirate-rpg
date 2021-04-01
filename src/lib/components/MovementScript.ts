@@ -12,9 +12,10 @@ export enum Direction {
 
 export interface MovementScript {
   state: MoveState
-  direction: Direction
+  direction: Direction | null
   update(): void
   stop(): void
   start(): void
   destroy(): void
+  handleTileCollision(go: any, obj: any, animations: any): void
 }

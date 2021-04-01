@@ -16,6 +16,7 @@ export interface MobAnimations {
   idleSide: string
   dieFront: string
   dieSide: string
+  [key: string]: string
 }
 
 export abstract class Mob {
@@ -31,7 +32,12 @@ export abstract class Mob {
   healthBar: HealthBar
   animations: MobAnimations
 
-  constructor(scene: Phaser.Scene, mobConfig: MobConfig, animations: MobAnimations) {
+  constructor(
+    scene: Phaser.Scene,
+    mobConfig: MobConfig,
+    animations: MobAnimations,
+    collidableLayers?: Phaser.Tilemaps.TilemapLayer[]
+  ) {
     const { x, y, textureKey } = mobConfig
     this.scene = scene
     this.x = x
@@ -40,7 +46,6 @@ export abstract class Mob {
     this.health = 100
     this.sprite = scene.physics.add.sprite(x, y, textureKey)
     this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
-    this.sprite.body.onCollide = true
     this.sprite.setPushable(false)
     this.animations = animations
     this.moveComp = new RandomMovementScript(this.sprite, scene, animations)
@@ -54,6 +59,19 @@ export abstract class Mob {
       3
     )
     this.healthBar.setVisible(false)
+    collidableLayers?.forEach((layer: Phaser.Tilemaps.TilemapLayer) => {
+      this.scene.physics.add.collider(
+        layer,
+        this.sprite,
+        (obj1: any, obj2: any) => this.handleTileCollision(obj1, obj2, animations),
+        undefined,
+        this
+      )
+    })
+  }
+
+  handleTileCollision(obj1: any, obj2: any, animations: any) {
+    this.moveComp.handleTileCollision(obj1, obj2, animations)
   }
 
   die(): void {

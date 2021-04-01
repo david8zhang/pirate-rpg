@@ -1,6 +1,6 @@
 import { MovementScript, MoveState, Direction } from './MovementScript'
 
-const randomDirection = (exclude: Direction) => {
+const randomDirection = (exclude: Direction | null) => {
   let newDirection = Phaser.Math.Between(0, 3)
   while (newDirection === exclude) {
     newDirection = Phaser.Math.Between(0, 3)
@@ -12,7 +12,7 @@ export class RandomMovementScript implements MovementScript {
   private sprite: Phaser.Physics.Arcade.Sprite
   private scene: Phaser.Scene
 
-  public direction = Direction.RIGHT
+  public direction: Direction | null = null
   public moveEvent!: Phaser.Time.TimerEvent
   public state: MoveState = MoveState.MOVING
   private onMove?: Function
@@ -27,7 +27,6 @@ export class RandomMovementScript implements MovementScript {
     this.sprite = sprite
     this.scene = scene
     this.sprite.anims.play(animations.idleFront)
-    this.direction = randomDirection(Direction.RIGHT)
     this.moveEvent = this.scene.time.addEvent({
       delay: 2000,
       callback: () => {
@@ -35,13 +34,6 @@ export class RandomMovementScript implements MovementScript {
       },
       loop: true,
     })
-    scene.physics.world.on(
-      Phaser.Physics.Arcade.Events.TILE_COLLIDE,
-      (go: Phaser.GameObjects.GameObject, tile: Phaser.Tilemaps.Tile) => {
-        this.handleTileCollision(go, tile, animations)
-      },
-      this
-    )
     if (onMoveFn) {
       this.onMove = onMoveFn
     }

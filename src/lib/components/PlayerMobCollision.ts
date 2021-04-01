@@ -1,6 +1,7 @@
 import { Constants } from '~/utils/Constants'
 import { Mob } from '../../mobs/Mob'
 import Game from '../../scenes/Game'
+import { Direction } from './MovementScript'
 
 export class PlayerMobCollision {
   private scene: Game
@@ -27,6 +28,7 @@ export class PlayerMobCollision {
       this.isHit = true
       this.mob.moveComp.stop()
       this.mob.takeDamage(10)
+
       if (this.mob.health === 0) {
         this.mob.die()
       } else {
