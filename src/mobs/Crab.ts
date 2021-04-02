@@ -14,6 +14,9 @@ const CRAB_ANIMATIONS = {
   dieFront: 'crab-die-front',
   dieSide: 'crab-die-side',
   dieBack: 'crab-die-front',
+  hurtFront: '',
+  hurtBack: '',
+  hurtSide: '',
 }
 
 export class Crab extends Mob {

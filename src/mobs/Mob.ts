@@ -1,6 +1,7 @@
+import { MovementBehavior, Direction } from '~/lib/components/MovementBehavior'
 import { DamageNumber } from '~/ui/DamageNumber'
-import { Direction, MovementScript } from '../lib/components/MovementScript'
-import { RandomMovementScript } from '../lib/components/RandomMovementScript'
+import { Behavior } from '../lib/components/Behavior'
+import { RandomMovementScript } from '../lib/components/RandomMovementBehavior'
 import { HealthBar } from '../ui/HealthBar'
 
 export interface MobConfig {
@@ -12,11 +13,16 @@ export interface MobConfig {
 export interface MobAnimations {
   moveFront: string
   moveSide: string
+  moveBack: string
   idleFront: string
   idleSide: string
+  idleBack: string
   dieFront: string
   dieSide: string
-  [key: string]: string
+  dieBack: string
+  hurtFront: string
+  hurtBack: string
+  hurtSide: string
 }
 
 export abstract class Mob {
@@ -28,7 +34,7 @@ export abstract class Mob {
   sprite: Phaser.Physics.Arcade.Sprite
 
   // Components
-  moveComp: MovementScript
+  moveBehavior: MovementBehavior
   healthBar: HealthBar
   animations: MobAnimations
 
@@ -48,7 +54,7 @@ export abstract class Mob {
     this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.sprite.setPushable(false)
     this.animations = animations
-    this.moveComp = new RandomMovementScript(this.sprite, scene, animations)
+    this.moveBehavior = new RandomMovementScript(this.sprite, scene, animations)
 
     const healthBarWidth = this.sprite.width * 1.5
     this.healthBar = new HealthBar(
@@ -71,17 +77,19 @@ export abstract class Mob {
   }
 
   handleTileCollision(obj1: any, obj2: any, animations: any) {
-    this.moveComp.handleTileCollision(obj1, obj2, animations)
+    this.moveBehavior.handleTileCollision(obj1, obj2, animations)
   }
 
   die(): void {
     this.sprite.setVelocity(0)
-    if (this.moveComp.direction === Direction.UP || this.moveComp.direction === Direction.DOWN) {
-      this.sprite.anims.play(this.animations.dieSide)
-    } else {
+    if (this.moveBehavior.direction === Direction.DOWN) {
       this.sprite.anims.play(this.animations.dieFront)
+    } else if (this.moveBehavior.direction === Direction.UP) {
+      this.sprite.anims.play(this.animations.dieBack)
+    } else {
+      this.sprite.anims.play(this.animations.dieSide)
     }
-    this.moveComp.destroy()
+    this.moveBehavior.destroy()
     this.healthBar.destroy()
   }
 
@@ -97,6 +105,6 @@ export abstract class Mob {
     this.healthBar.x = this.sprite.x - this.healthBar.width / 2
     this.healthBar.y = this.sprite.y - this.sprite.height
     this.healthBar.draw()
-    this.moveComp.update()
+    this.moveBehavior.update()
   }
 }

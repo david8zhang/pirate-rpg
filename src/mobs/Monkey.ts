@@ -1,4 +1,4 @@
-import { Direction } from '~/lib/components/MovementScript'
+import { Direction } from '../lib/components/MovementBehavior'
 import { PlayerMobCollision } from '../lib/components/PlayerMobCollision'
 import Game from '../scenes/Game'
 import { Mob, MobConfig } from './Mob'
@@ -33,7 +33,7 @@ export class Monkey extends Mob {
 
   public update() {
     if (this.sprite.active) {
-      switch (this.moveComp.direction) {
+      switch (this.moveBehavior.direction) {
         case Direction.LEFT:
           this.sprite.scaleX = 1
           this.sprite.body.offset.x = 8

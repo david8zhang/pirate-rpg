@@ -1,4 +1,5 @@
-import { MovementScript, MoveState, Direction } from './MovementScript'
+import { MobAnimations } from '../../mobs/Mob'
+import { MovementBehavior, MoveState, Direction } from './MovementBehavior'
 
 const randomDirection = (exclude: Direction | null) => {
   let newDirection = Phaser.Math.Between(0, 3)
@@ -8,29 +9,33 @@ const randomDirection = (exclude: Direction | null) => {
   return newDirection
 }
 
-export class RandomMovementScript implements MovementScript {
+export class RandomMovementScript extends MovementBehavior {
   private sprite: Phaser.Physics.Arcade.Sprite
   private scene: Phaser.Scene
+  private onMove?: Function
+  private isStopped: boolean = false
+  private animations: MobAnimations
 
   public direction: Direction | null = null
   public moveEvent!: Phaser.Time.TimerEvent
   public state: MoveState = MoveState.MOVING
-  private onMove?: Function
-  private isStopped: boolean = false
+  public speed: number = 50
 
   constructor(
     sprite: Phaser.Physics.Arcade.Sprite,
     scene: Phaser.Scene,
-    animations: any,
+    animations: MobAnimations,
     onMoveFn?: Function
   ) {
+    super()
+    this.animations = animations
     this.sprite = sprite
     this.scene = scene
     this.sprite.anims.play(animations.idleFront)
     this.moveEvent = this.scene.time.addEvent({
       delay: 2000,
       callback: () => {
-        this.randomMoveOrStop(animations)
+        this.randomMoveOrStop()
       },
       loop: true,
     })
@@ -47,33 +52,39 @@ export class RandomMovementScript implements MovementScript {
     if (go !== this.sprite) {
       return
     }
-    this.randomMoveOrStop(animations)
+    this.randomMoveOrStop()
   }
 
-  randomMoveOrStop(animations: any) {
+  randomMoveOrStop() {
     this.state = [MoveState.MOVING, MoveState.STOPPED][Math.floor(Math.random() * 2)]
     if (this.state === MoveState.MOVING) {
       this.direction = randomDirection(this.direction)
     }
-    this.playAnimsBasedOnDirection(animations)
+    this.playAnimsBasedOnDirection()
   }
 
-  playAnimsBasedOnDirection(animations: any) {
+  playAnimsBasedOnDirection() {
+    const animation = this._getAnimBasedOnDirection()
+    if (animation && this.sprite.active) {
+      this.sprite.anims.play(animation)
+    }
+  }
+
+  private _getAnimBasedOnDirection() {
     const isMoving = this.state === MoveState.MOVING
     switch (this.direction) {
       case Direction.UP: {
-        this.sprite.anims.play(isMoving ? animations.moveBack : animations.idleBack)
-        break
+        return isMoving ? this.animations.moveBack : this.animations.idleBack
       }
       case Direction.DOWN: {
-        this.sprite.anims.play(isMoving ? animations.moveFront : animations.idleFront)
-        break
+        return isMoving ? this.animations.moveFront : this.animations.idleFront
       }
       case Direction.RIGHT:
       case Direction.LEFT: {
-        this.sprite.anims.play(isMoving ? animations.moveSide : animations.idleSide)
-        break
+        return isMoving ? this.animations.moveSide : this.animations.idleSide
       }
+      default:
+        return this.animations.idleFront
     }
   }
 
@@ -90,33 +101,40 @@ export class RandomMovementScript implements MovementScript {
   }
 
   update() {
-    const speed = 50
+    // If the mob is currently stopped, don't add velocity
     if (this.isStopped) {
       if (this.sprite.active && this.sprite.setVelocity) {
         this.sprite.setVelocity(0)
       }
       return
     }
+
+    // Play the move animation if the mob was moving
+    if (this.sprite.anims.getName() !== this._getAnimBasedOnDirection()) {
+      this.playAnimsBasedOnDirection()
+    }
+
+    // Move the mob based on its direction
     if (this.state === MoveState.MOVING) {
       switch (this.direction) {
         case Direction.UP: {
           if (this.onMove) this.onMove(this.direction)
-          this.sprite.setVelocity(0, -speed)
+          this.sprite.setVelocity(0, -this.speed)
           break
         }
         case Direction.DOWN: {
           if (this.onMove) this.onMove(this.direction)
-          this.sprite.setVelocity(0, speed)
+          this.sprite.setVelocity(0, this.speed)
           break
         }
         case Direction.LEFT: {
           if (this.onMove) this.onMove(this.direction)
-          this.sprite.setVelocity(-speed, 0)
+          this.sprite.setVelocity(-this.speed, 0)
           break
         }
         case Direction.RIGHT: {
           if (this.onMove) this.onMove(this.direction)
-          this.sprite.setVelocity(speed, 0)
+          this.sprite.setVelocity(this.speed, 0)
           break
         }
       }
