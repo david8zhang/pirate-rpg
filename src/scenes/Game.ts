@@ -98,17 +98,17 @@ export default class Game extends Phaser.Scene {
   }
 
   initMobs() {
-    // const mobsLayer = this.map.getObjectLayer('Mobs')
-    // const mobsGroup = this.physics.add.group({
-    //   classType: Mob,
-    // })
-    // mobsLayer.objects.forEach((mobObj) => {
-    //   const xPos = mobObj.x! + mobObj.width! * 0.5
-    //   const yPos = mobObj.y! - mobObj.height! * 0.5
-    //   const crab = new Crab(this, { x: xPos, y: yPos, textureKey: 'crab' })
-    //   this.mobsList.push(crab)
-    //   mobsGroup.add(crab.sprite)
-    // })
+    const mobsLayer = this.map.getObjectLayer('Mobs')
+    const mobsGroup = this.physics.add.group({
+      classType: Mob,
+    })
+    mobsLayer.objects.forEach((mobObj) => {
+      const xPos = mobObj.x! + mobObj.width! * 0.5
+      const yPos = mobObj.y! - mobObj.height! * 0.5
+      const crab = new Crab(this, { x: xPos, y: yPos, textureKey: 'crab' })
+      this.mobsList.push(crab)
+      mobsGroup.add(crab.sprite)
+    })
     const monkey = new Monkey(this, {
       x: 300,
       y: 300,
