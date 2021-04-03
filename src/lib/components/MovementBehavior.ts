@@ -17,6 +17,7 @@ export class MovementBehavior implements Behavior {
   public moveEvent!: Phaser.Time.TimerEvent
   public state: MoveState = MoveState.MOVING
   public speed: number = 50
+  public onMove: Function = () => {}
 
   constructor() {}
 

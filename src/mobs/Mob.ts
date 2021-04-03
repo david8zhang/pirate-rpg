@@ -1,6 +1,6 @@
-import { MovementBehavior, Direction } from '~/lib/components/MovementBehavior'
-import { DamageNumber } from '~/ui/DamageNumber'
-import { Behavior } from '../lib/components/Behavior'
+import { AttackBehavior } from '../lib/components/AttackBehavior'
+import { MovementBehavior, Direction } from '../lib/components/MovementBehavior'
+import { DamageNumber } from '../ui/DamageNumber'
 import { RandomMovementScript } from '../lib/components/RandomMovementBehavior'
 import { HealthBar } from '../ui/HealthBar'
 
@@ -23,6 +23,9 @@ export interface MobAnimations {
   hurtFront: string
   hurtBack: string
   hurtSide: string
+  attackFront: string
+  attackSide: string
+  attackBack: string
 }
 
 export abstract class Mob {
@@ -32,9 +35,11 @@ export abstract class Mob {
   maxHealth: number
   health: number
   sprite: Phaser.Physics.Arcade.Sprite
+  isAggro: boolean = false
 
   // Components
   moveBehavior: MovementBehavior
+  attackBehavior?: AttackBehavior
   healthBar: HealthBar
   animations: MobAnimations
 
@@ -76,8 +81,14 @@ export abstract class Mob {
     })
   }
 
+  setAttackBehavior(attackBehavior: AttackBehavior) {
+    this.attackBehavior = attackBehavior
+  }
+
   handleTileCollision(obj1: any, obj2: any, animations: any) {
-    this.moveBehavior.handleTileCollision(obj1, obj2, animations)
+    if (!(this.attackBehavior && this.attackBehavior.isActive)) {
+      this.moveBehavior.handleTileCollision(obj1, obj2, animations)
+    }
   }
 
   die(): void {
@@ -89,8 +100,18 @@ export abstract class Mob {
     } else {
       this.sprite.anims.play(this.animations.dieSide)
     }
+    if (this.attackBehavior) {
+      this.attackBehavior.destroy()
+    }
     this.moveBehavior.destroy()
     this.healthBar.destroy()
+  }
+
+  activateAttackBehavior() {
+    if (this.attackBehavior) {
+      this.attackBehavior.isActive = true
+      this.moveBehavior.stop()
+    }
   }
 
   takeDamage(damage: number) {
@@ -105,6 +126,11 @@ export abstract class Mob {
     this.healthBar.x = this.sprite.x - this.healthBar.width / 2
     this.healthBar.y = this.sprite.y - this.sprite.height
     this.healthBar.draw()
-    this.moveBehavior.update()
+
+    if (this.attackBehavior && this.attackBehavior.isActive) {
+      this.attackBehavior.update()
+    } else {
+      this.moveBehavior.update()
+    }
   }
 }

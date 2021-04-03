@@ -143,7 +143,7 @@ export const createmonkeyAnims = (anims: Phaser.Animations.AnimationManager) => 
       end: 26,
       suffix: '.png',
     }),
-    repeat: 0,
+    repeat: -1,
     frameRate: 5,
   })
 
@@ -154,7 +154,7 @@ export const createmonkeyAnims = (anims: Phaser.Animations.AnimationManager) => 
       end: 29,
       suffix: '.png',
     }),
-    repeat: 0,
+    repeat: -1,
     frameRate: 5,
   })
 
@@ -165,7 +165,7 @@ export const createmonkeyAnims = (anims: Phaser.Animations.AnimationManager) => 
       end: 32,
       suffix: '.png',
     }),
-    repeat: 0,
+    repeat: -1,
     frameRate: 5,
   })
 }

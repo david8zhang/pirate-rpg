@@ -1,3 +1,4 @@
+import { MeleeAttackBehavior } from '~/lib/components/MeleeAttackBehavior'
 import { Direction } from '../lib/components/MovementBehavior'
 import { PlayerMobCollision } from '../lib/components/PlayerMobCollision'
 import Game from '../scenes/Game'
@@ -16,6 +17,9 @@ const MONKEY_ANIMATIONS = {
   hurtFront: 'monkey-hurt-front',
   hurtSide: 'monkey-hurt-side',
   hurtBack: 'monkey-hurt-back',
+  attackFront: 'monkey-attack-front',
+  attackSide: 'monkey-attack-side',
+  attackBack: 'monkey-attack-back',
 }
 
 export class Monkey extends Mob {
@@ -29,19 +33,18 @@ export class Monkey extends Mob {
     this.healthBar.currValue = this.health
     this.sprite.body.setSize(this.sprite.width * 0.6, this.sprite.height * 0.5)
     this.sprite.body.offset.y = 15
+    this.attackBehavior = new MeleeAttackBehavior(this)
+    this.activateAttackBehavior()
   }
 
   public update() {
     if (this.sprite.active) {
-      switch (this.moveBehavior.direction) {
-        case Direction.LEFT:
-          this.sprite.scaleX = 1
-          this.sprite.body.offset.x = 8
-          break
-        case Direction.RIGHT:
-          this.sprite.body.offset.x = 25
-          this.sprite.scaleX = -1
-          break
+      if (this.sprite.body.velocity.x < 0) {
+        this.sprite.scaleX = 1
+        this.sprite.body.offset.x = 8
+      } else if (this.sprite.body.velocity.x > 0) {
+        this.sprite.body.offset.x = 25
+        this.sprite.scaleX = -1
       }
     }
     super.update()

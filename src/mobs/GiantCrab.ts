@@ -15,6 +15,9 @@ export class GiantCrab extends Mob {
       hurtFront: '',
       hurtBack: '',
       hurtSide: '',
+      attackFront: '',
+      attackSide: '',
+      attackBack: '',
     })
     this.sprite.anims.play('giant-crab-idle')
   }

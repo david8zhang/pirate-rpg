@@ -12,7 +12,6 @@ const randomDirection = (exclude: Direction | null) => {
 export class RandomMovementScript extends MovementBehavior {
   private sprite: Phaser.Physics.Arcade.Sprite
   private scene: Phaser.Scene
-  private onMove?: Function
   private isStopped: boolean = false
   private animations: MobAnimations
 
@@ -20,6 +19,7 @@ export class RandomMovementScript extends MovementBehavior {
   public moveEvent!: Phaser.Time.TimerEvent
   public state: MoveState = MoveState.MOVING
   public speed: number = 50
+  public onMove: Function = () => {}
 
   constructor(
     sprite: Phaser.Physics.Arcade.Sprite,
@@ -56,11 +56,13 @@ export class RandomMovementScript extends MovementBehavior {
   }
 
   randomMoveOrStop() {
-    this.state = [MoveState.MOVING, MoveState.STOPPED][Math.floor(Math.random() * 2)]
-    if (this.state === MoveState.MOVING) {
-      this.direction = randomDirection(this.direction)
+    if (!this.isStopped) {
+      this.state = [MoveState.MOVING, MoveState.STOPPED][Math.floor(Math.random() * 2)]
+      if (this.state === MoveState.MOVING) {
+        this.direction = randomDirection(this.direction)
+      }
+      this.playAnimsBasedOnDirection()
     }
-    this.playAnimsBasedOnDirection()
   }
 
   playAnimsBasedOnDirection() {

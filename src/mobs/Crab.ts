@@ -17,6 +17,9 @@ const CRAB_ANIMATIONS = {
   hurtFront: '',
   hurtBack: '',
   hurtSide: '',
+  attackFront: '',
+  attackSide: '',
+  attackBack: '',
 }
 
 export class Crab extends Mob {
