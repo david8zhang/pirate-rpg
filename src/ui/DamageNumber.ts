@@ -7,9 +7,11 @@ export class DamageNumber {
         color: 'red',
       })
       .setOrigin(0.5)
+      .setDepth(5000)
+    text.setName('InAir')
     scene.add.tween({
       targets: text,
-      duration: 800,
+      duration: 1000,
       ease: 'Exponential.In',
       alpha: {
         getStart: () => 1,
