@@ -1,5 +1,6 @@
 import { MobAnimations } from '../../mobs/Mob'
-import { MovementBehavior, MoveState, Direction } from './MovementBehavior'
+import { Direction } from './Behavior'
+import { MovementBehavior, MoveState } from './MovementBehavior'
 
 const randomDirection = (exclude: Direction | null) => {
   let newDirection = Phaser.Math.Between(0, 3)
@@ -9,7 +10,7 @@ const randomDirection = (exclude: Direction | null) => {
   return newDirection
 }
 
-export class RandomMovementScript extends MovementBehavior {
+export class RandomMovementBehavior extends MovementBehavior {
   private sprite: Phaser.Physics.Arcade.Sprite
   private scene: Phaser.Scene
   private isStopped: boolean = false
@@ -99,6 +100,7 @@ export class RandomMovementScript extends MovementBehavior {
   }
 
   stop() {
+    this.sprite.setVelocity(0)
     this.isStopped = true
   }
 

@@ -9,6 +9,7 @@ export default class Preloader extends Phaser.Scene {
   preload() {
     this.load.bitmapFont('rainyhearts', 'fonts/rainyhearts.png', 'fonts/rainyhearts.xml')
     this.load.atlas('player', 'character/player.png', 'character/player.json')
+    this.load.image('heart', 'ui/pixel-heart.png')
 
     // Plants
     this.load.spritesheet('palm-trees', 'plants/palm-trees.png', {

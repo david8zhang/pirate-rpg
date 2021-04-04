@@ -7,8 +7,18 @@ export class HealthBar {
 
   height: number
   width: number
+  fillColor: number
+  showBorder: boolean
 
-  constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number) {
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    fillColor?: number,
+    showBorder?: boolean
+  ) {
     this.bar = new Phaser.GameObjects.Graphics(scene)
     this.x = x
     this.y = y
@@ -16,6 +26,8 @@ export class HealthBar {
     this.currValue = 100
     this.width = width
     this.height = height
+    this.fillColor = fillColor || 0x2ecc71
+    this.showBorder = showBorder || false
     scene.add.existing(this.bar)
     this.draw()
     this.bar.setDepth(1000)
@@ -34,16 +46,24 @@ export class HealthBar {
   draw() {
     this.bar.clear()
 
-    // BG
+    // Border
+    const borderWidth = this.showBorder ? 4 : 0
     this.bar.fillStyle(0x00000)
-    this.bar.fillRect(this.x, this.y, this.width, this.height)
+    this.bar.fillRect(
+      this.x - borderWidth / 2,
+      this.y - borderWidth / 2,
+      this.width + borderWidth,
+      this.height + borderWidth
+    )
 
     const percentage = this.currValue / this.maxValue
 
-    if (percentage < 0.2) {
+    if (percentage <= 0.25) {
       this.bar.fillStyle(0xff0000)
+    } else if (percentage <= 0.5) {
+      this.bar.fillStyle(0xf1c40f)
     } else {
-      this.bar.fillStyle(0x00ff00)
+      this.bar.fillStyle(this.fillColor)
     }
 
     const length = Math.floor(percentage * this.width)

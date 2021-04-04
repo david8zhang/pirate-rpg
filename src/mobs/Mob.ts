@@ -1,8 +1,9 @@
-import { AttackBehavior } from '../lib/components/AttackBehavior'
-import { MovementBehavior, Direction } from '../lib/components/MovementBehavior'
 import { DamageNumber } from '../ui/DamageNumber'
-import { RandomMovementScript } from '../lib/components/RandomMovementBehavior'
+import { RandomMovementBehavior } from '../lib/components/RandomMovementBehavior'
 import { HealthBar } from '../ui/HealthBar'
+import { Behavior, Direction } from '../lib/components/Behavior'
+import { PlayerMobCollision } from '~/lib/components/PlayerMobCollision'
+import Game from '~/scenes/Game'
 
 export interface MobConfig {
   textureKey: string
@@ -36,10 +37,10 @@ export abstract class Mob {
   health: number
   sprite: Phaser.Physics.Arcade.Sprite
   isAggro: boolean = false
+  playerMobCollision: PlayerMobCollision
 
   // Components
-  moveBehavior: MovementBehavior
-  attackBehavior?: AttackBehavior
+  activeBehavior: Behavior
   healthBar: HealthBar
   animations: MobAnimations
 
@@ -59,7 +60,7 @@ export abstract class Mob {
     this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.sprite.setPushable(false)
     this.animations = animations
-    this.moveBehavior = new RandomMovementScript(this.sprite, scene, animations)
+    this.playerMobCollision = new PlayerMobCollision(this.scene as Game, this)
 
     const healthBarWidth = this.sprite.width * 1.5
     this.healthBar = new HealthBar(
@@ -67,7 +68,8 @@ export abstract class Mob {
       this.sprite.x - healthBarWidth / 2,
       this.sprite.y - this.sprite.height,
       healthBarWidth,
-      3
+      3,
+      0x00ff00
     )
     this.healthBar.setVisible(false)
     collidableLayers?.forEach((layer: Phaser.Tilemaps.TilemapLayer) => {
@@ -79,39 +81,39 @@ export abstract class Mob {
         this
       )
     })
+    this.activeBehavior = new RandomMovementBehavior(
+      this.sprite,
+      this.scene,
+      this.animations,
+      () => {}
+    )
   }
 
-  setAttackBehavior(attackBehavior: AttackBehavior) {
-    this.attackBehavior = attackBehavior
+  isHit() {
+    return this.playerMobCollision.isHit
+  }
+
+  setActiveBehavior(behavior: Behavior) {
+    this.activeBehavior.stop()
+    this.activeBehavior = behavior
+    this.activeBehavior.start()
   }
 
   handleTileCollision(obj1: any, obj2: any, animations: any) {
-    if (!(this.attackBehavior && this.attackBehavior.isActive)) {
-      this.moveBehavior.handleTileCollision(obj1, obj2, animations)
-    }
+    this.activeBehavior.handleTileCollision(obj1, obj2, animations)
   }
 
   die(): void {
     this.sprite.setVelocity(0)
-    if (this.moveBehavior.direction === Direction.DOWN) {
+    if (this.activeBehavior.direction === Direction.DOWN) {
       this.sprite.anims.play(this.animations.dieFront)
-    } else if (this.moveBehavior.direction === Direction.UP) {
+    } else if (this.activeBehavior.direction === Direction.UP) {
       this.sprite.anims.play(this.animations.dieBack)
     } else {
       this.sprite.anims.play(this.animations.dieSide)
     }
-    if (this.attackBehavior) {
-      this.attackBehavior.destroy()
-    }
-    this.moveBehavior.destroy()
+    this.activeBehavior.destroy()
     this.healthBar.destroy()
-  }
-
-  activateAttackBehavior() {
-    if (this.attackBehavior) {
-      this.attackBehavior.isActive = true
-      this.moveBehavior.stop()
-    }
   }
 
   takeDamage(damage: number) {
@@ -124,13 +126,8 @@ export abstract class Mob {
 
   update() {
     this.healthBar.x = this.sprite.x - this.healthBar.width / 2
-    this.healthBar.y = this.sprite.y - this.sprite.height
+    this.healthBar.y = this.sprite.y - this.sprite.height / 2
     this.healthBar.draw()
-
-    if (this.attackBehavior && this.attackBehavior.isActive) {
-      this.attackBehavior.update()
-    } else {
-      this.moveBehavior.update()
-    }
+    this.activeBehavior.update()
   }
 }

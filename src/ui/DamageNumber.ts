@@ -7,16 +7,15 @@ export class DamageNumber {
         color: 'red',
       })
       .setOrigin(0.5)
-    text.setDepth(1000)
     scene.add.tween({
       targets: text,
-      duration: 500,
+      duration: 800,
       ease: 'Exponential.In',
       alpha: {
         getStart: () => 1,
         getEnd: () => 0,
       },
-      y: y - 20,
+      y: y - 50,
       onComplete: () => {
         text.destroy()
       },

@@ -24,13 +24,10 @@ const CRAB_ANIMATIONS = {
 
 export class Crab extends Mob {
   public isWalkAnimPlaying: boolean = false
-  public isHit = false
-  private playerMobCollision: PlayerMobCollision
   constructor(scene: Game, mobConfig: MobConfig) {
     super(scene, mobConfig, CRAB_ANIMATIONS, [scene.oceanLayer, scene.grassLayer])
     this.health = 20
     this.maxHealth = 20
-    this.playerMobCollision = new PlayerMobCollision(scene as Game, this)
     this.healthBar.maxValue = this.maxHealth
     this.healthBar.currValue = this.health
   }

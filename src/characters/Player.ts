@@ -6,6 +6,7 @@ import Game from '../scenes/Game'
 import { StateMachine } from '../lib/StateMachine'
 import UIScene from '../scenes/UIScene'
 import { Item } from '../items/Item'
+import { DamageNumber } from '~/ui/DamageNumber'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -33,6 +34,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public stateMachine: StateMachine
   public direction: Direction = Direction.DOWN
   public inventory: Inventory
+  public maxHealth: number = 100
+  public currHealth: number = 100
+  public iFrameDuration: number = 650
+  public isHit: boolean = false
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture)
@@ -51,6 +56,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   getCurrState(): string {
     return this.stateMachine.getState()
+  }
+
+  takeDamage(damage: number) {
+    this.currHealth -= damage
+    this.setTint(0xff0000)
+    this.scene.time.delayedCall(200, () => {
+      this.setTint(0xffffff)
+    })
+    DamageNumber.createDamageNumber(damage, this.scene, this.x, this.y)
+    UIScene.instance.playerHealth.takeDamage(damage)
   }
 
   update() {
