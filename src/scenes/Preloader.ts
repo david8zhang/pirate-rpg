@@ -28,6 +28,8 @@ export default class Preloader extends Phaser.Scene {
     // Items
     this.load.image('coconut', 'items/coconut.png')
     this.load.image('crabclaw', 'items/crab-claw.png')
+    this.load.image('stick', 'items/stick.png')
+    this.load.image('rock', 'items/rock.png')
 
     // Mobs
     this.load.atlas(

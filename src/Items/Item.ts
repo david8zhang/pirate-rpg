@@ -1,3 +1,4 @@
+import UIScene from '~/scenes/UIScene'
 import Game from '../scenes/Game'
 
 export class Item {
@@ -9,19 +10,26 @@ export class Item {
   constructor(scene: Game, x: number, y: number, textureKey: string) {
     this.scene = scene
     this.sprite = this.scene.physics.add.sprite(x, y, textureKey)
-    this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
-    this.collider = this.scene.physics.add.collider(
+    this.scene.physics.world.enable(this.sprite)
+    this.sprite.body.onOverlap = true
+
+    this.scene.physics.overlap(this.sprite, this.scene.player)
+    this.collider = this.scene.physics.add.overlap(
       this.scene.player,
       this.sprite,
-      this.onPlayerItemCollide,
+      this.onPlayerHoverItem,
       undefined,
       this
     )
   }
 
-  onPlayerItemCollide() {
-    this.scene.player.addItem(this)
-    this.sprite.destroy()
+  onPlayerHoverItem() {
+    this.scene.pickupObjText.showText(
+      this.itemType,
+      this.scene.player.x - this.scene.player.width,
+      this.scene.player.y + 20
+    )
+    this.scene.player.itemOnHover = this
   }
 
   drop(dropLength: number = 650) {

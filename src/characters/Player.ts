@@ -38,6 +38,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public currHealth: number = 100
   public iFrameDuration: number = 650
   public isHit: boolean = false
+  public itemOnHover: Item | null = null
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture)
@@ -52,6 +53,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       [(scene as Game).cursors, this]
     )
     this.inventory = {}
+    scene.input.keyboard.on(
+      'keydown',
+      (keycode: any) => {
+        if (this.itemOnHover && keycode.code === 'KeyE') {
+          this.itemOnHover.sprite.destroy()
+          this.addItem(this.itemOnHover)
+        }
+      },
+      this
+    )
   }
 
   getCurrState(): string {
@@ -70,6 +81,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   update() {
     this.stateMachine.step()
+    const gameScene = this.scene as Game
+    if (!this.body.embedded) {
+      gameScene.pickupObjText.hide()
+    }
   }
 
   addItem(item: Item) {

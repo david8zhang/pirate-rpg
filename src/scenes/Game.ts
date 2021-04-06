@@ -14,6 +14,10 @@ import { HealthBar } from '../ui/HealthBar'
 import { Monkey } from '~/mobs/Monkey'
 import { createmonkeyAnims } from '~/anims/MonkeyAnims'
 import { debugDraw } from '~/utils/debug'
+import { Item } from '~/items/Item'
+import { Rock } from '~/items/Rock'
+import { Stick } from '~/items/Stick'
+import { PickupObjectText } from '~/ui/PickupObjectText'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -25,20 +29,29 @@ export default class Game extends Phaser.Scene {
   public oceanLayer!: Phaser.Tilemaps.TilemapLayer
   public grassLayer!: Phaser.Tilemaps.TilemapLayer
   public sandLayer!: Phaser.Tilemaps.TilemapLayer
+  public objectsLayer!: Phaser.Tilemaps.TilemapLayer
 
   // colliders
   public playerTreeCollider!: Physics.Arcade.Collider
   public treeBeingHit!: PalmTree
   public coconuts: Coconut[] = []
+  public itemsOnGround: Item[] = []
 
   // Mobs
   public mobsList: Mob[] = []
+
+  // Ignore Names
+  public ignoreNames = ['InAir', 'UI']
+
+  // UI text
+  public pickupObjText!: PickupObjectText
 
   constructor() {
     super('game')
   }
 
   preload(): void {
+    this.pickupObjText = new PickupObjectText(this, 0, 0)
     this.cursors = this.input.keyboard.createCursorKeys()
   }
 
@@ -51,6 +64,7 @@ export default class Game extends Phaser.Scene {
     this.initPlayer()
     this.initPlants()
     this.initMobs()
+    this.initObjects()
   }
 
   initTilemap() {
@@ -117,6 +131,20 @@ export default class Game extends Phaser.Scene {
     this.mobsList.push(monkey)
   }
 
+  initObjects() {
+    const objectLayer = this.map.getObjectLayer('Objects')
+    objectLayer.objects.forEach((obj) => {
+      const xPos = obj.x! + obj.width! * 0.5
+      const yPos = obj.y! - obj.height! * 0.5
+      const randNum = Math.floor(Math.random() * 2)
+      if (randNum === 0) {
+        this.itemsOnGround.push(new Rock(this, xPos, yPos))
+      } else {
+        this.itemsOnGround.push(new Stick(this, xPos, yPos))
+      }
+    })
+  }
+
   handlePlayerTreeCollision(
     obj1: Phaser.GameObjects.GameObject,
     obj2: Phaser.GameObjects.GameObject
@@ -147,7 +175,7 @@ export default class Game extends Phaser.Scene {
         return (
           child.y &&
           this.cameras.main.worldView.contains(child.x, child.y) &&
-          child.name !== 'InAir'
+          !this.ignoreNames.includes(child.name)
         )
       })
       .sort((a: any, b: any) => {
