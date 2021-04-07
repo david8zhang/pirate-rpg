@@ -1,4 +1,5 @@
 import { Inventory } from '~/characters/Player'
+import UIScene from '~/scenes/UIScene'
 
 class ItemBox {
   // Dimensions
@@ -8,7 +9,7 @@ class ItemBox {
 
   // Item contained inside
   private sprite!: Phaser.GameObjects.Sprite
-  public itemType!: String
+  public itemType!: string
   public countText: Phaser.GameObjects.Text
 
   // instance vars
@@ -17,12 +18,7 @@ class ItemBox {
   public x: number
   private container: Phaser.GameObjects.Container
 
-  constructor(
-    scene: Phaser.Scene,
-    container: Phaser.GameObjects.Container,
-    xPos: number,
-    yPos: number
-  ) {
+  constructor(scene: Phaser.Scene, xPos: number, yPos: number) {
     this.scene = scene
     this.x = xPos
     this.y = yPos
@@ -38,6 +34,10 @@ class ItemBox {
       .setOrigin(0.5)
     panel.tint = 0xaaaaaa
     panel.setAlpha(0.9)
+    panel
+      .setInteractive({ useHandCursor: true })
+      .on('pointerover', this.handleItemHover, this)
+      .on('pointerout', this.handleItemExitHover, this)
     this.sprite = scene.add.sprite(xPos, yPos, '')
     this.sprite.setVisible(false)
     this.countText = scene.add
@@ -52,10 +52,20 @@ class ItemBox {
       })
       .setOrigin(0.5)
     this.countText.autoRound = false
-    this.container = container
+    this.container = scene.add.container(25, 25)
     this.container.add(panel)
     this.container.add(this.sprite)
     this.container.add(this.countText)
+  }
+
+  handleItemHover(pointer: any, x: number, y: number) {
+    if (this.itemType) {
+      UIScene.instance.itemTooltip.itemType = this.itemType
+    }
+  }
+
+  handleItemExitHover() {
+    UIScene.instance.itemTooltip.itemType = ''
   }
 
   setItem(count: number, itemType: string, texture: string) {
@@ -66,19 +76,42 @@ class ItemBox {
     }
     this.countText.setText(count.toString())
   }
+
+  setVisible(isVisible: boolean) {
+    this.container.setVisible(isVisible)
+  }
 }
 
 export class InventoryMenu {
   private scene: Phaser.Scene
-  private numRows: number = 1
+  private numRows: number = 5
   private numCols: number = 5
 
-  private container: Phaser.GameObjects.Container
   private itemBoxes: ItemBox[][] = []
+  private isExpanded: boolean = false
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene
-    this.container = scene.add.container(25, 25)
+    this.scene.input.keyboard.on('keydown', (keyEvent) => {
+      if (keyEvent.code === 'KeyI') {
+        this.toggleInventoryExpand()
+      }
+    })
+  }
+
+  toggleInventoryExpand() {
+    this.isExpanded = !this.isExpanded
+    this.updateInventoryExpandState()
+  }
+
+  public updateInventoryExpandState() {
+    for (let i = 0; i < this.numRows; i++) {
+      for (let j = 0; j < this.numCols; j++) {
+        if (i > 0) {
+          this.itemBoxes[i][j].setVisible(this.isExpanded)
+        }
+      }
+    }
   }
 
   public initialize() {
@@ -88,7 +121,10 @@ export class InventoryMenu {
       this.itemBoxes[i] = new Array(this.numCols)
       for (let j = 0; j < this.numCols; j++) {
         const xPos = j * (ItemBox.WIDTH + paddingBetweenBox)
-        this.itemBoxes[i][j] = new ItemBox(this.scene, this.container, xPos, yPos)
+        this.itemBoxes[i][j] = new ItemBox(this.scene, xPos, yPos)
+        if (i > 0) {
+          this.itemBoxes[i][j].setVisible(false)
+        }
       }
     }
   }
