@@ -28,6 +28,7 @@ export class AttackState extends State {
       }
       default:
         player.body.offset.x += 10
+        player.weapon.tweenWeaponAttack()
         player.once('animationcomplete', () => {
           player.body.offset.x -= 10
           this.stateMachine.transition('idle')

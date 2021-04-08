@@ -12,12 +12,12 @@ export class IdleState extends State {
     const rightDown = cursors.right?.isDown
     const upDown = cursors.up?.isDown
     const downDown = cursors.down?.isDown
-    const spaceDown = cursors.space?.isDown
+    const spaceDown = Phaser.Input.Keyboard.JustDown(cursors.space)
     if (leftDown || upDown || downDown || rightDown) {
       this.stateMachine.transition('move')
       return
     }
-    if (spaceDown) {
+    if (spaceDown && player.getCurrState() !== 'attack') {
       this.stateMachine.transition('attack')
       return
     }
