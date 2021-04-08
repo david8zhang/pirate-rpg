@@ -7,6 +7,7 @@ import { StateMachine } from '../lib/StateMachine'
 import UIScene from '../scenes/UIScene'
 import { Item } from '../items/Item'
 import { DamageNumber } from '~/ui/DamageNumber'
+import { Weapon } from '~/items/Weapon'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -40,6 +41,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public isHit: boolean = false
   public itemOnHover: Item | null = null
 
+  public weapon: Weapon
+
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture)
     this.anims.play('player-idle-down')
@@ -60,10 +63,17 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           this.itemOnHover.sprite.destroy()
           this.addItem(this.itemOnHover)
         }
+
+        if (keycode.code === 'KeyR') {
+          this.toggleWeaponEquip()
+        }
       },
       this
     )
+    this.weapon = new Weapon(this.scene, this)
   }
+
+  toggleWeaponEquip() {}
 
   getCurrState(): string {
     return this.stateMachine.getState()
@@ -85,6 +95,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (!this.body.embedded) {
       gameScene.pickupObjText.hide()
     }
+    this.weapon.show('axe')
   }
 
   addItem(item: Item) {

@@ -40,8 +40,8 @@ export default class Game extends Phaser.Scene {
   // Mobs
   public mobsList: Mob[] = []
 
-  // Ignore Names
-  public ignoreNames = ['InAir', 'UI']
+  // sprite names to ignore during depth-sorting
+  public ignoreNames = ['InAir', 'UI', 'Weapon']
 
   // UI text
   public pickupObjText!: PickupObjectText
