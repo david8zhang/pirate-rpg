@@ -65,15 +65,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         }
 
         if (keycode.code === 'KeyR') {
-          this.toggleWeaponEquip()
+          this.weapon.toggleEquip()
         }
       },
       this
     )
     this.weapon = new Weapon(this.scene, this)
   }
-
-  toggleWeaponEquip() {}
 
   getCurrState(): string {
     return this.stateMachine.getState()

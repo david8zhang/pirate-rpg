@@ -9,6 +9,9 @@ export class AttackState extends State {
   }
 
   adjustColliderOffset(player: Player) {
+    if (player.weapon.isEquipped) {
+      player.weapon.tweenWeaponAttack()
+    }
     switch (player.direction) {
       case Direction.DOWN: {
         player.body.offset.y += 10
@@ -28,7 +31,6 @@ export class AttackState extends State {
       }
       default:
         player.body.offset.x += 10
-        player.weapon.tweenWeaponAttack()
         player.once('animationcomplete', () => {
           player.body.offset.x -= 10
           this.stateMachine.transition('idle')
