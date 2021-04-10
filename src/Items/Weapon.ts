@@ -1,29 +1,58 @@
 import { Constants } from '~/utils/Constants'
 import Player, { Direction } from '../characters/Player'
 
+export interface WeaponConfig {
+  texture: string
+  damage: number
+  attackRange: number
+}
+
 export class Weapon {
   private scene: Phaser.Scene
   private player: Player
-  public sprite: Phaser.Physics.Arcade.Sprite
+  public sprite: Phaser.GameObjects.Sprite
   public isEquipped: boolean = false
+  public damage: number = 10
+  public weaponTexture: string
+  public attackRange: number
+
+  // Hitbox image
+  public hitboxImage: Phaser.Physics.Arcade.Image
 
   private isAttacking: boolean = false
 
-  constructor(scene: Phaser.Scene, player: Player) {
+  constructor(scene: Phaser.Scene, player: Player, weaponConfig: WeaponConfig) {
     this.scene = scene
     this.player = player
-    this.sprite = this.scene.physics.add.sprite(player.x, player.y, '')
+    this.sprite = this.scene.add.sprite(player.x, player.y, '')
     this.sprite.setVisible(false)
     this.sprite.setOrigin(0.5)
     this.sprite.setAngle(30)
     this.sprite.setName('Weapon')
+    this.weaponTexture = weaponConfig.texture
+    this.damage = weaponConfig.damage
+    this.attackRange = weaponConfig.attackRange
+
+    // Initialize weapon hitbox
+    this.hitboxImage = this.scene.physics.add.image(this.sprite.x, this.sprite.y, '')
+    this.hitboxImage.setSize(5, 5)
+    this.hitboxImage.setVisible(false)
+    this.scene.physics.world.enableBody(this.hitboxImage, Phaser.Physics.Arcade.DYNAMIC_BODY)
+    this.hitboxImage.setPushable(false)
+    this.hitboxImage.setDebugBodyColor(0xffff00)
+  }
+
+  setWeaponConfig(weaponConfig: WeaponConfig) {
+    this.attackRange = weaponConfig.attackRange
+    this.weaponTexture = weaponConfig.texture
+    this.damage = weaponConfig.damage
   }
 
   toggleEquip() {
     this.isEquipped = !this.isEquipped
   }
 
-  show(weaponType: string) {
+  show() {
     if (!this.isAttacking && this.isEquipped) {
       const handPosition = this.getPlayerHandPosition()
       const rotationAngle = this.getWeaponRotationAngle()
@@ -32,7 +61,7 @@ export class Weapon {
 
       this.sprite.setX(handPosition.x)
       this.sprite.setY(handPosition.y)
-      this.sprite.setTexture(weaponType)
+      this.sprite.setTexture(this.weaponTexture)
       this.sprite.setAngle(rotationAngle)
       this.sprite.setDepth(weaponDepth)
       this.sprite.scaleY = scaleY
@@ -40,7 +69,34 @@ export class Weapon {
     this.sprite.setVisible(this.isEquipped)
   }
 
+  public activateWeaponHitbox() {
+    this.hitboxImage.body.enable = true
+    switch (this.player.direction) {
+      case Direction.LEFT: {
+        this.hitboxImage.setSize(this.sprite.width, this.player.height + 20)
+        this.hitboxImage.setPosition(this.player.x - this.attackRange, this.player.y)
+        break
+      }
+      case Direction.RIGHT: {
+        this.hitboxImage.setSize(this.sprite.width, this.player.height + 20)
+        this.hitboxImage.setPosition(this.player.x + this.attackRange, this.player.y)
+        break
+      }
+      case Direction.UP: {
+        this.hitboxImage.setSize(this.player.width + 20, this.sprite.height)
+        this.hitboxImage.setPosition(this.player.x, this.player.y - this.attackRange)
+        break
+      }
+      case Direction.DOWN: {
+        this.hitboxImage.setSize(this.player.width + 20, this.sprite.height)
+        this.hitboxImage.setPosition(this.player.x, this.player.y + this.attackRange)
+        break
+      }
+    }
+  }
+
   public tweenWeaponAttack() {
+    this.activateWeaponHitbox()
     if (!this.isAttacking) {
       this.isAttacking = true
       this.sprite.setOrigin(0.5, 1)
@@ -67,6 +123,7 @@ export class Weapon {
                 this.sprite.setScale(1)
                 this.sprite.setOrigin(0.5)
                 this.isAttacking = false
+                this.hitboxImage.body.enable = false
               })
             },
           })
@@ -89,6 +146,7 @@ export class Weapon {
                 this.sprite.setScale(1)
                 this.sprite.setOrigin(0.5)
                 this.isAttacking = false
+                this.hitboxImage.body.enable = false
               })
             },
           })

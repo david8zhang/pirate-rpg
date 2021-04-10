@@ -32,6 +32,8 @@ export interface Inventory {
 }
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
+  public static UNARMED_DAMAGE = 10
+
   public stateMachine: StateMachine
   public direction: Direction = Direction.DOWN
   public inventory: Inventory
@@ -70,7 +72,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       },
       this
     )
-    this.weapon = new Weapon(this.scene, this)
+    this.weapon = new Weapon(this.scene, this, {
+      texture: 'axe',
+      damage: 15,
+      attackRange: 25,
+    })
   }
 
   getCurrState(): string {
@@ -93,7 +99,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (!this.body.embedded) {
       gameScene.pickupObjText.hide()
     }
-    this.weapon.show('axe')
+    this.weapon.show()
   }
 
   addItem(item: Item) {
