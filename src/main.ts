@@ -10,6 +10,10 @@ const config: any = {
   width: 600,
   height: 400,
   pixelArt: true,
+  parent: 'phaser',
+  dom: {
+    createContainer: true,
+  },
   physics: {
     default: 'arcade',
     arcade: {
