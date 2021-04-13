@@ -39,9 +39,11 @@ export class CraftingMenu {
   private rectangle: Phaser.GameObjects.Rectangle
   private craftableItemsListWrapper: Phaser.GameObjects.Rectangle
   private itemToCraftDescription: Phaser.GameObjects.Rectangle
+  private container: Phaser.GameObjects.Container
 
   private startIndex: number = 0
 
+  public isVisible = false
   public scene: Phaser.Scene
   public craftableItemsList: Phaser.GameObjects.Text[] = []
   public currHighlight: Phaser.GameObjects.Rectangle
@@ -92,7 +94,21 @@ export class CraftingMenu {
       .rectangle(0, 0, this.craftableItemsListWrapper.width, 15, 0xffff00, 0.5)
       .setOrigin(0, 0)
       .setVisible(false)
+
+    this.container = scene.add.container(0, 0)
+    this.container.add(this.rectangle)
+    this.container.add(headerText)
+    this.container.add(this.craftableItemsListWrapper)
+    this.container.add(this.itemToCraftDescription)
+    this.container.add(this.currHighlight)
     this.renderCraftableItems(itemsList)
+
+    this.container.setVisible(this.isVisible)
+  }
+
+  public toggleVisible() {
+    this.container.setVisible(!this.isVisible)
+    this.isVisible = !this.isVisible
   }
 
   renderCraftableItems(items: string[]) {
@@ -101,16 +117,22 @@ export class CraftingMenu {
 
     const listCutoffPoint =
       this.craftableItemsListWrapper.height + this.craftableItemsListWrapper.y - 5
-    items.forEach((item) => {
+    items.forEach((item: string, index: number) => {
+      let text = this.craftableItemsList[index]
       if (yPos < listCutoffPoint) {
-        const text = this.scene.add.text(startingX, yPos, item, {
-          fontFamily: 'GraphicPixel',
-          fontSize: '10px',
-        })
-        this.craftableItemsList.push()
+        if (!text) {
+          text = this.scene.add.text(startingX, yPos, item, {
+            fontFamily: 'GraphicPixel',
+            fontSize: '10px',
+          })
+          this.craftableItemsList.push(text)
+          this.container.add(text)
+        } else {
+          text.setText(item)
+        }
         yPos += text.height + 5
         text.setInteractive()
-        text.on('pointerdown', (obj) => {
+        text.on('pointerDown', (obj) => {
           this.currHighlight.setX(text.x - 5)
           this.currHighlight.setY(text.y - 2)
           this.currHighlight.setVisible(true)
