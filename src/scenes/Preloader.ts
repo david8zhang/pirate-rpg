@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import WebFontFile from '~/files/WebFontFile'
 import { Constants } from '~/utils/Constants'
 
 export default class Preloader extends Phaser.Scene {
@@ -7,7 +8,10 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload() {
-    this.load.bitmapFont('rainyhearts', 'fonts/rainyhearts.png', 'fonts/rainyhearts.xml')
+    // Fonts
+    const fonts = new WebFontFile(this.load, ['Poor Story'])
+    this.load.addFile(fonts)
+
     this.load.atlas('player', 'character/player.png', 'character/player.json')
     this.load.image('heart', 'ui/pixel-heart.png')
 

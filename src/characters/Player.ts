@@ -58,25 +58,42 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       [(scene as Game).cursors, this]
     )
     this.inventory = {}
-    scene.input.keyboard.on(
-      'keydown',
-      (keycode: any) => {
-        if (this.itemOnHover && keycode.code === 'KeyE') {
-          this.itemOnHover.sprite.destroy()
-          this.addItem(this.itemOnHover)
-        }
 
-        if (keycode.code === 'KeyR') {
-          this.weapon.toggleEquip()
-        }
-      },
-      this
-    )
     this.weapon = new Weapon(this.scene, this, {
       texture: 'axe',
       damage: 15,
       attackRange: 25,
     })
+
+    this.configureKeyPresses()
+  }
+
+  configureKeyPresses() {
+    this.scene.input.keyboard.on(
+      'keydown',
+      (keycode: any) => {
+        // Pick up items that user is hovering over
+        if (this.itemOnHover && keycode.code === 'KeyE') {
+          this.itemOnHover.sprite.destroy()
+          this.addItem(this.itemOnHover)
+        }
+
+        // Toggle weapon equip
+        if (keycode.code === 'KeyR') {
+          this.weapon.toggleEquip()
+        }
+
+        // Maximize the inventory and bring up crafting menu if 'I' is pressed
+        if (keycode.code === 'KeyI') {
+          UIScene.instance.inventoryMenu.toggleInventoryExpand()
+          UIScene.instance.craftingMenu.toggleVisible()
+
+          // Provide the crafting menu with the player's current inventory
+          UIScene.instance.craftingMenu.updateCraftableItems(this.inventory)
+        }
+      },
+      this
+    )
   }
 
   getCurrState(): string {
@@ -111,6 +128,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
     this.inventory[item.itemType].count++
     UIScene.instance.inventoryMenu.updateInventoryMenu(this.inventory)
+    UIScene.instance.craftingMenu.updateCraftableItems(this.inventory)
   }
 
   getAnimDirection(dir: Direction) {

@@ -6,10 +6,10 @@ import Preloader from './scenes/Preloader'
 import UIScene from './scenes/UIScene'
 
 const config: any = {
+  antialias: false,
   type: Phaser.AUTO,
   width: 600,
   height: 400,
-  pixelArt: true,
   parent: 'phaser',
   dom: {
     createContainer: true,
@@ -18,14 +18,14 @@ const config: any = {
     default: 'arcade',
     arcade: {
       gravity: { x: 0, y: 0 },
-      // debug: true,
     },
   },
   plugins: {
     global: [NineSlicePlugin.DefaultCfg],
   },
   scale: {
-    zoom: 2,
+    zoom: 1,
+    mode: Phaser.Scale.ScaleModes.FIT,
   },
   scene: [Preloader, Game, UIScene],
 }

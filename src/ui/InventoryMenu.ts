@@ -92,12 +92,6 @@ export class InventoryMenu {
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene
-    this.scene.input.keyboard.on('keydown', (keyEvent) => {
-      if (keyEvent.code === 'KeyI') {
-        this.toggleInventoryExpand()
-        UIScene.instance.craftingMenu.toggleVisible()
-      }
-    })
   }
 
   toggleInventoryExpand() {
