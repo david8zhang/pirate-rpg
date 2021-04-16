@@ -24,6 +24,33 @@ export const ALL_CRAFTABLE_ITEMS = [
       Rock: 2,
       Stick: 1,
     },
+    stats: {
+      damage: 15,
+    },
     type: CraftableItemTypes.weapon,
+  },
+]
+
+export const ALL_ITEMS = [
+  {
+    name: 'Coconut',
+    image: 'coconut',
+  },
+  {
+    name: 'Crab claw',
+    image: 'crabclaw',
+    dropLength: 300,
+  },
+  {
+    name: 'Rock',
+    image: 'rock',
+  },
+  {
+    name: 'Stick',
+    image: 'stick',
+  },
+  {
+    name: 'Stone Axe',
+    image: 'axe',
   },
 ]

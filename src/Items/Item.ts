@@ -6,8 +6,9 @@ export class Item {
   sprite!: Phaser.Physics.Arcade.Sprite
   scene: Game
   collider: Phaser.Physics.Arcade.Collider
+  dropLength?: number
 
-  constructor(scene: Game, x: number, y: number, textureKey: string) {
+  constructor(scene: Game, x: number, y: number, textureKey: string, dropLength?: number) {
     this.scene = scene
     this.sprite = this.scene.physics.add.sprite(x, y, textureKey)
     this.scene.physics.world.enable(this.sprite)
@@ -21,6 +22,7 @@ export class Item {
       undefined,
       this
     )
+    this.dropLength = dropLength
   }
 
   onPlayerHoverItem() {
@@ -32,7 +34,7 @@ export class Item {
     this.scene.player.itemOnHover = this
   }
 
-  drop(dropLength: number = 650) {
+  drop() {
     // Launch coconut in random direction
     this.sprite.setName('InAir') // InAir tells depth sorting logic to ignore this sprite
     this.sprite.setGravityY(500)
@@ -42,7 +44,7 @@ export class Item {
     this.collider.active = false
 
     // After some time, stop the gravity and velocity to simulate it hitting the ground
-    this.scene.time.delayedCall(dropLength, () => {
+    this.scene.time.delayedCall(this.dropLength || 650, () => {
       this.sprite.setGravity(0)
       this.sprite.setVelocity(0)
 

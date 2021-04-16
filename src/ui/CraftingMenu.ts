@@ -86,6 +86,7 @@ export class CraftingMenu {
       this.container.add(this.headerText)
     }
     this.container.setVisible(!this.isVisible)
+    this.craftableItemDetails.setVisible(!this.isVisible)
     this.isVisible = !this.isVisible
   }
 

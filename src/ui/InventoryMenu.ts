@@ -1,5 +1,6 @@
 import { Inventory } from '~/characters/Player'
 import UIScene from '~/scenes/UIScene'
+import { text } from './components/Text'
 
 class ItemBox {
   // Dimensions
@@ -40,6 +41,7 @@ class ItemBox {
       .on('pointerout', this.handleItemExitHover, this)
     this.sprite = scene.add.sprite(xPos, yPos, '')
     this.sprite.setVisible(false)
+
     this.countText = scene.add
       .text(xPos + 8, yPos + 8, '', {
         fontSize: '10px',

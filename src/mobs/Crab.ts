@@ -1,8 +1,6 @@
 import Game from '../scenes/Game'
-
-import { CrabClaw } from '../items/CrabClaw'
 import { Mob, MobConfig } from './Mob'
-import { PlayerMobCollision } from '../lib/components/PlayerMobCollision'
+import { ItemFactory } from '~/items/ItemFactory'
 
 const CRAB_ANIMATIONS = {
   moveFront: 'crab-walk-side',
@@ -39,9 +37,10 @@ export class Crab extends Mob {
   die() {
     this.sprite.on('animationcomplete', () => {
       this.sprite.destroy()
-      const gameScene = this.scene as Game
-      const crabClaw = new CrabClaw(gameScene, this.sprite.x, this.sprite.y)
-      crabClaw.drop()
+      const crabClaw = ItemFactory.instance.createItem('Crab claw', this.sprite.x, this.sprite.y)
+      if (crabClaw) {
+        crabClaw.drop()
+      }
     })
     super.die()
   }

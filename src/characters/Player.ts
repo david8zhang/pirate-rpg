@@ -76,6 +76,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         if (this.itemOnHover && keycode.code === 'KeyE') {
           this.itemOnHover.sprite.destroy()
           this.addItem(this.itemOnHover)
+          this.itemOnHover = null
         }
 
         // Toggle weapon equip

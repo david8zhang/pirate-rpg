@@ -1,14 +1,14 @@
 import Phaser from 'phaser'
-import Game from '~/scenes/Game'
 import { Constants } from '../utils/Constants'
-import { Coconut } from './Coconut'
+import { Item } from './Item'
+import { ItemFactory } from './ItemFactory'
 
 export default class PalmTree extends Phaser.Physics.Arcade.Sprite {
   private static _FULL_HEALTH = 100
   public hasCoconuts: boolean = true
   public health: number = PalmTree._FULL_HEALTH
   public isBeingHit = false
-  public droppedCoconuts: Coconut[] = []
+  public droppedCoconuts: Item[] = []
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture, frame)
@@ -30,8 +30,14 @@ export default class PalmTree extends Phaser.Physics.Arcade.Sprite {
   }
 
   dropCoconuts() {
-    const coconut = new Coconut(this.scene as Game, this.x, this.y - this.height / 2 + 10)
-    coconut.drop()
-    this.droppedCoconuts.push(coconut)
+    const coconut = ItemFactory.instance.createItem(
+      'Coconut',
+      this.x,
+      this.y - this.height / 2 + 10
+    )
+    if (coconut) {
+      coconut.drop()
+      this.droppedCoconuts.push(coconut)
+    }
   }
 }

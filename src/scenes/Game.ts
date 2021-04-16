@@ -4,7 +4,6 @@ import { Constants } from '../utils/Constants'
 import '../characters/Player'
 import '../mobs/GiantCrab'
 import Player from '../characters/Player'
-import { Coconut } from '../items/Coconut'
 import { Crab } from '../mobs/Crab'
 import { createCrabAnims } from '~/anims/CrabAnims'
 import { createCharacterAnims } from '../anims/CharacterAnims'
@@ -15,9 +14,8 @@ import { Monkey } from '~/mobs/Monkey'
 import { createmonkeyAnims } from '~/anims/MonkeyAnims'
 import { debugDraw } from '~/utils/debug'
 import { Item } from '~/items/Item'
-import { Rock } from '~/items/Rock'
-import { Stick } from '~/items/Stick'
 import { PickupObjectText } from '~/ui/PickupObjectText'
+import { ItemFactory } from '~/items/ItemFactory'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -34,7 +32,6 @@ export default class Game extends Phaser.Scene {
   // colliders
   public playerTreeCollider!: Physics.Arcade.Collider
   public treeBeingHit!: PalmTree
-  public coconuts: Coconut[] = []
   public itemsOnGround: Item[] = []
 
   // Mobs
@@ -46,8 +43,12 @@ export default class Game extends Phaser.Scene {
   // UI text
   public pickupObjText!: PickupObjectText
 
+  // Item Factory
+  public itemFactory: ItemFactory
+
   constructor() {
     super('game')
+    this.itemFactory = new ItemFactory(this)
   }
 
   preload(): void {
@@ -138,9 +139,15 @@ export default class Game extends Phaser.Scene {
       const yPos = obj.y! - obj.height! * 0.5
       const randNum = Math.floor(Math.random() * 2)
       if (randNum === 0) {
-        this.itemsOnGround.push(new Rock(this, xPos, yPos))
+        const rock = ItemFactory.instance.createItem('Rock', xPos, yPos)
+        if (rock) {
+          this.itemsOnGround.push(rock)
+        }
       } else {
-        this.itemsOnGround.push(new Stick(this, xPos, yPos))
+        const stick = ItemFactory.instance.createItem('Stick', xPos, yPos)
+        if (stick) {
+          this.itemsOnGround.push(stick)
+        }
       }
     })
   }
