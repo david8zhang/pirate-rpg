@@ -26,6 +26,8 @@ export const ALL_CRAFTABLE_ITEMS = [
     },
     stats: {
       damage: 15,
+      speed: 10,
+      durability: 20,
     },
     type: CraftableItemTypes.weapon,
   },

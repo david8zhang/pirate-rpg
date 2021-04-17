@@ -1,21 +1,26 @@
+import { ALL_ITEMS } from '~/utils/Constants'
 import { CraftableItem } from '../items/CraftableItem'
 import { button } from './components/Button'
+import { itemStats } from './components/ItemStats'
 import { text } from './components/Text'
+import { ItemBox } from './InventoryMenu'
+import { TooltipPosition } from './ItemTooltip'
+
 export class CraftableItemDetails {
   private sprite!: Phaser.GameObjects.Sprite
   private scene: Phaser.Scene
   private container: Phaser.GameObjects.Container
-  private craftableItemName: Phaser.GameObjects.Text
+  private craftableItemName: Phaser.GameObjects.DOMElement | null = null
   private craftableItemDescription: Phaser.GameObjects.DOMElement | null = null
   private craftButton: Phaser.GameObjects.DOMElement | null = null
+  private statList: Phaser.GameObjects.DOMElement[] = []
+  private ingredientBoxes: ItemBox[] = []
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene
     this.container = scene.add.container(0, 0)
     this.sprite = this.scene.add.sprite(0, 0, '').setVisible(false)
-    this.craftableItemName = this.scene.add.text(0, 0, '')
     this.container.add(this.sprite)
-    this.container.add(this.craftableItemName)
     this.container.setVisible(false)
   }
 
@@ -27,17 +32,23 @@ export class CraftableItemDetails {
       .setPosition(xPos + 15, yPos + 12)
       .setTexture(craftableItem.image)
       .setVisible(true)
-    this.craftableItemName
-      .setPosition(this.sprite.x + 12, yPos + 10)
-      .setText(craftableItem.name)
-      .setStyle({
-        fontFamily: 'GraphicPixel',
-        fontSize: '12px',
-        resolution: 2,
-        wordWrap: {
-          width: itemToCraftDescription.width - (this.sprite.width + 10),
-        },
-      })
+
+    // Add craftable item name
+    if (this.craftableItemName) {
+      this.craftableItemName.destroy()
+    }
+    const craftableItemName = text(craftableItem.name, {
+      fontSize: '15px',
+      fontFamily: 'GraphicPixel',
+      color: 'white',
+      margin: '0px',
+      width: `${itemToCraftDescription.width - 15}px`,
+    }) as HTMLElement
+
+    this.craftableItemName = this.scene.add
+      .dom(this.sprite.x + 12, yPos + 10, craftableItemName)
+      .setOrigin(0)
+    this.container.add(this.craftableItemName)
 
     // Add item description text
     const itemDescriptionText = text(craftableItem.description, {
@@ -50,7 +61,7 @@ export class CraftableItemDetails {
       this.craftableItemDescription.destroy()
     }
     this.craftableItemDescription = this.scene.add
-      .dom(this.sprite.x - 5, yPos + this.craftableItemName.height + 10, itemDescriptionText)
+      .dom(this.sprite.x - 5, yPos + this.craftableItemName.height + 15, itemDescriptionText)
       .setOrigin(0)
     this.container.add(this.craftableItemDescription)
 
@@ -72,11 +83,62 @@ export class CraftableItemDetails {
       })
       .setOrigin(0)
     this.container.add(this.craftButton)
+    this.setIngredientsRequired(craftableItem, this.craftButton.x - 10, this.craftButton.y - 50)
 
+    // Add item stats
+    this.addItemStats(craftableItem)
+  }
+
+  addItemStats(craftableItem: CraftableItem) {
+    if (this.statList) {
+      this.statList.forEach((obj) => {
+        obj.destroy()
+      })
+    }
+
+    Object.keys(craftableItem.stats).forEach((stat: string, index: number) => {
+      const statElement = itemStats(stat, craftableItem.stats[stat]) as HTMLElement
+      if (this.craftableItemDescription) {
+        const stat = this.scene.add
+          .dom(
+            this.sprite.x - 5,
+            this.craftableItemDescription.y + this.craftableItemDescription.height + index * 12,
+            statElement
+          )
+          .setOrigin(0)
+        this.container.add(stat)
+        this.statList.push(stat)
+      }
+    })
     this.container.setVisible(true)
+  }
+
+  getIngredientForName(name: string) {
+    return ALL_ITEMS.find((item) => item.name === name)
+  }
+
+  setIngredientsRequired(craftableItem: CraftableItem, xPos: number, yPos: number) {
+    const recipe = craftableItem.recipe
+    let currXPos = xPos
+    Object.keys(recipe).forEach((ingredient, index: number) => {
+      const ing = this.getIngredientForName(ingredient)
+      if (ing) {
+        let itemToBeCrafted = this.ingredientBoxes[index]
+        if (!this.ingredientBoxes[index]) {
+          itemToBeCrafted = new ItemBox(this.scene, currXPos, yPos)
+          itemToBeCrafted.tooltipPosition = TooltipPosition.TOP_MID
+          this.ingredientBoxes.push(itemToBeCrafted)
+        }
+        itemToBeCrafted.setItem(recipe[ingredient], ingredient, ing.image)
+        currXPos += itemToBeCrafted.panel.width + 5
+      }
+    })
   }
 
   setVisible(isVisible: boolean) {
     this.container.setVisible(isVisible)
+    this.ingredientBoxes.forEach((itemBox: ItemBox) => {
+      itemBox.setVisible(isVisible)
+    })
   }
 }

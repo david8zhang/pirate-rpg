@@ -11,4 +11,7 @@ export interface CraftableItem {
     [itemType: string]: number
   }
   type: CraftableItemTypes
+  stats: {
+    [stat: string]: number
+  }
 }

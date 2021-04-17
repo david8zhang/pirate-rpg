@@ -1,5 +1,14 @@
 import { Item } from '../items/Item'
 
+export enum TooltipPosition {
+  TOP_RIGHT = 'topRight',
+  TOP_LEFT = 'topLeft',
+  TOP_MID = 'topMid',
+  BOTTOM_RIGHT = 'bottomRight',
+  BOTTOM_LEFT = 'bottomLeft',
+  BOTTOM_MID = 'bottomMid',
+}
+
 export class ItemTooltip {
   private width = 125
   private height = 20
@@ -9,6 +18,7 @@ export class ItemTooltip {
   private scene: Phaser.Scene
   private rectangle: Phaser.GameObjects.Rectangle
   public itemType!: string
+  public position: TooltipPosition = TooltipPosition.BOTTOM_RIGHT
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     this.container = scene.add.container(x, y)
@@ -36,6 +46,7 @@ export class ItemTooltip {
     this.container.add(this.rectangle)
     this.container.add(this.itemNameText)
     this.container.add(this.itemDescriptionText)
+    this.container.setDepth(2000)
     this.container.setVisible(false)
   }
 
@@ -48,8 +59,7 @@ export class ItemTooltip {
   }
 
   showItemTooltip(itemType: string, x: number, y: number) {
-    this.container.setX(x + 10)
-    this.container.setY(y + 10)
+    this.setContainerPosition(x, y)
     this.itemNameText.text = `${itemType}`
     this.itemDescriptionText.text = 'Lorem ipsum dolor sit amet'
 
@@ -58,8 +68,42 @@ export class ItemTooltip {
     this.itemDescriptionText.setStyle({
       wordWrap: { width: this.width, useAdvancedWrap: true },
     })
-
     this.container.setVisible(true)
+  }
+
+  setContainerPosition(x: number, y: number) {
+    switch (this.position) {
+      case TooltipPosition.TOP_LEFT: {
+        this.container.setX(x - this.rectangle.width - 10)
+        this.container.setY(y - this.rectangle.height - 0)
+        break
+      }
+      case TooltipPosition.TOP_MID: {
+        this.container.setX(x - this.rectangle.width / 2)
+        this.container.setY(y - this.rectangle.height - 0)
+        break
+      }
+      case TooltipPosition.TOP_RIGHT: {
+        this.container.setX(x + 10)
+        this.container.setY(y - this.rectangle.height - 0)
+        break
+      }
+      case TooltipPosition.BOTTOM_LEFT: {
+        this.container.setX(x - this.rectangle.width - 10)
+        this.container.setY(y + 10)
+        break
+      }
+      case TooltipPosition.BOTTOM_MID: {
+        this.container.setX(x - this.rectangle.width / 2)
+        this.container.setY(y + 10)
+        break
+      }
+      case TooltipPosition.BOTTOM_RIGHT: {
+        this.container.setX(x + 10)
+        this.container.setY(y + 10)
+        break
+      }
+    }
   }
 
   hide() {

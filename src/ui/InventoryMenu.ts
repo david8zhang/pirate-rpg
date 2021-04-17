@@ -1,8 +1,9 @@
 import { Inventory } from '~/characters/Player'
 import UIScene from '~/scenes/UIScene'
 import { text } from './components/Text'
+import { TooltipPosition } from './ItemTooltip'
 
-class ItemBox {
+export class ItemBox {
   // Dimensions
   public static WIDTH = 22
   public static HEIGHT = 22
@@ -18,12 +19,16 @@ class ItemBox {
   public y: number
   public x: number
   private container: Phaser.GameObjects.Container
+  public panel: Phaser.GameObjects.RenderTexture
+
+  // Tooltip position
+  public tooltipPosition: TooltipPosition = TooltipPosition.BOTTOM_RIGHT
 
   constructor(scene: Phaser.Scene, xPos: number, yPos: number) {
     this.scene = scene
     this.x = xPos
     this.y = yPos
-    const panel = scene.add
+    this.panel = scene.add
       .nineslice(
         xPos,
         yPos,
@@ -33,9 +38,9 @@ class ItemBox {
         5
       )
       .setOrigin(0.5)
-    panel.tint = 0xaaaaaa
-    panel.setAlpha(0.9)
-    panel
+    this.panel.tint = 0xaaaaaa
+    this.panel.setAlpha(0.9)
+    this.panel
       .setInteractive({ useHandCursor: true })
       .on('pointerover', this.handleItemHover, this)
       .on('pointerout', this.handleItemExitHover, this)
@@ -55,13 +60,14 @@ class ItemBox {
       .setOrigin(0.5)
     this.countText.autoRound = false
     this.container = scene.add.container(25, 25)
-    this.container.add(panel)
+    this.container.add(this.panel)
     this.container.add(this.sprite)
     this.container.add(this.countText)
   }
 
   handleItemHover(pointer: any, x: number, y: number) {
     if (this.itemType) {
+      UIScene.instance.itemTooltip.position = this.tooltipPosition
       UIScene.instance.itemTooltip.itemType = this.itemType
     }
   }
