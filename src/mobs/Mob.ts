@@ -4,7 +4,6 @@ import { HealthBar } from '../ui/HealthBar'
 import { Behavior, Direction } from '../lib/components/Behavior'
 import { PlayerMobCollision } from '~/lib/components/PlayerMobCollision'
 import Game from '~/scenes/Game'
-import { ItemFactory } from '~/items/ItemFactory'
 
 export interface MobConfig {
   textureKey: string
@@ -130,5 +129,10 @@ export abstract class Mob {
     this.healthBar.y = this.sprite.y - this.sprite.height / 2
     this.healthBar.draw()
     this.activeBehavior.update()
+
+    const gameScene = this.scene as Game
+    if (gameScene) {
+      this.playerMobCollision.updatePlayerWeaponCollider()
+    }
   }
 }

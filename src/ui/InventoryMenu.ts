@@ -65,6 +65,10 @@ export class ItemBox {
     this.container.add(this.countText)
   }
 
+  setTextColor(color: string) {
+    this.countText.setColor(color)
+  }
+
   handleItemHover(pointer: any, x: number, y: number) {
     if (this.itemType) {
       UIScene.instance.itemTooltip.position = this.tooltipPosition
@@ -83,10 +87,18 @@ export class ItemBox {
       this.sprite.setVisible(true)
     }
     this.countText.setText(count.toString())
+    this.countText.setVisible(true)
   }
 
   setVisible(isVisible: boolean) {
     this.container.setVisible(isVisible)
+  }
+
+  removeItem() {
+    this.sprite.setTexture('')
+    this.countText.setText('0')
+    this.sprite.setVisible(false)
+    this.countText.setVisible(false)
   }
 }
 
@@ -133,10 +145,15 @@ export class InventoryMenu {
   }
 
   public updateInventoryMenu(inventory: Inventory) {
-    let inventoryIndex = 0
-    const inventoryTypes = Object.keys(inventory)
     for (let i = 0; i < this.itemBoxes.length; i++) {
       for (let j = 0; j < this.itemBoxes[0].length; j++) {
+        this.itemBoxes[i][j].removeItem()
+      }
+    }
+    let inventoryIndex = 0
+    const inventoryTypes = Object.keys(inventory)
+    for (let i = 0; i < this.numRows; i++) {
+      for (let j = 0; j < this.numCols; j++) {
         const itemType = inventoryTypes[inventoryIndex]
         if (itemType) {
           const { count, texture } = inventory[itemType]

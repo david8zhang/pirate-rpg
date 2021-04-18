@@ -7,30 +7,35 @@ import Player from '~/characters/Player'
 export class PlayerMobCollision {
   private scene: Game
   private mob: Mob
-  private collider: Phaser.Physics.Arcade.Collider
   public isHit: boolean = false
+  public weaponCollider!: Phaser.Physics.Arcade.Collider
 
   constructor(scene: Game, mob: Mob) {
     this.scene = scene
     this.mob = mob
-    this.collider = this.scene.physics.add.collider(
+    this.scene.physics.add.collider(
       this.mob.sprite,
       this.scene.player,
       this.handlePlayerAttack,
       undefined,
       this
     )
-    this.collider = this.scene.physics.add.collider(
-      this.mob.sprite,
-      this.scene.player.weapon.hitboxImage,
-      this.handlePlayerWeaponAttack,
-      undefined,
-      this
-    )
+  }
+
+  updatePlayerWeaponCollider() {
+    if (!this.weaponCollider && this.scene.player.weapon) {
+      this.weaponCollider = this.scene.physics.add.collider(
+        this.mob.sprite,
+        this.scene.player.weapon.hitboxImage,
+        this.handlePlayerWeaponAttack,
+        undefined,
+        this
+      )
+    }
   }
 
   handlePlayerWeaponAttack() {
-    if (this.scene.player.getCurrState() === 'attack' && !this.isHit) {
+    if (this.scene.player.weapon && this.scene.player.getCurrState() === 'attack' && !this.isHit) {
       const damage = this.scene.player.weapon.damage
       this.handleMobHit(damage)
     }

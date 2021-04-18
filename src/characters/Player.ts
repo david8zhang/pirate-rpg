@@ -8,6 +8,8 @@ import UIScene from '../scenes/UIScene'
 import { Item } from '../items/Item'
 import { DamageNumber } from '~/ui/DamageNumber'
 import { Weapon } from '~/items/Weapon'
+import { CraftableItem } from '~/items/CraftableItem'
+import { ItemFactory } from '~/items/ItemFactory'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -43,7 +45,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public isHit: boolean = false
   public itemOnHover: Item | null = null
 
-  public weapon: Weapon
+  public weapon: Weapon | null = null
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture)
@@ -58,14 +60,19 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       [(scene as Game).cursors, this]
     )
     this.inventory = {}
-
-    this.weapon = new Weapon(this.scene, this, {
-      texture: 'axe',
-      damage: 15,
-      attackRange: 25,
-    })
-
     this.configureKeyPresses()
+  }
+
+  onCraft(craftableItem: CraftableItem) {
+    const recipe = craftableItem.recipe
+    Object.keys(recipe).forEach((key: string) => {
+      this.removeItem(key, recipe[key])
+    })
+    const item = ItemFactory.instance.createItem(craftableItem.name, this.x, this.y)
+    if (item) {
+      this.addItem(item)
+      item.sprite.destroy()
+    }
   }
 
   configureKeyPresses() {
@@ -80,7 +87,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         }
 
         // Toggle weapon equip
-        if (keycode.code === 'KeyR') {
+        if (keycode.code === 'KeyR' && this.weapon) {
           this.weapon.toggleEquip()
         }
 
@@ -91,6 +98,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
           // Provide the crafting menu with the player's current inventory
           UIScene.instance.craftingMenu.updateCraftableItems(this.inventory)
+
+          if (!UIScene.instance.craftingMenu.onCraft) {
+            UIScene.instance.craftingMenu.setOnCraftCallback((craftableItem: CraftableItem) => {
+              this.onCraft(craftableItem)
+            })
+          }
         }
       },
       this
@@ -117,7 +130,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (!this.body.embedded) {
       gameScene.pickupObjText.hide()
     }
-    this.weapon.show()
+    if (this.weapon) {
+      this.weapon.show()
+    }
   }
 
   addItem(item: Item) {
@@ -130,6 +145,17 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.inventory[item.itemType].count++
     UIScene.instance.inventoryMenu.updateInventoryMenu(this.inventory)
     UIScene.instance.craftingMenu.updateCraftableItems(this.inventory)
+  }
+
+  removeItem(itemKey: string, quantity: number) {
+    if (this.inventory[itemKey]) {
+      this.inventory[itemKey].count -= quantity
+      if (this.inventory[itemKey].count === 0) {
+        delete this.inventory[itemKey]
+      }
+      UIScene.instance.inventoryMenu.updateInventoryMenu(this.inventory)
+      UIScene.instance.craftingMenu.updateCraftableItems(this.inventory)
+    }
   }
 
   getAnimDirection(dir: Direction) {

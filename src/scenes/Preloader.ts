@@ -37,6 +37,7 @@ export default class Preloader extends Phaser.Scene {
 
     // Weapons
     this.load.image('axe', 'weapons/axe.png')
+    this.load.image('axe-inventory', 'weapons/axe-inventory.png')
 
     // Mobs
     this.load.atlas(

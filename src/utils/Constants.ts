@@ -37,22 +37,27 @@ export const ALL_ITEMS = [
   {
     name: 'Coconut',
     image: 'coconut',
+    type: 'resource',
   },
   {
     name: 'Crab claw',
     image: 'crabclaw',
     dropLength: 300,
+    type: 'resource',
   },
   {
     name: 'Rock',
     image: 'rock',
+    type: 'resource',
   },
   {
     name: 'Stick',
     image: 'stick',
+    type: 'resource',
   },
   {
     name: 'Stone Axe',
-    image: 'axe',
+    image: 'axe-inventory',
+    type: 'weapon',
   },
 ]

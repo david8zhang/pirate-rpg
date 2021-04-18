@@ -25,6 +25,7 @@ export class CraftingMenu {
 
   // Game state variables
   public currentCraftableItem: CraftableItem | null = null
+  public onCraft: Function | null = null
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene
@@ -75,6 +76,10 @@ export class CraftingMenu {
     this.craftableItemDetails = new CraftableItemDetails(this.scene)
   }
 
+  setOnCraftCallback(cb: Function) {
+    this.onCraft = cb
+  }
+
   public toggleVisible() {
     if (!this.headerText) {
       this.headerText = this.scene.add
@@ -90,35 +95,13 @@ export class CraftingMenu {
     this.isVisible = !this.isVisible
   }
 
-  getCraftableBasedOnInventory(inventory: Inventory): CraftableItem[] {
-    const craftableItems: CraftableItem[] = []
-    ALL_CRAFTABLE_ITEMS.forEach((item) => {
-      const recipe = item.recipe
-      const keys = Object.keys(recipe)
-      let isCraftable = true
-      for (let i = 0; i < keys.length; i++) {
-        const currKey = keys[i]
-        if (!inventory[currKey] || inventory[currKey].count < recipe[currKey]) {
-          isCraftable = false
-          break
-        }
-      }
-      if (isCraftable) {
-        craftableItems.push(item)
-      }
-    })
-    return craftableItems
-  }
-
   updateCraftableItems(inventory: Inventory) {
-    const craftableItems = this.getCraftableBasedOnInventory(inventory)
-
     const startingX = this.craftableItemsListWrapper.x + 5
     let yPos = this.craftableItemsListWrapper.y + 5
     const listCutoffPoint =
       this.craftableItemsListWrapper.height + this.craftableItemsListWrapper.y - 5
 
-    craftableItems.forEach((item: CraftableItem, index: number) => {
+    ALL_CRAFTABLE_ITEMS.forEach((item: CraftableItem, index: number) => {
       let text = this.craftableItemsList[index]
       if (yPos < listCutoffPoint) {
         if (!text) {
@@ -138,9 +121,23 @@ export class CraftingMenu {
           this.currHighlight.setY(text.y - 2)
           this.currHighlight.setVisible(true)
           this.currentCraftableItem = item
-          this.craftableItemDetails.showItem(item, this.itemToCraftDescription)
+          this.craftableItemDetails.showItem(
+            item,
+            this.itemToCraftDescription,
+            inventory,
+            this.onCraft as Function
+          )
         })
       }
     })
+
+    if (this.currentCraftableItem) {
+      this.craftableItemDetails.showItem(
+        this.currentCraftableItem,
+        this.itemToCraftDescription,
+        inventory,
+        this.onCraft as Function
+      )
+    }
   }
 }

@@ -1,3 +1,4 @@
+import { Inventory } from '~/characters/Player'
 import { ALL_ITEMS } from '~/utils/Constants'
 import { CraftableItem } from '../items/CraftableItem'
 import { button } from './components/Button'
@@ -15,6 +16,7 @@ export class CraftableItemDetails {
   private craftButton: Phaser.GameObjects.DOMElement | null = null
   private statList: Phaser.GameObjects.DOMElement[] = []
   private ingredientBoxes: ItemBox[] = []
+  private playerInventory!: Inventory
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene
@@ -24,9 +26,16 @@ export class CraftableItemDetails {
     this.container.setVisible(false)
   }
 
-  showItem(craftableItem: CraftableItem, itemToCraftDescription: Phaser.GameObjects.Rectangle) {
+  showItem(
+    craftableItem: CraftableItem,
+    itemToCraftDescription: Phaser.GameObjects.Rectangle,
+    inventory: Inventory,
+    cb: Function
+  ) {
     const xPos = itemToCraftDescription.x
     const yPos = itemToCraftDescription.y
+
+    this.playerInventory = inventory
 
     this.sprite
       .setPosition(xPos + 15, yPos + 12)
@@ -75,11 +84,14 @@ export class CraftableItemDetails {
     if (this.craftButton) {
       this.craftButton.destroy()
     }
+
     this.craftButton = this.scene.add
       .dom(this.sprite.x - 5, yPos + itemToCraftDescription.height - 30, itemCraftButton)
       .addListener('click')
       .on('click', () => {
-        console.log('Clicked!')
+        if (this.isItemCraftable(craftableItem, inventory)) {
+          cb(craftableItem)
+        }
       })
       .setOrigin(0)
     this.container.add(this.craftButton)
@@ -89,13 +101,24 @@ export class CraftableItemDetails {
     this.addItemStats(craftableItem)
   }
 
+  isItemCraftable(craftableItem: CraftableItem, inventory: Inventory) {
+    const recipe = craftableItem.recipe
+    const ingredients = Object.keys(recipe)
+    for (let i = 0; i < ingredients.length; i++) {
+      const ing = ingredients[i]
+      if (!inventory[ing] || inventory[ing].count < recipe[ing]) {
+        return false
+      }
+    }
+    return true
+  }
+
   addItemStats(craftableItem: CraftableItem) {
     if (this.statList) {
       this.statList.forEach((obj) => {
         obj.destroy()
       })
     }
-
     Object.keys(craftableItem.stats).forEach((stat: string, index: number) => {
       const statElement = itemStats(stat, craftableItem.stats[stat]) as HTMLElement
       if (this.craftableItemDescription) {
@@ -124,11 +147,15 @@ export class CraftableItemDetails {
       const ing = this.getIngredientForName(ingredient)
       if (ing) {
         let itemToBeCrafted = this.ingredientBoxes[index]
+        const playerHasEnough =
+          this.playerInventory[ing.name] &&
+          this.playerInventory[ing.name].count >= recipe[ingredient]
         if (!this.ingredientBoxes[index]) {
           itemToBeCrafted = new ItemBox(this.scene, currXPos, yPos)
           itemToBeCrafted.tooltipPosition = TooltipPosition.TOP_MID
           this.ingredientBoxes.push(itemToBeCrafted)
         }
+        itemToBeCrafted.setTextColor(playerHasEnough ? 'white' : 'red')
         itemToBeCrafted.setItem(recipe[ingredient], ingredient, ing.image)
         currXPos += itemToBeCrafted.panel.width + 5
       }
