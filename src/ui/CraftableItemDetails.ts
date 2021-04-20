@@ -22,8 +22,8 @@ export class CraftableItemDetails {
     this.scene = scene
     this.container = scene.add.container(0, 0)
     this.sprite = this.scene.add.sprite(0, 0, '').setVisible(false)
-    this.container.add(this.sprite)
     this.container.setVisible(false)
+    this.container.add(this.sprite)
   }
 
   showItem(
@@ -43,9 +43,6 @@ export class CraftableItemDetails {
       .setVisible(true)
 
     // Add craftable item name
-    if (this.craftableItemName) {
-      this.craftableItemName.destroy()
-    }
     const craftableItemName = text(craftableItem.name, {
       fontSize: '15px',
       fontFamily: 'GraphicPixel',
@@ -54,10 +51,14 @@ export class CraftableItemDetails {
       width: `${itemToCraftDescription.width - 15}px`,
     }) as HTMLElement
 
-    this.craftableItemName = this.scene.add
-      .dom(this.sprite.x + 12, yPos + 10, craftableItemName)
-      .setOrigin(0)
-    this.container.add(this.craftableItemName)
+    if (this.craftableItemName) {
+      this.craftableItemName.setElement(craftableItemName)
+    } else {
+      this.craftableItemName = this.scene.add
+        .dom(this.sprite.x + 12, yPos + 10, craftableItemName)
+        .setOrigin(0)
+      this.container.add(this.craftableItemName)
+    }
 
     // Add item description text
     const itemDescriptionText = text(craftableItem.description, {
@@ -67,12 +68,13 @@ export class CraftableItemDetails {
       width: `${itemToCraftDescription.width - 15}px`,
     }) as HTMLElement
     if (this.craftableItemDescription) {
-      this.craftableItemDescription.destroy()
+      this.craftableItemDescription.setElement(itemDescriptionText)
+    } else {
+      this.craftableItemDescription = this.scene.add
+        .dom(this.sprite.x - 5, yPos + this.craftableItemName.height + 15, itemDescriptionText)
+        .setOrigin(0)
+      this.container.add(this.craftableItemDescription)
     }
-    this.craftableItemDescription = this.scene.add
-      .dom(this.sprite.x - 5, yPos + this.craftableItemName.height + 15, itemDescriptionText)
-      .setOrigin(0)
-    this.container.add(this.craftableItemDescription)
 
     // Add item crafting button
     const itemCraftButton = button('Craft', {
@@ -82,11 +84,16 @@ export class CraftableItemDetails {
       height: '20px',
     }) as HTMLElement
     if (this.craftButton) {
-      this.craftButton.destroy()
+      this.craftButton.setElement(itemCraftButton)
+    } else {
+      this.craftButton = this.scene.add.dom(
+        this.sprite.x - 5,
+        yPos + itemToCraftDescription.height - 30,
+        itemCraftButton
+      )
+      this.container.add(this.craftButton)
     }
-
-    this.craftButton = this.scene.add
-      .dom(this.sprite.x - 5, yPos + itemToCraftDescription.height - 30, itemCraftButton)
+    this.craftButton
       .addListener('click')
       .on('click', () => {
         if (this.isItemCraftable(craftableItem, inventory)) {
@@ -94,11 +101,11 @@ export class CraftableItemDetails {
         }
       })
       .setOrigin(0)
-    this.container.add(this.craftButton)
     this.setIngredientsRequired(craftableItem, this.craftButton.x - 10, this.craftButton.y - 50)
 
     // Add item stats
     this.addItemStats(craftableItem)
+    this.container.setVisible(true)
   }
 
   isItemCraftable(craftableItem: CraftableItem, inventory: Inventory) {
@@ -114,26 +121,24 @@ export class CraftableItemDetails {
   }
 
   addItemStats(craftableItem: CraftableItem) {
-    if (this.statList) {
-      this.statList.forEach((obj) => {
-        obj.destroy()
-      })
-    }
     Object.keys(craftableItem.stats).forEach((stat: string, index: number) => {
       const statElement = itemStats(stat, craftableItem.stats[stat]) as HTMLElement
       if (this.craftableItemDescription) {
-        const stat = this.scene.add
-          .dom(
-            this.sprite.x - 5,
-            this.craftableItemDescription.y + this.craftableItemDescription.height + index * 12,
-            statElement
-          )
-          .setOrigin(0)
-        this.container.add(stat)
-        this.statList.push(stat)
+        if (this.statList[index]) {
+          this.statList[index].setElement(statElement)
+        } else {
+          const stat = this.scene.add
+            .dom(
+              this.sprite.x - 5,
+              this.craftableItemDescription.y + this.craftableItemDescription.height + index * 12,
+              statElement
+            )
+            .setOrigin(0)
+          this.container.add(stat)
+          this.statList[index] = stat
+        }
       }
     })
-    this.container.setVisible(true)
   }
 
   getIngredientForName(name: string) {
@@ -166,6 +171,9 @@ export class CraftableItemDetails {
     this.container.setVisible(isVisible)
     this.ingredientBoxes.forEach((itemBox: ItemBox) => {
       itemBox.setVisible(isVisible)
+    })
+    this.statList.forEach((stat) => {
+      stat.setVisible(isVisible)
     })
   }
 }

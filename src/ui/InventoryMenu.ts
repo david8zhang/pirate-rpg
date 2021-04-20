@@ -1,4 +1,5 @@
 import { Inventory } from '~/characters/Player'
+import { ItemFactory } from '~/items/ItemFactory'
 import UIScene from '~/scenes/UIScene'
 import { text } from './components/Text'
 import { TooltipPosition } from './ItemTooltip'
@@ -11,7 +12,7 @@ export class ItemBox {
 
   // Item contained inside
   private sprite!: Phaser.GameObjects.Sprite
-  public itemType!: string
+  public itemName!: string
   public countText: Phaser.GameObjects.Text
 
   // instance vars
@@ -23,6 +24,7 @@ export class ItemBox {
 
   // Tooltip position
   public tooltipPosition: TooltipPosition = TooltipPosition.BOTTOM_RIGHT
+  public itemClickHandler: Function = () => {}
 
   constructor(scene: Phaser.Scene, xPos: number, yPos: number) {
     this.scene = scene
@@ -44,6 +46,8 @@ export class ItemBox {
       .setInteractive({ useHandCursor: true })
       .on('pointerover', this.handleItemHover, this)
       .on('pointerout', this.handleItemExitHover, this)
+      .on('pointerdown', this.onItemClick, this)
+
     this.sprite = scene.add.sprite(xPos, yPos, '')
     this.sprite.setVisible(false)
 
@@ -70,18 +74,18 @@ export class ItemBox {
   }
 
   handleItemHover(pointer: any, x: number, y: number) {
-    if (this.itemType) {
+    if (this.itemName) {
       UIScene.instance.itemTooltip.position = this.tooltipPosition
-      UIScene.instance.itemTooltip.itemType = this.itemType
+      UIScene.instance.itemTooltip.itemName = this.itemName
     }
   }
 
   handleItemExitHover() {
-    UIScene.instance.itemTooltip.itemType = ''
+    UIScene.instance.itemTooltip.itemName = ''
   }
 
-  setItem(count: number, itemType: string, texture: string) {
-    this.itemType = itemType
+  setItem(count: number, itemName: string, texture: string) {
+    this.itemName = itemName
     this.sprite.setTexture(texture)
     if (count > 0) {
       this.sprite.setVisible(true)
@@ -99,6 +103,10 @@ export class ItemBox {
     this.countText.setText('0')
     this.sprite.setVisible(false)
     this.countText.setVisible(false)
+  }
+
+  onItemClick() {
+    this.itemClickHandler(this.itemName)
   }
 }
 
@@ -144,7 +152,7 @@ export class InventoryMenu {
     }
   }
 
-  public updateInventoryMenu(inventory: Inventory) {
+  public updateInventoryMenu(inventory: Inventory, onItemClick: Function) {
     for (let i = 0; i < this.itemBoxes.length; i++) {
       for (let j = 0; j < this.itemBoxes[0].length; j++) {
         this.itemBoxes[i][j].removeItem()
@@ -154,10 +162,11 @@ export class InventoryMenu {
     const inventoryTypes = Object.keys(inventory)
     for (let i = 0; i < this.numRows; i++) {
       for (let j = 0; j < this.numCols; j++) {
-        const itemType = inventoryTypes[inventoryIndex]
-        if (itemType) {
-          const { count, texture } = inventory[itemType]
-          this.itemBoxes[i][j].setItem(count, itemType, texture)
+        const itemName = inventoryTypes[inventoryIndex]
+        if (itemName) {
+          const { count, texture } = inventory[itemName]
+          this.itemBoxes[i][j].setItem(count, itemName, texture)
+          this.itemBoxes[i][j].itemClickHandler = onItemClick
           inventoryIndex++
         }
       }

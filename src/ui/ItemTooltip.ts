@@ -17,7 +17,7 @@ export class ItemTooltip {
   private itemDescriptionText: Phaser.GameObjects.Text
   private scene: Phaser.Scene
   private rectangle: Phaser.GameObjects.Rectangle
-  public itemType!: string
+  public itemName!: string
   public position: TooltipPosition = TooltipPosition.BOTTOM_RIGHT
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
@@ -51,16 +51,16 @@ export class ItemTooltip {
   }
 
   update() {
-    if (this.itemType) {
-      this.showItemTooltip(this.itemType, this.scene.input.x, this.scene.input.y)
+    if (this.itemName) {
+      this.showItemTooltip(this.itemName, this.scene.input.x, this.scene.input.y)
     } else {
       this.hide()
     }
   }
 
-  showItemTooltip(itemType: string, x: number, y: number) {
+  showItemTooltip(itemName: string, x: number, y: number) {
     this.setContainerPosition(x, y)
-    this.itemNameText.text = `${itemType}`
+    this.itemNameText.text = `${itemName}`
     this.itemDescriptionText.text = 'Lorem ipsum dolor sit amet'
 
     this.rectangle.height = this.itemDescriptionText.height + this.itemNameText.height + 20

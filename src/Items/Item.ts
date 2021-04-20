@@ -2,7 +2,7 @@ import UIScene from '~/scenes/UIScene'
 import Game from '../scenes/Game'
 
 export class Item {
-  itemType: string = ''
+  itemName: string = ''
   sprite!: Phaser.Physics.Arcade.Sprite
   scene: Game
   collider: Phaser.Physics.Arcade.Collider
@@ -27,7 +27,7 @@ export class Item {
 
   onPlayerHoverItem() {
     this.scene.pickupObjText.showText(
-      this.itemType,
+      this.itemName,
       this.scene.player.x - this.scene.player.width,
       this.scene.player.y + 20
     )

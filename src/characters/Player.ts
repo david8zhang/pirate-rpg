@@ -93,10 +93,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         // Maximize the inventory and bring up crafting menu if 'I' is pressed
         if (keycode.code === 'KeyI') {
-          UIScene.instance.inventoryMenu.toggleInventoryExpand()
-          UIScene.instance.craftingMenu.toggleVisible()
-
-          // Provide the crafting menu with the player's current inventory
           UIScene.instance.craftingMenu.updateCraftableItems(this.inventory)
 
           if (!UIScene.instance.craftingMenu.onCraft) {
@@ -104,6 +100,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
               this.onCraft(craftableItem)
             })
           }
+          UIScene.instance.inventoryMenu.toggleInventoryExpand()
+          UIScene.instance.craftingMenu.toggleVisible()
         }
       },
       this
@@ -135,15 +133,21 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  handleItemClick(itemName: string) {
+    console.log('Item Name: ', itemName)
+  }
+
   addItem(item: Item) {
-    if (!this.inventory[item.itemType]) {
-      this.inventory[item.itemType] = {
+    if (!this.inventory[item.itemName]) {
+      this.inventory[item.itemName] = {
         count: 0,
         texture: item.sprite.texture.key,
       }
     }
-    this.inventory[item.itemType].count++
-    UIScene.instance.inventoryMenu.updateInventoryMenu(this.inventory)
+    this.inventory[item.itemName].count++
+    UIScene.instance.inventoryMenu.updateInventoryMenu(this.inventory, (itemName: string) =>
+      this.handleItemClick(itemName)
+    )
     UIScene.instance.craftingMenu.updateCraftableItems(this.inventory)
   }
 
@@ -153,7 +157,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       if (this.inventory[itemKey].count === 0) {
         delete this.inventory[itemKey]
       }
-      UIScene.instance.inventoryMenu.updateInventoryMenu(this.inventory)
+      UIScene.instance.inventoryMenu.updateInventoryMenu(this.inventory, (itemType: string) =>
+        this.handleItemClick(itemType)
+      )
       UIScene.instance.craftingMenu.updateCraftableItems(this.inventory)
     }
   }
