@@ -1,6 +1,6 @@
 import { Inventory } from '~/characters/Player'
 import { ALL_ITEMS } from '~/utils/Constants'
-import { CraftableItem } from '../items/CraftableItem'
+import { ItemConfig } from '../items/ItemConfig'
 import { button } from './components/Button'
 import { itemStats } from './components/ItemStats'
 import { text } from './components/Text'
@@ -18,6 +18,8 @@ export class CraftableItemDetails {
   private ingredientBoxes: ItemBox[] = []
   private playerInventory!: Inventory
 
+  public isVisible: boolean = false
+
   constructor(scene: Phaser.Scene) {
     this.scene = scene
     this.container = scene.add.container(0, 0)
@@ -27,7 +29,7 @@ export class CraftableItemDetails {
   }
 
   showItem(
-    craftableItem: CraftableItem,
+    craftableItem: ItemConfig,
     itemToCraftDescription: Phaser.GameObjects.Rectangle,
     inventory: Inventory,
     cb: Function
@@ -105,11 +107,12 @@ export class CraftableItemDetails {
 
     // Add item stats
     this.addItemStats(craftableItem)
-    this.container.setVisible(true)
+    this.container.setVisible(this.isVisible)
   }
 
-  isItemCraftable(craftableItem: CraftableItem, inventory: Inventory) {
+  isItemCraftable(craftableItem: ItemConfig, inventory: Inventory) {
     const recipe = craftableItem.recipe
+    if (!recipe) return
     const ingredients = Object.keys(recipe)
     for (let i = 0; i < ingredients.length; i++) {
       const ing = ingredients[i]
@@ -120,24 +123,19 @@ export class CraftableItemDetails {
     return true
   }
 
-  addItemStats(craftableItem: CraftableItem) {
+  addItemStats(craftableItem: ItemConfig) {
+    if (!craftableItem.stats) return
+    let yPos = this.craftableItemDescription!.y + this.craftableItemDescription!.height + 10
     Object.keys(craftableItem.stats).forEach((stat: string, index: number) => {
-      const statElement = itemStats(stat, craftableItem.stats[stat]) as HTMLElement
-      if (this.craftableItemDescription) {
-        if (this.statList[index]) {
-          this.statList[index].setElement(statElement)
-        } else {
-          const stat = this.scene.add
-            .dom(
-              this.sprite.x - 5,
-              this.craftableItemDescription.y + this.craftableItemDescription.height + index * 12,
-              statElement
-            )
-            .setOrigin(0)
-          this.container.add(stat)
-          this.statList[index] = stat
-        }
+      const statElement = itemStats(stat, craftableItem.stats![stat]) as HTMLElement
+      if (this.statList[index]) {
+        this.statList[index].setElement(statElement)
+      } else {
+        const stat = this.scene.add.dom(this.sprite.x - 5, yPos, statElement).setOrigin(0)
+        this.container.add(stat)
+        this.statList[index] = stat
       }
+      yPos += 10
     })
   }
 
@@ -145,8 +143,9 @@ export class CraftableItemDetails {
     return ALL_ITEMS.find((item) => item.name === name)
   }
 
-  setIngredientsRequired(craftableItem: CraftableItem, xPos: number, yPos: number) {
+  setIngredientsRequired(craftableItem: ItemConfig, xPos: number, yPos: number) {
     const recipe = craftableItem.recipe
+    if (!recipe) return
     let currXPos = xPos
     Object.keys(recipe).forEach((ingredient, index: number) => {
       const ing = this.getIngredientForName(ingredient)
@@ -168,6 +167,7 @@ export class CraftableItemDetails {
   }
 
   setVisible(isVisible: boolean) {
+    this.isVisible = isVisible
     this.container.setVisible(isVisible)
     this.ingredientBoxes.forEach((itemBox: ItemBox) => {
       itemBox.setVisible(isVisible)

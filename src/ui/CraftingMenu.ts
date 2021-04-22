@@ -1,6 +1,6 @@
 import { Inventory } from '~/characters/Player'
-import { CraftableItem } from '~/items/CraftableItem'
-import { ALL_CRAFTABLE_ITEMS } from '../utils/Constants'
+import { ItemConfig } from '~/items/ItemConfig'
+import { ALL_ITEMS } from '../utils/Constants'
 import { CraftableItemDetails } from './CraftableItemDetails'
 
 export class CraftingMenu {
@@ -24,7 +24,7 @@ export class CraftingMenu {
   private craftableItemDetails: CraftableItemDetails
 
   // Game state variables
-  public currentCraftableItem: CraftableItem | null = null
+  public currentCraftableItem: ItemConfig | null = null
   public onCraft: Function | null = null
 
   constructor(scene: Phaser.Scene) {
@@ -101,9 +101,11 @@ export class CraftingMenu {
     const listCutoffPoint =
       this.craftableItemsListWrapper.height + this.craftableItemsListWrapper.y - 5
 
-    ALL_CRAFTABLE_ITEMS.forEach((item: CraftableItem, index: number) => {
+    const craftableItems = ALL_ITEMS.filter((item) => item.recipe !== undefined)
+
+    craftableItems.forEach((item: ItemConfig, index: number) => {
       let text = this.craftableItemsList[index]
-      if (yPos < listCutoffPoint) {
+      if (yPos < listCutoffPoint && item.recipe) {
         if (!text) {
           text = this.scene.add.text(startingX, yPos, item.name, {
             fontFamily: 'GraphicPixel',

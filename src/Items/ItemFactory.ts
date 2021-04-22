@@ -12,7 +12,13 @@ export class ItemFactory {
   createItem(itemType: string, x: number, y: number): Item | null {
     const item = ALL_ITEMS.find((item) => item.name == itemType)
     if (item) {
-      const itemGo = new Item(this.scene, x, y, item.image, item.dropLength ? item.dropLength : 650)
+      const itemGo = new Item(
+        this.scene,
+        x,
+        y,
+        item.thumbnail || item.image,
+        item.stats && item.stats.dropLength ? item.stats.dropLength : 650
+      )
       itemGo.itemName = item.name
       return itemGo
     }
@@ -20,5 +26,7 @@ export class ItemFactory {
   }
 
   // Get whether the item is a weapon, armor, resource, etc.
-  getItemClass(itemType: string) {}
+  getItemType(itemName: string) {
+    return ALL_ITEMS.find((i) => i.name == itemName)
+  }
 }

@@ -26,6 +26,9 @@ export class ItemBox {
   public tooltipPosition: TooltipPosition = TooltipPosition.BOTTOM_RIGHT
   public itemClickHandler: Function = () => {}
 
+  // Detect double clicked
+  public isClicked: boolean = false
+
   constructor(scene: Phaser.Scene, xPos: number, yPos: number) {
     this.scene = scene
     this.x = xPos
@@ -106,7 +109,14 @@ export class ItemBox {
   }
 
   onItemClick() {
-    this.itemClickHandler(this.itemName)
+    if (this.isClicked) {
+      this.itemClickHandler(this.itemName)
+    } else {
+      this.isClicked = true
+      this.scene.time.delayedCall(500, () => {
+        this.isClicked = false
+      })
+    }
   }
 }
 

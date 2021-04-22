@@ -1,4 +1,4 @@
-import { CraftableItemTypes } from '../items/CraftableItem'
+import { ItemTypes } from '../items/ItemConfig'
 
 export class Constants {
   static get TILE_SIZE() {
@@ -15,49 +15,47 @@ export class Constants {
   }
 }
 
-export const ALL_CRAFTABLE_ITEMS = [
+export const ALL_ITEMS = [
+  {
+    name: 'Coconut',
+    image: 'coconut',
+    type: ItemTypes.resource,
+    description: 'A tasty coconut',
+  },
+  {
+    name: 'Crab claw',
+    image: 'crabclaw',
+    stats: {
+      dropLength: 300,
+    },
+    description: "These claws ain't just for attracting mates!",
+    type: ItemTypes.resource,
+  },
+  {
+    name: 'Rock',
+    image: 'rock',
+    description: 'Dwayne Johnson',
+    type: ItemTypes.resource,
+  },
+  {
+    name: 'Stick',
+    image: 'stick',
+    description: "What's brown and sticky?",
+    type: ItemTypes.resource,
+  },
   {
     name: 'Stone Axe',
     image: 'axe',
-    description: "It's an axe made of stone. Perfect for tree murder",
+    thumbnail: 'axe-inventory',
+    description: 'And my axe!',
     recipe: {
       Rock: 2,
       Stick: 1,
     },
     stats: {
       damage: 15,
-      speed: 10,
-      durability: 20,
+      'attack range': 20,
     },
-    type: CraftableItemTypes.weapon,
-  },
-]
-
-export const ALL_ITEMS = [
-  {
-    name: 'Coconut',
-    image: 'coconut',
-    type: 'resource',
-  },
-  {
-    name: 'Crab claw',
-    image: 'crabclaw',
-    dropLength: 300,
-    type: 'resource',
-  },
-  {
-    name: 'Rock',
-    image: 'rock',
-    type: 'resource',
-  },
-  {
-    name: 'Stick',
-    image: 'stick',
-    type: 'resource',
-  },
-  {
-    name: 'Stone Axe',
-    image: 'axe-inventory',
-    type: 'weapon',
+    type: ItemTypes.weapon,
   },
 ]

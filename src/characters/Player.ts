@@ -8,7 +8,7 @@ import UIScene from '../scenes/UIScene'
 import { Item } from '../items/Item'
 import { DamageNumber } from '~/ui/DamageNumber'
 import { Weapon } from '~/items/Weapon'
-import { CraftableItem } from '~/items/CraftableItem'
+import { ItemTypes, ItemConfig } from '~/items/ItemConfig'
 import { ItemFactory } from '~/items/ItemFactory'
 
 declare global {
@@ -63,15 +63,17 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.configureKeyPresses()
   }
 
-  onCraft(craftableItem: CraftableItem) {
+  onCraft(craftableItem: ItemConfig) {
     const recipe = craftableItem.recipe
-    Object.keys(recipe).forEach((key: string) => {
-      this.removeItem(key, recipe[key])
-    })
-    const item = ItemFactory.instance.createItem(craftableItem.name, this.x, this.y)
-    if (item) {
-      this.addItem(item)
-      item.sprite.destroy()
+    if (recipe) {
+      Object.keys(recipe).forEach((key: string) => {
+        this.removeItem(key, recipe[key])
+      })
+      const item = ItemFactory.instance.createItem(craftableItem.name, this.x, this.y)
+      if (item) {
+        this.addItem(item)
+        item.sprite.destroy()
+      }
     }
   }
 
@@ -96,7 +98,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           UIScene.instance.craftingMenu.updateCraftableItems(this.inventory)
 
           if (!UIScene.instance.craftingMenu.onCraft) {
-            UIScene.instance.craftingMenu.setOnCraftCallback((craftableItem: CraftableItem) => {
+            UIScene.instance.craftingMenu.setOnCraftCallback((craftableItem: ItemConfig) => {
               this.onCraft(craftableItem)
             })
           }
@@ -134,7 +136,17 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   handleItemClick(itemName: string) {
-    console.log('Item Name: ', itemName)
+    const item = ItemFactory.instance.getItemType(itemName)
+    if (item && item.stats) {
+      if (item.type === ItemTypes.weapon) {
+        this.weapon = new Weapon(this.scene, this, {
+          texture: item.image,
+          damage: item.stats.damage as number,
+          attackRange: item.stats['attack range'] as number,
+        })
+        this.weapon.isEquipped = true
+      }
+    }
   }
 
   addItem(item: Item) {
