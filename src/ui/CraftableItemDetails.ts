@@ -18,6 +18,8 @@ export class CraftableItemDetails {
   private ingredientBoxes: ItemBox[] = []
   private playerInventory!: Inventory
 
+  public craftableItem!: ItemConfig
+
   public isVisible: boolean = false
 
   constructor(scene: Phaser.Scene) {
@@ -34,6 +36,7 @@ export class CraftableItemDetails {
     inventory: Inventory,
     cb: Function
   ) {
+    this.craftableItem = craftableItem
     const xPos = itemToCraftDescription.x
     const yPos = itemToCraftDescription.y
 
@@ -85,29 +88,27 @@ export class CraftableItemDetails {
       width: itemToCraftDescription.width - 20,
       height: '20px',
     }) as HTMLElement
-    if (this.craftButton) {
-      this.craftButton.setElement(itemCraftButton)
-    } else {
-      this.craftButton = this.scene.add.dom(
-        this.sprite.x - 5,
-        yPos + itemToCraftDescription.height - 30,
-        itemCraftButton
-      )
+    if (!this.craftButton) {
+      this.craftButton = this.scene.add
+        .dom(this.sprite.x - 5, yPos + itemToCraftDescription.height - 30, itemCraftButton)
+        .addListener('click')
+        .on('click', () => {
+          this.onCraftButtonClick(inventory, cb)
+        })
+        .setOrigin(0)
       this.container.add(this.craftButton)
     }
-    this.craftButton
-      .addListener('click')
-      .on('click', () => {
-        if (this.isItemCraftable(craftableItem, inventory)) {
-          cb(craftableItem)
-        }
-      })
-      .setOrigin(0)
     this.setIngredientsRequired(craftableItem, this.craftButton.x - 10, this.craftButton.y - 50)
 
     // Add item stats
     this.addItemStats(craftableItem)
     this.container.setVisible(this.isVisible)
+  }
+
+  onCraftButtonClick(inventory: Inventory, cb: Function) {
+    if (this.isItemCraftable(this.craftableItem, inventory)) {
+      cb(this.craftableItem)
+    }
   }
 
   isItemCraftable(craftableItem: ItemConfig, inventory: Inventory) {
@@ -125,6 +126,14 @@ export class CraftableItemDetails {
 
   addItemStats(craftableItem: ItemConfig) {
     if (!craftableItem.stats) return
+
+    // Reset the stat list
+    this.statList.forEach((stat: Phaser.GameObjects.DOMElement) => {
+      stat.destroy()
+    })
+    this.statList = []
+
+    // Populate the new statlist
     let yPos = this.craftableItemDescription!.y + this.craftableItemDescription!.height + 10
     Object.keys(craftableItem.stats).forEach((stat: string, index: number) => {
       const statElement = itemStats(stat, craftableItem.stats![stat]) as HTMLElement
@@ -144,6 +153,10 @@ export class CraftableItemDetails {
   }
 
   setIngredientsRequired(craftableItem: ItemConfig, xPos: number, yPos: number) {
+    this.ingredientBoxes.forEach((ingBox: ItemBox) => {
+      ingBox.destroy()
+    })
+    this.ingredientBoxes = []
     const recipe = craftableItem.recipe
     if (!recipe) return
     let currXPos = xPos

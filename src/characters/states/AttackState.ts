@@ -4,7 +4,8 @@ import { State } from '../../lib/StateMachine'
 export class AttackState extends State {
   enter(cursors: Phaser.Types.Input.Keyboard.CursorKeys, player: Player) {
     player.setVelocity(0)
-    if (player.weapon && player.weapon.isEquipped) {
+    const weapon = player.getWeapon()
+    if (weapon && weapon.isEquipped) {
       player.anims.play(`player-punch-down`)
     } else {
       player.anims.play(`player-punch-${player.getAnimDirection(player.direction)}`)
@@ -13,8 +14,9 @@ export class AttackState extends State {
   }
 
   adjustColliderOffset(player: Player) {
-    if (player.weapon.isEquipped) {
-      player.weapon.tweenWeaponAttack()
+    const weapon = player.getWeapon()
+    if (weapon && weapon.isEquipped) {
+      weapon.tweenWeaponAttack()
     }
     switch (player.direction) {
       case Direction.DOWN: {

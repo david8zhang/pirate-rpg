@@ -25,11 +25,16 @@ export const ALL_ITEMS = [
   {
     name: 'Crab claw',
     image: 'crabclaw',
+    recipe: {
+      Stick: 1,
+    },
     stats: {
       dropLength: 300,
+      damage: 15,
+      'attack range': 20,
     },
     description: "These claws ain't just for attracting mates!",
-    type: ItemTypes.resource,
+    type: ItemTypes.weapon,
   },
   {
     name: 'Rock',

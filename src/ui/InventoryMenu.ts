@@ -1,7 +1,5 @@
 import { Inventory } from '~/characters/Player'
-import { ItemFactory } from '~/items/ItemFactory'
 import UIScene from '~/scenes/UIScene'
-import { text } from './components/Text'
 import { TooltipPosition } from './ItemTooltip'
 
 export class ItemBox {
@@ -28,6 +26,7 @@ export class ItemBox {
 
   // Detect double clicked
   public isClicked: boolean = false
+  public isHighlighted: boolean = false
 
   constructor(scene: Phaser.Scene, xPos: number, yPos: number) {
     this.scene = scene
@@ -66,6 +65,7 @@ export class ItemBox {
       })
       .setOrigin(0.5)
     this.countText.autoRound = false
+
     this.container = scene.add.container(25, 25)
     this.container.add(this.panel)
     this.container.add(this.sprite)
@@ -110,13 +110,23 @@ export class ItemBox {
 
   onItemClick() {
     if (this.isClicked) {
-      this.itemClickHandler(this.itemName)
+      this.itemClickHandler(this.itemName, this)
     } else {
       this.isClicked = true
       this.scene.time.delayedCall(500, () => {
         this.isClicked = false
       })
     }
+  }
+
+  setHighlight(isHighlighted: boolean) {
+    this.isHighlighted = isHighlighted
+  }
+
+  destroy() {
+    this.panel.destroy()
+    this.sprite.destroy()
+    this.container.destroy()
   }
 }
 

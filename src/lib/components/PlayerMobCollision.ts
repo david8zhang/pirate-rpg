@@ -23,10 +23,11 @@ export class PlayerMobCollision {
   }
 
   updatePlayerWeaponCollider() {
-    if (!this.weaponCollider && this.scene.player.weapon) {
+    const weapon = this.scene.player.getWeapon()
+    if (weapon) {
       this.weaponCollider = this.scene.physics.add.collider(
         this.mob.sprite,
-        this.scene.player.weapon.hitboxImage,
+        weapon.hitboxImage,
         this.handlePlayerWeaponAttack,
         undefined,
         this
@@ -35,8 +36,9 @@ export class PlayerMobCollision {
   }
 
   handlePlayerWeaponAttack() {
-    if (this.scene.player.weapon && this.scene.player.getCurrState() === 'attack' && !this.isHit) {
-      const damage = this.scene.player.weapon.damage
+    const weapon = this.scene.player.getWeapon()
+    if (weapon && this.scene.player.getCurrState() === 'attack' && !this.isHit) {
+      const damage = weapon.damage
       this.handleMobHit(damage)
     }
   }
@@ -61,7 +63,8 @@ export class PlayerMobCollision {
   }
 
   handlePlayerAttack() {
-    if (this.scene.player.weapon && this.scene.player.weapon.isEquipped) {
+    const weapon = this.scene.player.getWeapon()
+    if (weapon && weapon.isEquipped) {
       return
     }
     if (this.scene.player.getCurrState() === 'attack' && !this.isHit) {

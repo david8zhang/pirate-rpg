@@ -34,6 +34,11 @@ export class Item {
     this.scene.player.itemOnHover = this
   }
 
+  destroy() {
+    this.sprite.destroy()
+    this.collider.destroy()
+  }
+
   drop() {
     // Launch coconut in random direction
     this.sprite.setName('InAir') // InAir tells depth sorting logic to ignore this sprite

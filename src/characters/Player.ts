@@ -10,6 +10,7 @@ import { DamageNumber } from '~/ui/DamageNumber'
 import { Weapon } from '~/items/Weapon'
 import { ItemTypes, ItemConfig } from '~/items/ItemConfig'
 import { ItemFactory } from '~/items/ItemFactory'
+import { ItemBox } from '~/ui/InventoryMenu'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -33,19 +34,24 @@ export interface Inventory {
   }
 }
 
+export interface Equipment {
+  weapon?: Weapon
+}
+
 export default class Player extends Phaser.Physics.Arcade.Sprite {
   public static UNARMED_DAMAGE = 10
 
   public stateMachine: StateMachine
   public direction: Direction = Direction.DOWN
-  public inventory: Inventory
   public maxHealth: number = 100
   public currHealth: number = 100
   public iFrameDuration: number = 650
   public isHit: boolean = false
   public itemOnHover: Item | null = null
 
-  public weapon: Weapon | null = null
+  // Equipment and inventory
+  public inventory: Inventory
+  public equipment: Equipment
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture)
@@ -60,7 +66,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       [(scene as Game).cursors, this]
     )
     this.inventory = {}
+    this.equipment = {}
     this.configureKeyPresses()
+  }
+
+  getWeapon(): Weapon | undefined {
+    return this.equipment.weapon
   }
 
   onCraft(craftableItem: ItemConfig) {
@@ -89,8 +100,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         }
 
         // Toggle weapon equip
-        if (keycode.code === 'KeyR' && this.weapon) {
-          this.weapon.toggleEquip()
+        if (keycode.code === 'KeyR' && this.equipment.weapon) {
+          this.equipment.weapon.toggleEquip()
         }
 
         // Maximize the inventory and bring up crafting menu if 'I' is pressed
@@ -128,10 +139,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.stateMachine.step()
     const gameScene = this.scene as Game
     if (!this.body.embedded) {
+      this.itemOnHover = null
       gameScene.pickupObjText.hide()
     }
-    if (this.weapon) {
-      this.weapon.show()
+    if (this.equipment.weapon) {
+      this.equipment.weapon.show()
     }
   }
 
@@ -139,12 +151,24 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     const item = ItemFactory.instance.getItemType(itemName)
     if (item && item.stats) {
       if (item.type === ItemTypes.weapon) {
-        this.weapon = new Weapon(this.scene, this, {
+        if (this.equipment.weapon) {
+          const weaponName = this.equipment.weapon.name
+          const weaponItem = ItemFactory.instance.createItem(weaponName, this.x, this.y)
+          if (weaponItem) {
+            this.addItem(weaponItem)
+            weaponItem.destroy()
+          }
+          this.equipment.weapon.destroy()
+          this.equipment.weapon = undefined
+        }
+        this.removeItem(item.name, 1)
+        this.equipment.weapon = new Weapon(this.scene, this, {
           texture: item.image,
           damage: item.stats.damage as number,
           attackRange: item.stats['attack range'] as number,
+          name: item.name,
         })
-        this.weapon.isEquipped = true
+        this.equipment.weapon.isEquipped = true
       }
     }
   }
@@ -157,8 +181,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       }
     }
     this.inventory[item.itemName].count++
-    UIScene.instance.inventoryMenu.updateInventoryMenu(this.inventory, (itemName: string) =>
-      this.handleItemClick(itemName)
+    UIScene.instance.inventoryMenu.updateInventoryMenu(
+      this.inventory,
+      (itemName: string, itemBox: ItemBox) => this.handleItemClick(itemName)
     )
     UIScene.instance.craftingMenu.updateCraftableItems(this.inventory)
   }
@@ -169,8 +194,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       if (this.inventory[itemKey].count === 0) {
         delete this.inventory[itemKey]
       }
-      UIScene.instance.inventoryMenu.updateInventoryMenu(this.inventory, (itemType: string) =>
-        this.handleItemClick(itemType)
+      UIScene.instance.inventoryMenu.updateInventoryMenu(
+        this.inventory,
+        (itemType: string, itemBox: ItemBox) => this.handleItemClick(itemType)
       )
       UIScene.instance.craftingMenu.updateCraftableItems(this.inventory)
     }

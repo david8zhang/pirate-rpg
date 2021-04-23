@@ -5,6 +5,7 @@ export interface WeaponConfig {
   texture: string
   damage: number
   attackRange: number
+  name: string
 }
 
 export class Weapon {
@@ -15,10 +16,10 @@ export class Weapon {
   public damage: number = 10
   public weaponTexture: string
   public attackRange: number
+  public name: string
 
   // Hitbox image
   public hitboxImage: Phaser.Physics.Arcade.Image
-
   private isAttacking: boolean = false
 
   constructor(scene: Phaser.Scene, player: Player, weaponConfig: WeaponConfig) {
@@ -32,6 +33,7 @@ export class Weapon {
     this.weaponTexture = weaponConfig.texture
     this.damage = weaponConfig.damage
     this.attackRange = weaponConfig.attackRange
+    this.name = weaponConfig.name
 
     // Initialize weapon hitbox
     this.hitboxImage = this.scene.physics.add.image(this.sprite.x, this.sprite.y, '')
@@ -50,6 +52,11 @@ export class Weapon {
 
   toggleEquip() {
     this.isEquipped = !this.isEquipped
+  }
+
+  destroy() {
+    this.sprite.destroy()
+    this.hitboxImage.destroy()
   }
 
   show() {
