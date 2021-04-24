@@ -170,6 +170,7 @@ export class CraftableItemDetails {
         if (!this.ingredientBoxes[index]) {
           itemToBeCrafted = new ItemBox(this.scene, currXPos, yPos)
           itemToBeCrafted.tooltipPosition = TooltipPosition.TOP_MID
+          itemToBeCrafted.setVisible(this.isVisible)
           this.ingredientBoxes.push(itemToBeCrafted)
         }
         itemToBeCrafted.setTextColor(playerHasEnough ? 'white' : 'red')

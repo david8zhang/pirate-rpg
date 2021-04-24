@@ -1,6 +1,5 @@
 import Phaser, { Physics } from 'phaser'
-import PalmTree from '../items/PalmTree'
-import { Constants } from '../utils/Constants'
+import { ALL_HARVESTABLES, Constants } from '../utils/Constants'
 import '../characters/Player'
 import '../mobs/GiantCrab'
 import Player from '../characters/Player'
@@ -16,6 +15,7 @@ import { debugDraw } from '~/utils/debug'
 import { Item } from '~/items/Item'
 import { PickupObjectText } from '~/ui/PickupObjectText'
 import { ItemFactory } from '~/items/ItemFactory'
+import { Harvestable } from '~/items/Harvestable'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -31,11 +31,11 @@ export default class Game extends Phaser.Scene {
 
   // colliders
   public playerTreeCollider!: Physics.Arcade.Collider
-  public treeBeingHit!: PalmTree
   public itemsOnGround: Item[] = []
 
-  // Mobs
+  // Mobs & Harvestables
   public mobsList: Mob[] = []
+  public harvestableList: Harvestable[] = []
 
   // sprite names to ignore during depth-sorting
   public ignoreNames = ['InAir', 'UI', 'Weapon']
@@ -95,21 +95,23 @@ export default class Game extends Phaser.Scene {
       return a.y! - b.y!
     })
     this.trees = this.physics.add.group({
-      classType: PalmTree,
+      classType: Harvestable,
     })
+
+    // Add other plant types
+    const palmTreeConfig = ALL_HARVESTABLES[0]
+
     sortedByY.forEach((plantObj) => {
       const xPos = plantObj.x! + plantObj.width! * 0.5
       const yPos = plantObj.y! - plantObj.height! * 0.5
-      this.trees.get(xPos, yPos, 'palm-trees', 1)
+      const harvestable = new Harvestable(this, {
+        ...palmTreeConfig,
+        xPos,
+        yPos,
+      })
+      this.trees.add(harvestable.sprite)
+      this.harvestableList.push(harvestable)
     })
-
-    this.playerTreeCollider = this.physics.add.collider(
-      this.player,
-      this.trees,
-      this.handlePlayerTreeCollision,
-      undefined,
-      this
-    )
   }
 
   initMobs() {
@@ -117,6 +119,8 @@ export default class Game extends Phaser.Scene {
     const mobsGroup = this.physics.add.group({
       classType: Mob,
     })
+
+    // TODO: Use procedural generation technique for spawning in mobs
     mobsLayer.objects.forEach((mobObj) => {
       const xPos = mobObj.x! + mobObj.width! * 0.5
       const yPos = mobObj.y! - mobObj.height! * 0.5
@@ -150,20 +154,6 @@ export default class Game extends Phaser.Scene {
         }
       }
     })
-  }
-
-  handlePlayerTreeCollision(
-    obj1: Phaser.GameObjects.GameObject,
-    obj2: Phaser.GameObjects.GameObject
-  ) {
-    this.treeBeingHit = obj2 as PalmTree
-    if (!this.treeBeingHit.isBeingHit && this.player.getCurrState() === 'attack') {
-      this.treeBeingHit.takeDamage(10)
-      this.treeBeingHit.isBeingHit = true
-      this.time.delayedCall(Constants.ATTACK_DURATION, () => {
-        this.treeBeingHit.isBeingHit = false
-      })
-    }
   }
 
   update() {

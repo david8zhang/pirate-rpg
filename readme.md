@@ -4,4 +4,4 @@ A top down pirate themed RPG game build using Phaser 3
 
 ## TODO:
 
-- Enemy spawn location based on tilemap layer
+- Set up a callback system for re-configuring mob + harvestable colliders when player equips a weapon

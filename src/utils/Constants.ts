@@ -1,3 +1,4 @@
+import { Harvestable, HarvestableConfig } from '~/items/Harvestable'
 import { ItemTypes } from '../items/ItemConfig'
 
 export class Constants {
@@ -15,6 +16,26 @@ export class Constants {
   }
 }
 
+export const ALL_HARVESTABLES = [
+  {
+    name: 'PalmTree',
+    texture: 'palm-trees',
+    health: 100,
+    defaultFrame: 1,
+    onDropItem: (harvestable: Harvestable) => {
+      harvestable.sprite.setFrame(0)
+    },
+    droppedItems: ['Coconut'],
+    bodyResize: {
+      width: 0.2,
+      height: 0.1,
+      offset: {
+        y: 53,
+      },
+    },
+  },
+]
+
 export const ALL_ITEMS = [
   {
     name: 'Coconut',
@@ -25,16 +46,11 @@ export const ALL_ITEMS = [
   {
     name: 'Crab claw',
     image: 'crabclaw',
-    recipe: {
-      Stick: 1,
-    },
     stats: {
       dropLength: 300,
-      damage: 15,
-      'attack range': 20,
     },
     description: "These claws ain't just for attracting mates!",
-    type: ItemTypes.weapon,
+    type: ItemTypes.resource,
   },
   {
     name: 'Rock',
