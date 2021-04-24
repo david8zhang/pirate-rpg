@@ -29,7 +29,6 @@ export class Harvestable {
   public sprite: Phaser.Physics.Arcade.Sprite
   public config: HarvestableConfig
   public onDropItem?: Function
-  public collider: Phaser.Physics.Arcade.Collider
   public isAttacked: boolean = false
   public currPlayerWeapon: string = 'unarmed'
 
@@ -58,11 +57,8 @@ export class Harvestable {
         this.sprite.body.offset.x = bodyResize.offset.x
       }
     }
-
+    this.sprite.setData('ref', this)
     this.sprite.setPushable(false)
-    this.collider = this.scene.physics.add.overlap(this.scene.player, this.sprite, () => {
-      this.handlePlantPlayerCollision()
-    })
   }
 
   handlePlantPlayerCollision() {

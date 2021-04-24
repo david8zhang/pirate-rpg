@@ -48,6 +48,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public iFrameDuration: number = 650
   public isHit: boolean = false
   public itemOnHover: Item | null = null
+  public onEquipWeaponHandler: Function = () => {}
 
   // Equipment and inventory
   public inventory: Inventory
@@ -102,6 +103,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         // Toggle weapon equip
         if (keycode.code === 'KeyR' && this.equipment.weapon) {
           this.equipment.weapon.toggleEquip()
+          this.onEquipWeaponHandler()
         }
 
         // Maximize the inventory and bring up crafting menu if 'I' is pressed
@@ -169,8 +171,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           name: item.name,
         })
         this.equipment.weapon.isEquipped = true
+        this.onEquipWeaponHandler()
       }
     }
+  }
+
+  setOnEquipWeaponHandler(cb: Function) {
+    this.onEquipWeaponHandler = cb
   }
 
   addItem(item: Item) {

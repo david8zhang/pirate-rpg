@@ -30,7 +30,7 @@ export default class Game extends Phaser.Scene {
   public objectsLayer!: Phaser.Tilemaps.TilemapLayer
 
   // colliders
-  public playerTreeCollider!: Physics.Arcade.Collider
+  public playerHarvestableCollider!: Physics.Arcade.Collider
   public itemsOnGround: Item[] = []
 
   // Mobs & Harvestables
@@ -82,6 +82,9 @@ export default class Game extends Phaser.Scene {
   initPlayer() {
     this.player = this.add.player(256, 256, 'player')
     this.player.setDepth(1)
+    this.player.setOnEquipWeaponHandler(() => {
+      this.updateCollidersOnWeaponEquip()
+    })
     this.physics.add.collider(this.player, this.oceanLayer)
 
     this.cameras.main.setBounds(0, 0, Constants.BG_WIDTH, Constants.BG_HEIGHT)
@@ -112,6 +115,27 @@ export default class Game extends Phaser.Scene {
       this.trees.add(harvestable.sprite)
       this.harvestableList.push(harvestable)
     })
+
+    this.playerHarvestableCollider = this.physics.add.collider(
+      this.trees,
+      this.player,
+      (obj1, obj2) => {
+        const harvestableRef: Harvestable = obj2.getData('ref')
+        harvestableRef.handlePlantPlayerCollision()
+      }
+    )
+  }
+
+  updateCollidersOnWeaponEquip() {
+    const weapon = this.player.getWeapon()
+    this.playerHarvestableCollider = this.physics.add.collider(
+      this.trees,
+      weapon ? weapon.hitboxImage : this.player,
+      (obj1, obj2) => {
+        const harvestableRef: Harvestable = obj2.getData('ref')
+        harvestableRef.handlePlantPlayerCollision()
+      }
+    )
   }
 
   initMobs() {
