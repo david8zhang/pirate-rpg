@@ -13,26 +13,6 @@ export class PlayerMobCollision {
   constructor(scene: Game, mob: Mob) {
     this.scene = scene
     this.mob = mob
-    this.scene.physics.add.collider(
-      this.mob.sprite,
-      this.scene.player,
-      this.handlePlayerAttack,
-      undefined,
-      this
-    )
-  }
-
-  updatePlayerWeaponCollider() {
-    const weapon = this.scene.player.getWeapon()
-    if (weapon) {
-      this.weaponCollider = this.scene.physics.add.collider(
-        this.mob.sprite,
-        weapon.hitboxImage,
-        this.handlePlayerWeaponAttack,
-        undefined,
-        this
-      )
-    }
   }
 
   handlePlayerWeaponAttack() {

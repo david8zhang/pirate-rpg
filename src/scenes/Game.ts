@@ -1,4 +1,4 @@
-import Phaser, { Physics } from 'phaser'
+import Phaser, { Physics, RIGHT } from 'phaser'
 import { ALL_HARVESTABLES, Constants } from '../utils/Constants'
 import '../characters/Player'
 import '../mobs/GiantCrab'
@@ -21,6 +21,7 @@ export default class Game extends Phaser.Scene {
   public player!: Player
   public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private trees!: Phaser.GameObjects.Group
+  private mobs!: Phaser.GameObjects.Group
   private map!: Phaser.Tilemaps.Tilemap
 
   // Tilemap layers
@@ -31,6 +32,7 @@ export default class Game extends Phaser.Scene {
 
   // colliders
   public playerHarvestableCollider!: Physics.Arcade.Collider
+  public playerMobsCollider!: Physics.Arcade.Collider
   public itemsOnGround: Item[] = []
 
   // Mobs & Harvestables
@@ -136,11 +138,19 @@ export default class Game extends Phaser.Scene {
         harvestableRef.handlePlantPlayerCollision()
       }
     )
+    this.playerMobsCollider = this.physics.add.collider(
+      this.mobs,
+      weapon ? weapon.hitboxImage : this.player,
+      (obj1, obj2) => {
+        const mobRef: Mob = obj2.getData('ref')
+        mobRef.playerMobCollision.handlePlayerWeaponAttack()
+      }
+    )
   }
 
   initMobs() {
     const mobsLayer = this.map.getObjectLayer('Mobs')
-    const mobsGroup = this.physics.add.group({
+    this.mobs = this.physics.add.group({
       classType: Mob,
     })
 
@@ -150,7 +160,7 @@ export default class Game extends Phaser.Scene {
       const yPos = mobObj.y! - mobObj.height! * 0.5
       const crab = new Crab(this, { x: xPos, y: yPos, textureKey: 'crab' })
       this.mobsList.push(crab)
-      mobsGroup.add(crab.sprite)
+      this.mobs.add(crab.sprite)
     })
     const monkey = new Monkey(this, {
       x: 300,
@@ -158,6 +168,11 @@ export default class Game extends Phaser.Scene {
       textureKey: 'monkey',
     })
     this.mobsList.push(monkey)
+    this.mobs.add(monkey.sprite)
+    this.playerMobsCollider = this.physics.add.collider(this.mobs, this.player, (obj1, obj2) => {
+      const mobRef: Mob = obj2.getData('ref')
+      mobRef.playerMobCollision.handlePlayerAttack()
+    })
   }
 
   initObjects() {

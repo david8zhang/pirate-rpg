@@ -37,7 +37,7 @@ export abstract class Mob {
   health: number
   sprite: Phaser.Physics.Arcade.Sprite
   isAggro: boolean = false
-  playerMobCollision: PlayerMobCollision
+  public playerMobCollision: PlayerMobCollision
 
   // Components
   activeBehavior: Behavior
@@ -57,6 +57,7 @@ export abstract class Mob {
     this.maxHealth = 100
     this.health = 100
     this.sprite = scene.physics.add.sprite(x, y, textureKey)
+    this.sprite.setData('ref', this)
     this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.sprite.setPushable(false)
     this.animations = animations
@@ -129,10 +130,5 @@ export abstract class Mob {
     this.healthBar.y = this.sprite.y - this.sprite.height / 2
     this.healthBar.draw()
     this.activeBehavior.update()
-
-    const gameScene = this.scene as Game
-    if (gameScene) {
-      this.playerMobCollision.updatePlayerWeaponCollider()
-    }
   }
 }
