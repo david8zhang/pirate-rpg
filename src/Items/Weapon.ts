@@ -124,7 +124,7 @@ export class Weapon {
               from: isLeft ? 20 : -20,
               to: isLeft ? -140 : 140,
             },
-            duration: Constants.ATTACK_DURATION - 200,
+            duration: Constants.WEAPON_SWING_DURATION,
             onComplete: () => {
               this.scene.time.delayedCall(100, () => {
                 this.sprite.setScale(1)
@@ -147,7 +147,7 @@ export class Weapon {
             targets: this.sprite,
             x: '-=20',
             angle: isUp ? '-=150' : '+=150',
-            duration: Constants.ATTACK_DURATION - 200,
+            duration: Constants.WEAPON_SWING_DURATION,
             onComplete: () => {
               this.scene.time.delayedCall(100, () => {
                 this.sprite.setScale(1)

@@ -6,7 +6,13 @@ export class AttackState extends State {
     player.setVelocity(0)
     const weapon = player.getWeapon()
     if (weapon && weapon.isEquipped) {
-      player.anims.play(`player-punch-down`)
+      if (player.direction === Direction.LEFT || player.direction === Direction.RIGHT) {
+        player.anims.play(`player-weapon-swing-side`)
+      } else if (player.direction === Direction.UP) {
+        player.anims.play('player-punch-up')
+      } else if (player.direction === Direction.DOWN) {
+        player.anims.play(`player-punch-down`)
+      }
     } else {
       player.anims.play(`player-punch-${player.getAnimDirection(player.direction)}`)
     }

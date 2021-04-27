@@ -124,4 +124,15 @@ export const createCharacterAnims = (anims: Phaser.Animations.AnimationManager) 
     repeat: 0,
     frameRate: 10,
   })
+
+  anims.create({
+    key: 'player-weapon-swing-side',
+    frames: anims.generateFrameNames('player', {
+      start: 37,
+      end: 39,
+      suffix: '.png',
+    }),
+    repeat: 0,
+    frameRate: 8,
+  })
 }

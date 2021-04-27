@@ -14,6 +14,9 @@ export class Constants {
   static get ATTACK_DURATION() {
     return 400
   }
+  static get WEAPON_SWING_DURATION() {
+    return 300
+  }
 }
 
 export const ALL_HARVESTABLES = [
