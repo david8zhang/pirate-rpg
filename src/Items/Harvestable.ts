@@ -1,4 +1,4 @@
-import Player from '~/characters/Player'
+import Player, { Direction } from '~/characters/Player'
 import Game from '~/scenes/Game'
 import { Constants } from '~/utils/Constants'
 import { ItemConfig } from './ItemConfig'
@@ -31,6 +31,7 @@ export class Harvestable {
   public onDropItem?: Function
   public isAttacked: boolean = false
   public currPlayerWeapon: string = 'unarmed'
+  public emitter!: Phaser.GameObjects.Particles.ParticleEmitter
 
   constructor(scene: Game, config: HarvestableConfig) {
     const { xPos, yPos, texture, bodyResize, health, defaultFrame, onDropItem } = config
@@ -59,16 +60,47 @@ export class Harvestable {
     }
     this.sprite.setData('ref', this)
     this.sprite.setPushable(false)
+    const particles = this.scene.add.particles('wood-particle')
+    particles.setName('UI')
+    particles.setDepth(1000)
+    this.emitter = particles
+      .createEmitter({
+        x: 100,
+        y: 100,
+        gravityX: 10,
+        gravityY: 200,
+        angle: { min: 0, max: 360 },
+        speed: 50,
+        lifespan: 600,
+      })
+      .stop()
   }
 
   handlePlantPlayerCollision() {
     if (this.scene.player.getCurrState() === 'attack') {
       const weapon = this.scene.player.getWeapon()
       this.takeDamage(weapon ? weapon.damage : Player.UNARMED_DAMAGE)
-      this.isAttacked = true
-      this.scene.time.delayedCall(Constants.ATTACK_DURATION, () => {
-        this.isAttacked = false
-      })
+      if (!this.isAttacked && weapon) {
+        this.isAttacked = true
+        const offsetX = this.getParticleExplosionOffset()
+        this.emitter.explode(8, weapon.hitboxImage.x + offsetX, weapon.hitboxImage.y - 10)
+        this.emitter.onParticleDeath(() => {
+          this.isAttacked = false
+        })
+      }
+    }
+  }
+
+  getParticleExplosionOffset() {
+    switch (this.scene.player.direction) {
+      case Direction.LEFT: {
+        return -8
+      }
+      case Direction.RIGHT: {
+        return 8
+      }
+      default:
+        return 0
     }
   }
 

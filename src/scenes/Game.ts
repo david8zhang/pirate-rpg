@@ -47,6 +47,7 @@ export default class Game extends Phaser.Scene {
 
   // Item Factory
   public itemFactory: ItemFactory
+  public emitter!: Phaser.GameObjects.Particles.ParticleEmitter
 
   constructor() {
     super('game')

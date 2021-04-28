@@ -23,6 +23,9 @@ export default class Preloader extends Phaser.Scene {
       endFrame: 1,
     })
 
+    // Particles
+    this.load.image('wood-particle', 'particles/wood-particle.png')
+
     // Tiles
     this.load.image('tiles', 'tiles/beach-tiles.png')
     this.load.image('panel', 'ui/grey_panel.png')
