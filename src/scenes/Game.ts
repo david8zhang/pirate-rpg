@@ -1,4 +1,4 @@
-import Phaser, { Physics, RIGHT } from 'phaser'
+import Phaser, { Physics } from 'phaser'
 import { ALL_HARVESTABLES, Constants } from '../utils/Constants'
 import '../characters/Player'
 import '../mobs/GiantCrab'
@@ -8,14 +8,13 @@ import { createCrabAnims } from '~/anims/CrabAnims'
 import { createCharacterAnims } from '../anims/CharacterAnims'
 import { createGiantCrabAnims } from '../anims/GiantCrabAnims'
 import { Mob } from '../mobs/Mob'
-import { HealthBar } from '../ui/HealthBar'
 import { Monkey } from '~/mobs/Monkey'
 import { createmonkeyAnims } from '~/anims/MonkeyAnims'
-import { debugDraw } from '~/utils/debug'
 import { Item } from '~/items/Item'
 import { PickupObjectText } from '~/ui/PickupObjectText'
 import { ItemFactory } from '~/items/ItemFactory'
 import { Harvestable } from '~/items/Harvestable'
+import UIScene from './UIScene'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -44,6 +43,7 @@ export default class Game extends Phaser.Scene {
 
   // UI text
   public pickupObjText!: PickupObjectText
+  public isShipScale: boolean = false
 
   // Item Factory
   public itemFactory: ItemFactory
@@ -126,6 +126,12 @@ export default class Game extends Phaser.Scene {
         harvestableRef.handlePlantPlayerCollision()
       }
     )
+  }
+
+  public setShipCamera() {
+    this.isShipScale = true
+    UIScene.instance.hide()
+    this.scale.setGameSize(1200, 800)
   }
 
   updateCollidersOnWeaponEquip() {

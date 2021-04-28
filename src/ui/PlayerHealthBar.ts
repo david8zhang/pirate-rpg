@@ -5,9 +5,10 @@ export class PlayerHealthBar {
   private healthBar: HealthBar
   constructor(scene: Phaser.Scene) {
     this.scene = scene
-    this.healthBar = new HealthBar(this.scene, 27, 370, 150, 10, 0x2ecc71, true)
+    const height = this.scene.scale.height
+    this.healthBar = new HealthBar(this.scene, 27, height - 30, 150, 10, 0x2ecc71, true)
     this.healthBar.setVisible(true)
-    const sprite = this.scene.add.sprite(25, 372, 'heart')
+    const sprite = this.scene.add.sprite(25, height - 28, 'heart')
     sprite.setScale(0.1)
     sprite.setDepth(2000)
   }

@@ -30,6 +30,10 @@ export default class UIScene extends Phaser.Scene {
     this.itemTooltip.update()
   }
 
+  hide() {
+    this.scene.setVisible(false)
+  }
+
   public static get instance() {
     return UIScene._instance
   }

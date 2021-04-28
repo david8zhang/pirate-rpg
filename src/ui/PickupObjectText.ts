@@ -1,6 +1,8 @@
+import Game from '~/scenes/Game'
+
 export class PickupObjectText {
   text: Phaser.GameObjects.Text
-  constructor(scene: Phaser.Scene, x: number, y: number) {
+  constructor(scene: Game, x: number, y: number) {
     this.text = scene.add.text(x, y, '', {
       fontSize: '10px',
       fontFamily: 'GraphicPixel',

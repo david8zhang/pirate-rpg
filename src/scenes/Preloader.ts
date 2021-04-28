@@ -47,6 +47,8 @@ export default class Preloader extends Phaser.Scene {
     )
     this.load.atlas('monkey', 'mobs/monkey/monkey.png', 'mobs/monkey/monkey.json')
     this.load.atlas('crab', 'mobs/crab/crab.png', 'mobs/crab/crab.json')
+
+    this.load.image('ship', 'items/pirate-ship1.png')
   }
   create() {
     this.scene.start('game')
