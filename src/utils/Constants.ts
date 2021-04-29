@@ -1,4 +1,4 @@
-import { Harvestable, HarvestableConfig } from '~/items/Harvestable'
+import { Harvestable } from '~/items/Harvestable'
 import { ItemTypes } from '../items/ItemConfig'
 
 export class Constants {
@@ -36,6 +36,21 @@ export const ALL_HARVESTABLES = [
         y: 53,
       },
     },
+  },
+]
+
+export const ALL_PARTICLES = [
+  {
+    name: 'Blood Particle',
+    image: 'blood-particle',
+    type: ItemTypes.particle,
+    description: '',
+  },
+  {
+    name: 'Wood Particle',
+    image: 'wood-particle',
+    type: ItemTypes.particle,
+    description: '',
   },
 ]
 

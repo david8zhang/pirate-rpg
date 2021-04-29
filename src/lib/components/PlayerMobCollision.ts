@@ -3,6 +3,7 @@ import { Mob } from '../../mobs/Mob'
 import Game from '../../scenes/Game'
 import { Direction } from './Behavior'
 import Player from '~/characters/Player'
+import { ParticleSpawner } from './ParticleSpawner'
 
 export class PlayerMobCollision {
   private scene: Game
@@ -25,7 +26,15 @@ export class PlayerMobCollision {
 
   handleMobHit(damage: number = Player.UNARMED_DAMAGE) {
     this.scene.cameras.main.shake(100, 0.005)
-    this.isHit = true
+    if (!this.isHit) {
+      ParticleSpawner.instance.spawnParticle(
+        'blood-particle',
+        this.mob.sprite.x,
+        this.mob.sprite.y,
+        4
+      )
+      this.isHit = true
+    }
     this.mob.activeBehavior.stop()
 
     this.mob.takeDamage(damage)

@@ -7,8 +7,16 @@ export class Item {
   scene: Game
   collider: Phaser.Physics.Arcade.Collider
   dropLength?: number
+  disableHover?: boolean
 
-  constructor(scene: Game, x: number, y: number, textureKey: string, dropLength?: number) {
+  constructor(
+    scene: Game,
+    x: number,
+    y: number,
+    textureKey: string,
+    dropLength?: number,
+    disableHover?: boolean
+  ) {
     this.scene = scene
     this.sprite = this.scene.physics.add.sprite(x, y, textureKey)
     this.scene.physics.world.enable(this.sprite)
@@ -23,15 +31,18 @@ export class Item {
       this
     )
     this.dropLength = dropLength
+    this.disableHover = disableHover
   }
 
   onPlayerHoverItem() {
-    this.scene.pickupObjText.showText(
-      this.itemName,
-      this.scene.player.x - this.scene.player.width,
-      this.scene.player.y + 20
-    )
-    this.scene.player.itemOnHover = this
+    if (!this.disableHover) {
+      this.scene.pickupObjText.showText(
+        this.itemName,
+        this.scene.player.x - this.scene.player.width,
+        this.scene.player.y + 20
+      )
+      this.scene.player.itemOnHover = this
+    }
   }
 
   destroy() {

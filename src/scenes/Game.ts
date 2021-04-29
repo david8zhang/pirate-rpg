@@ -15,6 +15,7 @@ import { PickupObjectText } from '~/ui/PickupObjectText'
 import { ItemFactory } from '~/items/ItemFactory'
 import { Harvestable } from '~/items/Harvestable'
 import UIScene from './UIScene'
+import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -47,11 +48,12 @@ export default class Game extends Phaser.Scene {
 
   // Item Factory
   public itemFactory: ItemFactory
-  public emitter!: Phaser.GameObjects.Particles.ParticleEmitter
+  public particleSpawner: ParticleSpawner
 
   constructor() {
     super('game')
     this.itemFactory = new ItemFactory(this)
+    this.particleSpawner = new ParticleSpawner(this)
   }
 
   preload(): void {
