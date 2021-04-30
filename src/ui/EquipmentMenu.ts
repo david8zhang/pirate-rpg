@@ -10,7 +10,6 @@ export class EquipmentMenu {
   public weaponBox: ItemBox
   public chestBox: ItemBox
   public pantsBox: ItemBox
-  public offhandBox: ItemBox
   public isVisible: boolean = false
   public onItemClick: Function | null = null
 
@@ -29,12 +28,6 @@ export class EquipmentMenu {
       this.chestBox.panel.y,
       true
     )
-    this.offhandBox = new ItemBox(
-      scene,
-      this.chestBox.panel.x - this.chestBox.panel.width - EquipmentMenu.PADDING,
-      this.chestBox.panel.y,
-      true
-    )
     this.pantsBox = new ItemBox(
       scene,
       this.chestBox.panel.x,
@@ -45,7 +38,6 @@ export class EquipmentMenu {
     this.chestBox.setVisible(this.isVisible)
     this.headBox.setVisible(this.isVisible)
     this.weaponBox.setVisible(this.isVisible)
-    this.offhandBox.setVisible(this.isVisible)
     this.pantsBox.setVisible(this.isVisible)
 
     this.chestBox.itemClickHandler = () => {
@@ -57,9 +49,6 @@ export class EquipmentMenu {
     this.weaponBox.itemClickHandler = () => {
       this.onUnequipItem(this.weaponBox)
     }
-    this.offhandBox.itemClickHandler = () => {
-      this.onUnequipItem(this.offhandBox)
-    }
     this.pantsBox.itemClickHandler = () => {
       this.onUnequipItem(this.pantsBox)
     }
@@ -70,7 +59,6 @@ export class EquipmentMenu {
     this.chestBox.setVisible(this.isVisible)
     this.headBox.setVisible(this.isVisible)
     this.weaponBox.setVisible(this.isVisible)
-    this.offhandBox.setVisible(this.isVisible)
     this.pantsBox.setVisible(this.isVisible)
   }
 
