@@ -1,13 +1,14 @@
 import { Inventory } from '~/characters/Player'
 import { ItemConfig } from '~/items/ItemConfig'
 import { ALL_ITEMS } from '../utils/Constants'
+import { text } from './components/Text'
 import { CraftableItemDetails } from './CraftableItemDetails'
 
 export class CraftingMenu {
   private static X_POS: number = 350
   private static Y_POS: number = 10
   private static WIDTH: number = 250
-  private static HEIGHT: number = 300
+  private static HEIGHT: number = 250
 
   // Phaser Scene
   public scene: Phaser.Scene
@@ -20,7 +21,7 @@ export class CraftingMenu {
   public craftableItemsList: Phaser.GameObjects.Text[] = []
   public currHighlight: Phaser.GameObjects.Rectangle
   private container: Phaser.GameObjects.Container
-  private headerText!: Phaser.GameObjects.Text
+  private headerText!: Phaser.GameObjects.DOMElement
   private craftableItemDetails: CraftableItemDetails
 
   // Game state variables
@@ -82,11 +83,13 @@ export class CraftingMenu {
 
   public toggleVisible() {
     if (!this.headerText) {
+      const headerTextComp = text('Crafting', {
+        fontSize: '15ipx',
+        fontFamily: 'GraphicPixel',
+        color: 'white',
+      }) as HTMLElement
       this.headerText = this.scene.add
-        .text(CraftingMenu.X_POS + CraftingMenu.WIDTH / 2, CraftingMenu.Y_POS + 10, 'Crafting', {
-          fontFamily: 'GraphicPixel',
-          fontSize: '20px',
-        })
+        .dom(CraftingMenu.X_POS + CraftingMenu.WIDTH / 2, CraftingMenu.Y_POS + 10, headerTextComp)
         .setOrigin(0.5)
       this.container.add(this.headerText)
     }

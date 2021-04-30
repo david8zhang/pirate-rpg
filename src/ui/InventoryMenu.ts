@@ -11,7 +11,7 @@ export class ItemBox {
   // Item contained inside
   private sprite!: Phaser.GameObjects.Sprite
   public itemName!: string
-  public countText: Phaser.GameObjects.Text
+  public countText!: Phaser.GameObjects.Text
 
   // instance vars
   private scene: Phaser.Scene
@@ -28,7 +28,7 @@ export class ItemBox {
   public isClicked: boolean = false
   public isHighlighted: boolean = false
 
-  constructor(scene: Phaser.Scene, xPos: number, yPos: number) {
+  constructor(scene: Phaser.Scene, xPos: number, yPos: number, disableCount?: boolean) {
     this.scene = scene
     this.x = xPos
     this.y = yPos
@@ -53,23 +53,24 @@ export class ItemBox {
     this.sprite = scene.add.sprite(xPos, yPos, '')
     this.sprite.setVisible(false)
 
-    this.countText = scene.add
-      .text(xPos + 8, yPos + 8, '', {
-        fontSize: '10px',
-        padding: {
-          left: 20,
-        },
-        align: 'right',
-        fontFamily: 'GraphicPixel',
-        color: 'white',
-      })
-      .setOrigin(0.5)
-    this.countText.autoRound = false
-
     this.container = scene.add.container(25, 25)
     this.container.add(this.panel)
     this.container.add(this.sprite)
-    this.container.add(this.countText)
+    if (!disableCount) {
+      this.countText = scene.add
+        .text(xPos + 8, yPos + 8, '', {
+          fontSize: '10px',
+          padding: {
+            left: 20,
+          },
+          align: 'right',
+          fontFamily: 'GraphicPixel',
+          color: 'white',
+        })
+        .setOrigin(0.5)
+      this.countText.autoRound = false
+      this.container.add(this.countText)
+    }
   }
 
   setTextColor(color: string) {
@@ -93,8 +94,11 @@ export class ItemBox {
     if (count > 0) {
       this.sprite.setVisible(true)
     }
-    this.countText.setText(count.toString())
-    this.countText.setVisible(true)
+
+    if (this.countText) {
+      this.countText.setText(count.toString())
+      this.countText.setVisible(true)
+    }
   }
 
   setVisible(isVisible: boolean) {
@@ -103,9 +107,12 @@ export class ItemBox {
 
   removeItem() {
     this.sprite.setTexture('')
-    this.countText.setText('0')
     this.sprite.setVisible(false)
-    this.countText.setVisible(false)
+
+    if (this.countText) {
+      this.countText.setText('0')
+      this.countText.setVisible(false)
+    }
   }
 
   onItemClick() {

@@ -118,6 +118,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           UIScene.instance.inventoryMenu.toggleInventoryExpand()
           UIScene.instance.craftingMenu.toggleVisible()
         }
+
+        if (keycode.code === 'KeyC') {
+          UIScene.instance.equipMenu.toggleVisible()
+        }
       },
       this
     )
@@ -164,14 +168,40 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           this.equipment.weapon = undefined
         }
         this.removeItem(item.name, 1)
-        this.equipment.weapon = new Weapon(this.scene, this, {
+        const weapon = new Weapon(this.scene, this, {
           texture: item.image,
           damage: item.stats.damage as number,
           attackRange: item.stats['attack range'] as number,
           name: item.name,
         })
-        this.equipment.weapon.isEquipped = true
-        this.onEquipWeaponHandler()
+        this.equipWeapon(weapon)
+      }
+    }
+  }
+
+  onUnequipItem(itemBox: ItemBox) {
+    const weaponItem = ItemFactory.instance.createItem(itemBox.itemName, this.x, this.y)
+    if (weaponItem) {
+      this.addItem(weaponItem)
+      weaponItem?.destroy()
+    }
+    const weapon = this.equipment.weapon
+    this.equipment.weapon = undefined
+    weapon?.destroy()
+  }
+
+  equipWeapon(weapon: Weapon) {
+    this.equipment.weapon = weapon
+    this.equipment.weapon.isEquipped = true
+    this.onEquipWeaponHandler()
+
+    const item = ItemFactory.instance.getItemType(weapon.name)
+    if (item) {
+      UIScene.instance.equipMenu.weaponBox.setItem(1, weapon.name, item.thumbnail as string)
+      if (!UIScene.instance.equipMenu.onItemClick) {
+        UIScene.instance.equipMenu.onItemClick = (itemBox: ItemBox) => {
+          this.onUnequipItem(itemBox)
+        }
       }
     }
   }

@@ -47,8 +47,8 @@ export class HealthBar {
     this.bar.clear()
 
     // Border
-    const borderWidth = this.showBorder ? 4 : 0
-    this.bar.fillStyle(0x00000)
+    const borderWidth = this.showBorder ? 5 : 0
+    this.bar.fillStyle(0x000000)
     this.bar.fillRect(
       this.x - borderWidth / 2,
       this.y - borderWidth / 2,
