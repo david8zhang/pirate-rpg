@@ -21,6 +21,10 @@ export interface HarvestableConfig {
     }
   }
   droppedItems?: string[]
+  onDestroyDrops?: {
+    name: string
+    quantity: number
+  }[]
   onDropItem?: Function
 }
 
@@ -98,21 +102,43 @@ export class Harvestable {
     }
     this.health -= damage
     this.health = Math.max(0, this.health)
+    if (this.health === 0) {
+      this.onDestroy()
+    }
     this.scene.cameras.main.shake(Constants.ATTACK_DURATION / 2, 0.002)
   }
 
+  // Items to be dropped when broken completely
+  onDestroy() {
+    const { onDestroyDrops } = this.config
+    if (onDestroyDrops) {
+      onDestroyDrops.forEach((drop) => {
+        for (let i = 0; i < drop.quantity; i++) {
+          this.dropItem(drop.name)
+        }
+      })
+    }
+    this.sprite.destroy()
+  }
+
+  dropItem(itemName: string) {
+    const dropItem = ItemFactory.instance.createItem(
+      itemName,
+      this.sprite.x,
+      this.sprite.y - this.sprite.height / 2 + 10
+    )
+    if (dropItem) {
+      dropItem.drop()
+    }
+  }
+
+  // Items to be dropped when hit (trees, bushes, etc. dropping berries/fruits)
+  // Interesting idea: Drop mobs when hitting trees, like coconut crabs or bees
   dropItems() {
     const { droppedItems } = this.config
     if (droppedItems) {
       const dropItemName = droppedItems[Math.floor(Math.random() * droppedItems.length)]
-      const dropItem = ItemFactory.instance.createItem(
-        dropItemName,
-        this.sprite.x,
-        this.sprite.y - this.sprite.height / 2 + 10
-      )
-      if (dropItem) {
-        dropItem?.drop()
-      }
+      this.dropItem(dropItemName)
     }
   }
 }

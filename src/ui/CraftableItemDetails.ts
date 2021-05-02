@@ -125,7 +125,7 @@ export class CraftableItemDetails {
   }
 
   addItemStats(craftableItem: ItemConfig) {
-    if (!craftableItem.stats) return
+    let stats = craftableItem.stats || {}
 
     // Reset the stat list
     this.statList.forEach((stat: Phaser.GameObjects.DOMElement) => {
@@ -135,7 +135,7 @@ export class CraftableItemDetails {
 
     // Populate the new statlist
     let yPos = this.craftableItemDescription!.y + this.craftableItemDescription!.height + 10
-    Object.keys(craftableItem.stats).forEach((stat: string, index: number) => {
+    Object.keys(stats).forEach((stat: string, index: number) => {
       const statElement = itemStats(stat, craftableItem.stats![stat]) as HTMLElement
       if (this.statList[index]) {
         this.statList[index].setElement(statElement)

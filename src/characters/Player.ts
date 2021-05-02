@@ -39,7 +39,7 @@ export interface Equipment {
 }
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
-  public static UNARMED_DAMAGE = 10
+  public static UNARMED_DAMAGE = 5
 
   public stateMachine: StateMachine
   public direction: Direction = Direction.DOWN
@@ -169,7 +169,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         }
         this.removeItem(item.name, 1)
         const weapon = new Weapon(this.scene, this, {
-          texture: item.image,
+          texture: item.weaponImage as string,
           damage: item.stats.damage as number,
           attackRange: item.stats['attack range'] as number,
           name: item.name,
@@ -197,7 +197,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     const item = ItemFactory.instance.getItemType(weapon.name)
     if (item) {
-      UIScene.instance.equipMenu.weaponBox.setItem(1, weapon.name, item.thumbnail as string)
+      UIScene.instance.equipMenu.weaponBox.setItem(1, weapon.name, item.image as string)
       if (!UIScene.instance.equipMenu.onItemClick) {
         UIScene.instance.equipMenu.onItemClick = (itemBox: ItemBox) => {
           this.onUnequipItem(itemBox)

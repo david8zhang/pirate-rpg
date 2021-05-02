@@ -29,6 +29,12 @@ export const ALL_HARVESTABLES = [
       harvestable.sprite.setFrame(0)
     },
     droppedItems: ['Coconut'],
+    onDestroyDrops: [
+      {
+        name: 'Wood',
+        quantity: 5,
+      },
+    ],
     bodyResize: {
       width: 0.2,
       height: 0.1,
@@ -62,6 +68,15 @@ export const ALL_ITEMS = [
     description: 'A tasty coconut',
   },
   {
+    name: 'Wood',
+    image: 'wood',
+    type: ItemTypes.resource,
+    description: 'Some woody wood',
+    recipe: {
+      Stick: 2,
+    },
+  },
+  {
     name: 'Crab claw',
     image: 'crabclaw',
     stats: {
@@ -84,12 +99,12 @@ export const ALL_ITEMS = [
   },
   {
     name: 'Stone Axe',
-    image: 'axe',
-    thumbnail: 'axe-inventory',
+    weaponImage: 'axe',
+    image: 'axe-inventory',
     description: 'And my axe!',
     recipe: {
       Rock: 2,
-      Stick: 1,
+      Wood: 1,
     },
     stats: {
       damage: 15,

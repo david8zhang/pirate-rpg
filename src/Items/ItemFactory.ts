@@ -16,7 +16,7 @@ export class ItemFactory {
         this.scene,
         x,
         y,
-        item.thumbnail || item.image,
+        item.image,
         item.stats && item.stats.dropLength ? item.stats.dropLength : 650
       )
       itemGo.itemName = item.name
