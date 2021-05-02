@@ -43,7 +43,7 @@ export class CraftableItemDetails {
     this.playerInventory = inventory
 
     this.sprite
-      .setPosition(xPos + 15, yPos + 12)
+      .setPosition(xPos + 15, yPos + 16)
       .setTexture(craftableItem.image)
       .setVisible(true)
 
