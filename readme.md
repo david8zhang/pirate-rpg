@@ -6,7 +6,6 @@ A top down pirate themed RPG game build using Phaser 3
 
 Roadmap:
 
-- Cut down trees to harvest wood
+- Placeable structures (Tent)
 - Crafting boats
-- Placeable structures
 - Armor (Head, Chest, Feet)
