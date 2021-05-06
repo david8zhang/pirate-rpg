@@ -34,6 +34,10 @@ export const ALL_HARVESTABLES = [
         name: 'Wood',
         quantity: 5,
       },
+      {
+        name: 'Palm Frond',
+        quantity: 3,
+      },
     ],
     bodyResize: {
       width: 0.2,
@@ -62,10 +66,27 @@ export const ALL_PARTICLES = [
 
 export const ALL_ITEMS = [
   {
+    name: 'Tent',
+    structureImage: 'tent',
+    image: 'tent-inventory',
+    type: ItemTypes.structure,
+    description: "It's not much, but it's an honest home",
+    recipe: {
+      Wood: 5,
+      'Palm Frond': 3,
+    },
+  },
+  {
     name: 'Coconut',
     image: 'coconut',
     type: ItemTypes.resource,
     description: 'A tasty coconut',
+  },
+  {
+    name: 'Palm Frond',
+    image: 'palm-frond',
+    type: ItemTypes.resource,
+    description: 'Great for fanning',
   },
   {
     name: 'Wood',

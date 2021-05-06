@@ -1,6 +1,4 @@
 import Phaser from 'phaser'
-import WebFontFile from '~/files/WebFontFile'
-import { Constants } from '~/utils/Constants'
 
 export default class Preloader extends Phaser.Scene {
   constructor() {
@@ -9,8 +7,6 @@ export default class Preloader extends Phaser.Scene {
 
   preload() {
     // Fonts
-    const fonts = new WebFontFile(this.load, ['Poor Story'])
-    this.load.addFile(fonts)
 
     this.load.atlas('player', 'character/player.png', 'character/player.json')
     this.load.image('heart', 'ui/pixel-heart.png')
@@ -39,6 +35,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('stick', 'items/stick.png')
     this.load.image('rock', 'items/rock.png')
     this.load.image('wood', 'items/wood.png')
+    this.load.image('palm-frond', 'items/palm-frond.png')
 
     // Weapons
     this.load.image('axe', 'weapons/axe.png')
@@ -56,6 +53,7 @@ export default class Preloader extends Phaser.Scene {
     // Structures
     this.load.image('ship', 'items/pirate-ship1.png')
     this.load.image('tent', 'structures/tent.png')
+    this.load.image('tent-inventory', 'structures/tent-inventory.png')
   }
   create() {
     this.scene.start('game')

@@ -49,6 +49,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public isHit: boolean = false
   public itemOnHover: Item | null = null
   public onEquipWeaponHandler: Function = () => {}
+  public structureToBePlaced: any = null
 
   // Equipment and inventory
   public inventory: Inventory
@@ -156,6 +157,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   handleItemClick(itemName: string) {
     const item = ItemFactory.instance.getItemType(itemName)
     if (item && item.stats) {
+      // Handle if the double-clicked item was a weapon
       if (item.type === ItemTypes.weapon) {
         if (this.equipment.weapon) {
           const weaponName = this.equipment.weapon.name
@@ -175,6 +177,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           name: item.name,
         })
         this.equipWeapon(weapon)
+      }
+
+      // Handle if the double-clicked item was a structure
+      if (item.type === ItemTypes.structure) {
+        this.structureToBePlaced = item
       }
     }
   }

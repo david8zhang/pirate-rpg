@@ -3,6 +3,7 @@ export enum ItemTypes {
   armor = 'ARMOR',
   resource = 'RESOURCE',
   particle = 'PARTICLE',
+  structure = 'STRUCTURE',
 }
 
 export interface ItemConfig {

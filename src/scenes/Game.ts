@@ -71,8 +71,6 @@ export default class Game extends Phaser.Scene {
     this.initPlants()
     this.initMobs()
     this.initObjects()
-
-    const img = this.add.image(300, 300, 'tent')
   }
 
   initTilemap() {
