@@ -50,6 +50,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public itemOnHover: Item | null = null
   public onEquipWeaponHandler: Function = () => {}
   public structureToBePlaced: any = null
+  public structureImage: Phaser.GameObjects.Image | null = null
 
   // Equipment and inventory
   public inventory: Inventory
@@ -132,6 +133,20 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     return this.stateMachine.getState()
   }
 
+  placeStructure() {
+    if (this.structureImage && this.structureToBePlaced) {
+      this.removeItem(this.structureToBePlaced.name, 1)
+      this.scene.add.image(
+        this.structureImage?.x,
+        this.structureImage?.y,
+        this.structureToBePlaced.structureImage
+      )
+      this.structureImage.destroy()
+      this.structureImage = null
+      this.structureToBePlaced = null
+    }
+  }
+
   takeDamage(damage: number) {
     this.currHealth -= damage
     this.setTint(0xff0000)
@@ -143,6 +158,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   update() {
+    this.showStructureToBePlaced()
     this.stateMachine.step()
     const gameScene = this.scene as Game
     if (!this.body.embedded) {
@@ -154,11 +170,42 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  showStructureToBePlaced() {
+    if (this.structureToBePlaced) {
+      const { structureImage } = this.structureToBePlaced
+      let xPos = this.x
+      let yPos = this.y
+      if (!this.structureImage) {
+        this.structureImage = this.scene.add.image(xPos, yPos, structureImage).setAlpha(0.5)
+      }
+      switch (this.direction) {
+        case Direction.LEFT:
+          xPos = this.x - (this.structureImage.width / 2 + 10)
+          yPos = this.y
+          break
+        case Direction.RIGHT:
+          xPos = this.x + (this.structureImage.width / 2 + 10)
+          yPos = this.y
+          break
+        case Direction.UP:
+          yPos = this.y - (this.structureImage.height / 2 + 10)
+          xPos = this.x
+          break
+        case Direction.DOWN:
+          yPos = this.y + (this.structureImage.height / 2 + 10)
+          xPos = this.x
+          break
+      }
+      this.structureImage.x = xPos
+      this.structureImage.y = yPos
+    }
+  }
+
   handleItemClick(itemName: string) {
     const item = ItemFactory.instance.getItemType(itemName)
-    if (item && item.stats) {
+    if (item) {
       // Handle if the double-clicked item was a weapon
-      if (item.type === ItemTypes.weapon) {
+      if (item.type === ItemTypes.weapon && item.stats) {
         if (this.equipment.weapon) {
           const weaponName = this.equipment.weapon.name
           const weaponItem = ItemFactory.instance.createItem(weaponName, this.x, this.y)

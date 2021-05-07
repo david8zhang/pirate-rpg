@@ -17,9 +17,15 @@ export class IdleState extends State {
       this.stateMachine.transition('move')
       return
     }
-    if (spaceDown && player.getCurrState() !== 'attack') {
-      this.stateMachine.transition('attack')
-      return
+    if (spaceDown) {
+      if (!player.structureToBePlaced && player.getCurrState() !== 'attack') {
+        this.stateMachine.transition('attack')
+        return
+      }
+      if (player.structureToBePlaced) {
+        player.placeStructure()
+        return
+      }
     }
   }
 }
