@@ -9,7 +9,7 @@ const config: any = {
   antialias: false,
   type: Phaser.AUTO,
   width: 600,
-  height: 400,
+  height: 300,
   parent: 'phaser',
   dom: {
     createContainer: true,
