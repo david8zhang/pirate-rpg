@@ -1,5 +1,5 @@
 import { Inventory } from '~/characters/Player'
-import { ItemConfig } from '~/items/ItemConfig'
+import { ItemConfig } from '~/objects/ItemConfig'
 import { ALL_ITEMS } from '../utils/Constants'
 import { text } from './components/Text'
 import { CraftableItemDetails } from './CraftableItemDetails'

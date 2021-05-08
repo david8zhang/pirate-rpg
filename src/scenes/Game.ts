@@ -10,18 +10,17 @@ import { createGiantCrabAnims } from '../anims/GiantCrabAnims'
 import { Mob } from '../mobs/Mob'
 import { Monkey } from '~/mobs/Monkey'
 import { createmonkeyAnims } from '~/anims/MonkeyAnims'
-import { Item } from '~/items/Item'
+import { Item } from '~/objects/Item'
 import { PickupObjectText } from '~/ui/PickupObjectText'
-import { ItemFactory } from '~/items/ItemFactory'
-import { Harvestable } from '~/items/Harvestable'
+import { ItemFactory } from '~/objects/ItemFactory'
+import { Harvestable } from '~/objects/Harvestable'
 import UIScene from './UIScene'
 import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
+import { Structure } from '~/objects/Structure'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
   public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
-  private trees!: Phaser.GameObjects.Group
-  private mobs!: Phaser.GameObjects.Group
   private map!: Phaser.Tilemaps.Tilemap
 
   // Tilemap layers
@@ -33,11 +32,24 @@ export default class Game extends Phaser.Scene {
   // colliders
   public playerHarvestableCollider!: Physics.Arcade.Collider
   public playerMobsCollider!: Physics.Arcade.Collider
+  public playerItemsCollider!: Physics.Arcade.Collider
+
+  // Mobs
+  public mobsList: Mob[] = []
+  private mobs!: Phaser.GameObjects.Group
+
+  // Harvestables (Trees, bushes, etc.)
+  public harvestableList: Harvestable[] = []
+  private harvestables!: Phaser.GameObjects.Group
+
+  // Items
+  public items!: Phaser.GameObjects.Group
   public itemsOnGround: Item[] = []
 
-  // Mobs & Harvestables
-  public mobsList: Mob[] = []
-  public harvestableList: Harvestable[] = []
+  // Structures
+  private structures!: Phaser.GameObjects.Group
+  private structureLayer!: Phaser.Tilemaps.TilemapLayer
+  private isInsideStructure: boolean = false
 
   // sprite names to ignore during depth-sorting
   public ignoreNames = ['InAir', 'UI', 'Weapon']
@@ -70,7 +82,9 @@ export default class Game extends Phaser.Scene {
     this.initPlayer()
     this.initPlants()
     this.initMobs()
-    this.initObjects()
+    this.initItems()
+
+    this.addStructure('tent', 400, 400)
   }
 
   initTilemap() {
@@ -102,7 +116,7 @@ export default class Game extends Phaser.Scene {
     const sortedByY = plantsLayer.objects.sort((a, b) => {
       return a.y! - b.y!
     })
-    this.trees = this.physics.add.group({
+    this.harvestables = this.physics.add.group({
       classType: Harvestable,
     })
 
@@ -117,12 +131,12 @@ export default class Game extends Phaser.Scene {
         xPos,
         yPos,
       })
-      this.trees.add(harvestable.sprite)
+      this.harvestables.add(harvestable.sprite)
       this.harvestableList.push(harvestable)
     })
 
     this.playerHarvestableCollider = this.physics.add.collider(
-      this.trees,
+      this.harvestables,
       this.player,
       (obj1, obj2) => {
         const harvestableRef: Harvestable = obj2.getData('ref')
@@ -140,7 +154,7 @@ export default class Game extends Phaser.Scene {
   updateCollidersOnWeaponEquip() {
     const weapon = this.player.getWeapon()
     this.playerHarvestableCollider = this.physics.add.collider(
-      this.trees,
+      this.harvestables,
       weapon ? weapon.hitboxImage : this.player,
       (obj1, obj2) => {
         const harvestableRef: Harvestable = obj2.getData('ref')
@@ -184,31 +198,70 @@ export default class Game extends Phaser.Scene {
     })
   }
 
-  initObjects() {
+  addStructure(texture: string, x: number, y: number) {
+    if (!this.structures) {
+      this.structures = this.physics.add.group({ classType: Structure })
+    }
+    const structure = new Structure(this, texture, x, y)
+    this.structures.add(structure.sprite)
+  }
+
+  // TODO: Render the structure's tilemap
+  initEnteredStructure(structure: Structure) {
+    this.isInsideStructure = true
+    this.playerHarvestableCollider.active = false
+    this.playerMobsCollider.active = false
+    this.playerItemsCollider.active = false
+  }
+
+  hideAllLayers() {
+    this.mobs.setVisible(false)
+    this.harvestables.setVisible(false)
+    this.oceanLayer.setVisible(false)
+    this.sandLayer.setVisible(false)
+    this.grassLayer.setVisible(false)
+    this.structures.setVisible(false)
+    this.items.setVisible(false)
+  }
+
+  initItems() {
     const objectLayer = this.map.getObjectLayer('Objects')
+    if (!this.items) {
+      this.items = this.physics.add.group({ classType: Item })
+    }
     objectLayer.objects.forEach((obj) => {
       const xPos = obj.x! + obj.width! * 0.5
       const yPos = obj.y! - obj.height! * 0.5
       const randNum = Math.floor(Math.random() * 2)
+      let item: Item | null
       if (randNum === 0) {
-        const rock = ItemFactory.instance.createItem('Rock', xPos, yPos)
-        if (rock) {
-          this.itemsOnGround.push(rock)
-        }
+        item = ItemFactory.instance.createItem('Rock', xPos, yPos)
       } else {
-        const stick = ItemFactory.instance.createItem('Stick', xPos, yPos)
-        if (stick) {
-          this.itemsOnGround.push(stick)
-        }
+        item = ItemFactory.instance.createItem('Stick', xPos, yPos)
+      }
+      if (item) {
+        this.itemsOnGround.push(item)
+        this.items.add(item.sprite)
       }
     })
+    this.playerItemsCollider = this.physics.add.overlap(this.player, this.items, (obj1, obj2) => {
+      const item = obj2.getData('ref') as Item
+      item.onPlayerHoverItem()
+    })
+  }
+
+  dropItem(item: Item) {
+    this.itemsOnGround.push(item)
+    this.items.add(item.sprite)
   }
 
   update() {
     this.player.update()
-    this.mobsList.forEach((mob: Mob) => {
-      mob.update()
-    })
+    if (!this.isInsideStructure) {
+      this.mobsList.forEach((mob: Mob) => {
+        mob.update()
+      })
+    }
     this.updateSortingLayers()
   }
 

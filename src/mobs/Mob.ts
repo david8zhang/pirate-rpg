@@ -2,8 +2,8 @@ import { DamageNumber } from '../ui/DamageNumber'
 import { RandomMovementBehavior } from '../lib/components/RandomMovementBehavior'
 import { HealthBar } from '../ui/HealthBar'
 import { Behavior, Direction } from '../lib/components/Behavior'
-import { PlayerMobCollision } from '~/lib/components/PlayerMobCollision'
-import Game from '~/scenes/Game'
+import { PlayerMobCollision } from '../lib/components/PlayerMobCollision'
+import Game from '../scenes/Game'
 
 export interface MobConfig {
   textureKey: string

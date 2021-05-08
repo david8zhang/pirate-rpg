@@ -1,4 +1,4 @@
-import Game from '~/scenes/Game'
+import Game from '../scenes/Game'
 
 export class PickupObjectText {
   text: Phaser.GameObjects.Text

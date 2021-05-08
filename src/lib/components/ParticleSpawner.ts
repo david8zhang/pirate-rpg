@@ -1,5 +1,5 @@
-import { Item } from '~/items/Item'
-import Game from '~/scenes/Game'
+import { Item } from '../../objects/Item'
+import Game from '../../scenes/Game'
 
 export class ParticleSpawner {
   private scene: Game

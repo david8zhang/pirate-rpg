@@ -1,5 +1,3 @@
-import { Item } from '../items/Item'
-
 export enum TooltipPosition {
   TOP_RIGHT = 'topRight',
   TOP_LEFT = 'topLeft',

@@ -1,5 +1,5 @@
-import { Harvestable } from '~/items/Harvestable'
-import { ItemTypes } from '../items/ItemConfig'
+import { Harvestable } from '../objects/Harvestable'
+import { ItemTypes } from '../objects/ItemConfig'
 
 export class Constants {
   static get TILE_SIZE() {

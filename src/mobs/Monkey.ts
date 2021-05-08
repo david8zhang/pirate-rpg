@@ -1,5 +1,4 @@
-import { MeleeAttackBehavior } from '~/lib/components/MeleeAttackBehavior'
-import { PlayerMobCollision } from '../lib/components/PlayerMobCollision'
+import { MeleeAttackBehavior } from '../lib/components/MeleeAttackBehavior'
 import Game from '../scenes/Game'
 import { Mob, MobConfig } from './Mob'
 

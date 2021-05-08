@@ -1,6 +1,6 @@
 import { Inventory } from '~/characters/Player'
 import { ALL_ITEMS } from '~/utils/Constants'
-import { ItemConfig } from '../items/ItemConfig'
+import { ItemConfig } from '../objects/ItemConfig'
 import { button } from './components/Button'
 import { itemStats } from './components/ItemStats'
 import { text } from './components/Text'

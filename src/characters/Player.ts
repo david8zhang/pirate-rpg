@@ -5,12 +5,13 @@ import { MoveState } from './states/MoveState'
 import Game from '../scenes/Game'
 import { StateMachine } from '../lib/StateMachine'
 import UIScene from '../scenes/UIScene'
-import { Item } from '../items/Item'
+import { Item } from '../objects/Item'
 import { DamageNumber } from '~/ui/DamageNumber'
-import { Weapon } from '~/items/Weapon'
-import { ItemTypes, ItemConfig } from '~/items/ItemConfig'
-import { ItemFactory } from '~/items/ItemFactory'
+import { Weapon } from '~/objects/Weapon'
+import { ItemTypes, ItemConfig } from '~/objects/ItemConfig'
+import { ItemFactory } from '~/objects/ItemFactory'
 import { ItemBox } from '~/ui/InventoryMenu'
+import { Structure } from '~/objects/Structure'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -51,6 +52,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public onEquipWeaponHandler: Function = () => {}
   public structureToBePlaced: any = null
   public structureImage: Phaser.GameObjects.Image | null = null
+  public structureToEnter!: Structure | null
 
   // Equipment and inventory
   public inventory: Inventory
@@ -96,10 +98,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       'keydown',
       (keycode: any) => {
         // Pick up items that user is hovering over
-        if (this.itemOnHover && keycode.code === 'KeyE') {
-          this.itemOnHover.sprite.destroy()
-          this.addItem(this.itemOnHover)
-          this.itemOnHover = null
+        if (keycode.code === 'KeyE') {
+          if (this.itemOnHover) {
+            this.itemOnHover.sprite.destroy()
+            this.addItem(this.itemOnHover)
+            this.itemOnHover = null
+          }
+          if (this.structureToEnter) {
+            const gameScene = this.scene as Game
+            gameScene.hideAllLayers()
+          }
         }
 
         // Toggle weapon equip
@@ -134,12 +142,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   placeStructure() {
+    const gameScene = this.scene as Game
     if (this.structureImage && this.structureToBePlaced) {
       this.removeItem(this.structureToBePlaced.name, 1)
-      this.scene.add.image(
-        this.structureImage?.x,
-        this.structureImage?.y,
-        this.structureToBePlaced.structureImage
+      gameScene.addStructure(
+        this.structureToBePlaced.structureImage,
+        this.structureImage.x,
+        this.structureImage.y
       )
       this.structureImage.destroy()
       this.structureImage = null
@@ -157,6 +166,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     UIScene.instance.playerHealth.takeDamage(damage)
   }
 
+  setStructureToEnter(structure: Structure) {
+    const gameScene = this.scene as Game
+    gameScene.initEnteredStructure(structure)
+    this.structureToEnter = structure
+  }
+
+  resetEnterableStructure() {
+    this.structureToEnter = null
+  }
+
   update() {
     this.showStructureToBePlaced()
     this.stateMachine.step()
@@ -164,6 +183,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (!this.body.embedded) {
       this.itemOnHover = null
       gameScene.pickupObjText.hide()
+      this.resetEnterableStructure()
     }
     if (this.equipment.weapon) {
       this.equipment.weapon.show()

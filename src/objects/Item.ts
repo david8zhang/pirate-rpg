@@ -1,11 +1,9 @@
-import UIScene from '~/scenes/UIScene'
 import Game from '../scenes/Game'
 
 export class Item {
   itemName: string = ''
   sprite!: Phaser.Physics.Arcade.Sprite
   scene: Game
-  collider: Phaser.Physics.Arcade.Collider
   dropLength?: number
   disableHover?: boolean
 
@@ -21,15 +19,7 @@ export class Item {
     this.sprite = this.scene.physics.add.sprite(x, y, textureKey)
     this.scene.physics.world.enable(this.sprite)
     this.sprite.body.onOverlap = true
-
-    this.scene.physics.overlap(this.sprite, this.scene.player)
-    this.collider = this.scene.physics.add.overlap(
-      this.scene.player,
-      this.sprite,
-      this.onPlayerHoverItem,
-      undefined,
-      this
-    )
+    this.sprite.setData('ref', this)
     this.dropLength = dropLength
     this.disableHover = disableHover
   }
@@ -47,7 +37,6 @@ export class Item {
 
   destroy() {
     this.sprite.destroy()
-    this.collider.destroy()
   }
 
   drop() {
@@ -57,7 +46,6 @@ export class Item {
     this.sprite.setDepth(100)
     const randLaunchAngle = Math.random() * -60 + -60
     this.scene.physics.velocityFromAngle(randLaunchAngle, 100, this.sprite.body.velocity)
-    this.collider.active = false
 
     // After some time, stop the gravity and velocity to simulate it hitting the ground
     this.scene.time.delayedCall(this.dropLength || 650, () => {
@@ -70,8 +58,8 @@ export class Item {
       this.scene.time.delayedCall(150, () => {
         this.sprite.setGravity(0)
         this.sprite.setVelocity(0)
-        this.collider.active = true
         this.sprite.setName('')
+        this.scene.dropItem(this)
       })
     })
   }

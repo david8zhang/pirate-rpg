@@ -9,7 +9,7 @@ const config: any = {
   antialias: false,
   type: Phaser.AUTO,
   width: 600,
-  height: 300,
+  height: 375,
   parent: 'phaser',
   dom: {
     createContainer: true,
@@ -18,6 +18,7 @@ const config: any = {
     default: 'arcade',
     arcade: {
       gravity: { x: 0, y: 0 },
+      debug: true,
     },
   },
   plugins: {

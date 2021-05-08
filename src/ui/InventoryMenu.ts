@@ -1,5 +1,5 @@
-import { Inventory } from '~/characters/Player'
-import UIScene from '~/scenes/UIScene'
+import { Inventory } from '../characters/Player'
+import UIScene from '../scenes/UIScene'
 import { TooltipPosition } from './ItemTooltip'
 
 export class ItemBox {

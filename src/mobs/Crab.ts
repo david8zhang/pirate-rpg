@@ -1,6 +1,6 @@
 import Game from '../scenes/Game'
 import { Mob, MobConfig } from './Mob'
-import { ItemFactory } from '~/items/ItemFactory'
+import { ItemFactory } from '../objects/ItemFactory'
 
 const CRAB_ANIMATIONS = {
   moveFront: 'crab-walk-side',
