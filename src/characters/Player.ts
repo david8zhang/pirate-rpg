@@ -104,9 +104,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.addItem(this.itemOnHover)
             this.itemOnHover = null
           }
-          if (this.structureToEnter) {
-            const gameScene = this.scene as Game
-            gameScene.hideAllLayers()
+
+          const gameScene = this.scene as Game
+          if (this.structureToEnter && !gameScene.isInsideStructure) {
+            this.structureToEnter.enterStructure()
           }
         }
 
@@ -167,8 +168,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   setStructureToEnter(structure: Structure) {
-    const gameScene = this.scene as Game
-    gameScene.initEnteredStructure(structure)
     this.structureToEnter = structure
   }
 
@@ -182,7 +181,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     const gameScene = this.scene as Game
     if (!this.body.embedded) {
       this.itemOnHover = null
-      gameScene.pickupObjText.hide()
+      gameScene.hoverText.hide()
       this.resetEnterableStructure()
     }
     if (this.equipment.weapon) {

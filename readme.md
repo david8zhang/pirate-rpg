@@ -6,8 +6,8 @@ A top down pirate themed RPG game build using Phaser 3
 
 Roadmap:
 
-- Placeable structures (Tent)
 - Hills, mountains, etc.
 - Crafting boats
 - Armor (Head, Chest, Feet)
 - Refactor mobs to be dynamically instantiated
+- Refactor mob / layer collisions (too many colliders)

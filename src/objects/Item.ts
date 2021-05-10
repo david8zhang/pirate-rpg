@@ -26,8 +26,8 @@ export class Item {
 
   onPlayerHoverItem() {
     if (!this.disableHover) {
-      this.scene.pickupObjText.showText(
-        this.itemName,
+      this.scene.hoverText.showText(
+        `(E) Pick up ${this.itemName}`,
         this.scene.player.x - this.scene.player.width,
         this.scene.player.y + 20
       )

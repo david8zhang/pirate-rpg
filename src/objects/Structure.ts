@@ -3,7 +3,7 @@ import Game from '~/scenes/Game'
 export class Structure {
   public sprite: Phaser.Physics.Arcade.Image
   private scene: Game
-  private isEnterable: boolean = false
+  private boundsImage: Phaser.Physics.Arcade.Image
 
   constructor(scene: Game, texture: string, x: number, y: number) {
     this.scene = scene
@@ -12,14 +12,33 @@ export class Structure {
     this.sprite.body.setSize(this.sprite.width * 0.5, this.sprite.height * 0.5)
     this.sprite.body.offset.y = this.sprite.height - 20
     this.scene.physics.add.overlap(this.sprite, this.scene.player, () => {
-      if (scene.player.getCurrState() !== 'attack') {
-        this.isEnterable = true
+      if (scene.player.getCurrState() !== 'attack' && !scene.isInsideStructure) {
         this.scene.player.setStructureToEnter(this)
+        this.scene.hoverText.showText(
+          '(E) Enter',
+          this.scene.player.x - this.scene.player.width / 2,
+          this.scene.player.y - 10
+        )
       }
     })
+
+    // Create a boundary so player/mobs can't walk into the tent
+    this.boundsImage = this.scene.physics.add.image(x, y, '').setVisible(false)
+    this.scene.physics.world.enableBody(this.boundsImage, Phaser.Physics.Arcade.DYNAMIC_BODY)
+    this.scene.physics.add.collider(this.boundsImage, this.scene.player, () => {})
+    this.scene.physics.add.collider(this.boundsImage, this.scene.mobs, () => {})
+    this.boundsImage.body.setSize(this.sprite.width, this.sprite.height * 0.6)
+    this.boundsImage.body.offset.y = 10
+    this.boundsImage.setPushable(false)
+  }
+
+  exitStructure() {
+    this.boundsImage.body.enable = true
   }
 
   enterStructure() {
-    this.scene.hideAllLayers()
+    this.scene.hoverText.hide()
+    this.scene.initEnteredStructure(this)
+    this.boundsImage.body.enable = false
   }
 }

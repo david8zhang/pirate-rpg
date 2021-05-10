@@ -11,7 +11,7 @@ import { Mob } from '../mobs/Mob'
 import { Monkey } from '~/mobs/Monkey'
 import { createmonkeyAnims } from '~/anims/MonkeyAnims'
 import { Item } from '~/objects/Item'
-import { PickupObjectText } from '~/ui/PickupObjectText'
+import { HoverText } from '~/ui/HoverText'
 import { ItemFactory } from '~/objects/ItemFactory'
 import { Harvestable } from '~/objects/Harvestable'
 import UIScene from './UIScene'
@@ -28,6 +28,8 @@ export default class Game extends Phaser.Scene {
   public grassLayer!: Phaser.Tilemaps.TilemapLayer
   public sandLayer!: Phaser.Tilemaps.TilemapLayer
   public objectsLayer!: Phaser.Tilemaps.TilemapLayer
+  public structureInteriorLayer!: Phaser.Tilemaps.TilemapLayer
+  public structureEntranceLayer!: Phaser.Tilemaps.TilemapLayer
 
   // colliders
   public playerHarvestableCollider!: Physics.Arcade.Collider
@@ -36,26 +38,28 @@ export default class Game extends Phaser.Scene {
 
   // Mobs
   public mobsList: Mob[] = []
-  private mobs!: Phaser.GameObjects.Group
+  public mobs!: Phaser.GameObjects.Group
 
   // Harvestables (Trees, bushes, etc.)
   public harvestableList: Harvestable[] = []
-  private harvestables!: Phaser.GameObjects.Group
+  public harvestables!: Phaser.GameObjects.Group
 
   // Items
   public items!: Phaser.GameObjects.Group
   public itemsOnGround: Item[] = []
 
   // Structures
-  private structures!: Phaser.GameObjects.Group
-  private structureLayer!: Phaser.Tilemaps.TilemapLayer
-  private isInsideStructure: boolean = false
+  public structures!: Phaser.GameObjects.Group
+  public structureLayer!: Phaser.Tilemaps.TilemapLayer
+  public isInsideStructure: boolean = false
+  public structureInteriorCollider!: Phaser.Physics.Arcade.Collider
+  public structureEntranceCollider!: Phaser.Physics.Arcade.Collider
 
   // sprite names to ignore during depth-sorting
-  public ignoreNames = ['InAir', 'UI', 'Weapon']
+  public ignoreNames = ['InAir', 'UI', 'Weapon', 'Structure']
 
   // UI text
-  public pickupObjText!: PickupObjectText
+  public hoverText!: HoverText
   public isShipScale: boolean = false
 
   // Item Factory
@@ -69,7 +73,7 @@ export default class Game extends Phaser.Scene {
   }
 
   preload(): void {
-    this.pickupObjText = new PickupObjectText(this, 0, 0)
+    this.hoverText = new HoverText(this, 0, 0)
     this.cursors = this.input.keyboard.createCursorKeys()
   }
 
@@ -89,7 +93,7 @@ export default class Game extends Phaser.Scene {
 
   initTilemap() {
     this.map = this.make.tilemap({ key: 'starter-island-2' })
-    const tileset = this.map.addTilesetImage('beach-tiles', 'tiles')
+    const tileset = this.map.addTilesetImage('beach-tiles', 'beach-tiles')
     this.oceanLayer = this.map.createLayer('Ocean', tileset)
     this.sandLayer = this.map.createLayer('Sand', tileset)
     this.grassLayer = this.map.createLayer('Grass', tileset)
@@ -206,15 +210,28 @@ export default class Game extends Phaser.Scene {
     this.structures.add(structure.sprite)
   }
 
-  // TODO: Render the structure's tilemap
-  initEnteredStructure(structure: Structure) {
-    this.isInsideStructure = true
-    this.playerHarvestableCollider.active = false
-    this.playerMobsCollider.active = false
-    this.playerItemsCollider.active = false
+  exitStructure(structure: Structure) {
+    this.mobs.setVisible(true)
+    this.harvestables.setVisible(true)
+    this.oceanLayer.setVisible(true)
+    this.sandLayer.setVisible(true)
+    this.grassLayer.setVisible(true)
+    this.structures.setVisible(true)
+    this.items.setVisible(true)
+
+    this.structureEntranceLayer.setVisible(false)
+    this.structureInteriorLayer.setVisible(false)
+    this.player.setPosition(structure.sprite.x, structure.sprite.body.y + 10)
+
+    this.isInsideStructure = false
+    this.playerHarvestableCollider.active = true
+    this.playerMobsCollider.active = true
+    this.playerItemsCollider.active = true
+    this.structureEntranceCollider.active = false
+    this.structureInteriorCollider.active = false
   }
 
-  hideAllLayers() {
+  initEnteredStructure(structure: Structure) {
     this.mobs.setVisible(false)
     this.harvestables.setVisible(false)
     this.oceanLayer.setVisible(false)
@@ -222,6 +239,51 @@ export default class Game extends Phaser.Scene {
     this.grassLayer.setVisible(false)
     this.structures.setVisible(false)
     this.items.setVisible(false)
+
+    this.isInsideStructure = true
+    this.playerHarvestableCollider.active = false
+    this.playerMobsCollider.active = false
+    this.playerItemsCollider.active = false
+
+    const tentTileMap = this.make.tilemap({ key: 'tent' })
+    const tileset = tentTileMap.addTilesetImage('tent-tiles', 'tent-tiles')
+    this.structureEntranceLayer = tentTileMap.createLayer('Entrance', tileset)
+    this.structureInteriorLayer = tentTileMap.createLayer('Ground', tileset)
+
+    this.structureEntranceLayer
+      .setPosition(
+        this.player.x - this.structureInteriorLayer.width / 2,
+        this.player.y - (this.structureInteriorLayer.height - Constants.TILE_SIZE * 4)
+      )
+      .setName('Structure')
+    this.structureInteriorLayer
+      .setPosition(
+        this.player.x - this.structureInteriorLayer.width / 2,
+        this.player.y - (this.structureInteriorLayer.height - Constants.TILE_SIZE * 4)
+      )
+      .setName('Structure')
+      .setCollisionByProperty({ collides: true })
+
+    if (this.structureEntranceCollider) {
+      this.structureEntranceCollider.destroy()
+    }
+    if (this.structureInteriorCollider) {
+      this.structureInteriorCollider.destroy()
+    }
+    this.structureInteriorCollider = this.physics.add.collider(
+      this.structureInteriorLayer,
+      this.player
+    )
+    this.structureEntranceCollider = this.physics.add.overlap(
+      this.structureEntranceLayer,
+      this.player,
+      (obj1, obj2: any) => {
+        if (obj2.properties.isEntrance) {
+          structure.exitStructure()
+          this.exitStructure(structure)
+        }
+      }
+    )
   }
 
   initItems() {

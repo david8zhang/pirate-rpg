@@ -1,6 +1,6 @@
 import Game from '../scenes/Game'
 
-export class PickupObjectText {
+export class HoverText {
   text: Phaser.GameObjects.Text
   constructor(scene: Game, x: number, y: number) {
     this.text = scene.add.text(x, y, '', {
@@ -15,8 +15,7 @@ export class PickupObjectText {
     this.text.setDepth(1000)
   }
 
-  showText(itemType: string, x: number, y: number) {
-    const text = `(E) Pick up ${itemType}`
+  showText(text: string, x: number, y: number) {
     this.text.setText(text)
     this.text.x = x
     this.text.y = y
