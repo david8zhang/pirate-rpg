@@ -84,7 +84,8 @@ export class CraftingMenu {
   public toggleVisible() {
     if (!this.headerText) {
       const headerTextComp = text('Crafting', {
-        fontSize: '15ipx',
+        fontSize: '15px',
+        margin: '0px',
         fontFamily: 'GraphicPixel',
         color: 'white',
       }) as HTMLElement

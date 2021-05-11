@@ -11,12 +11,16 @@ export class CraftableItemDetails {
   private sprite!: Phaser.GameObjects.Sprite
   private scene: Phaser.Scene
   private container: Phaser.GameObjects.Container
-  private craftableItemName: Phaser.GameObjects.DOMElement | null = null
-  private craftableItemDescription: Phaser.GameObjects.DOMElement | null = null
   private craftButton: Phaser.GameObjects.DOMElement | null = null
   private statList: Phaser.GameObjects.DOMElement[] = []
   private ingredientBoxes: ItemBox[] = []
   private playerInventory!: Inventory
+
+  // DOM Elements
+  private craftableItemName: Phaser.GameObjects.DOMElement | null = null
+  private craftableItemDescription: Phaser.GameObjects.DOMElement | null = null
+  private craftableItemNameElem: HTMLElement | null = null
+  private craftableItemDescriptionElem: HTMLElement | null = null
 
   public craftableItem!: ItemConfig
 
@@ -47,36 +51,44 @@ export class CraftableItemDetails {
       .setTexture(craftableItem.image)
       .setVisible(true)
 
-    // Add craftable item name
-    const craftableItemName = text(craftableItem.name, {
-      fontSize: '15px',
-      fontFamily: 'GraphicPixel',
-      color: 'white',
-      margin: '0px',
-      width: `${itemToCraftDescription.width - 15}px`,
-    }) as HTMLElement
-
-    if (this.craftableItemName) {
-      this.craftableItemName.setElement(craftableItemName)
+    // // Add craftable item name
+    if (!this.craftableItemNameElem) {
+      this.craftableItemNameElem = text(craftableItem.name, {
+        fontSize: '15px',
+        fontFamily: 'GraphicPixel',
+        color: 'white',
+        margin: '0px',
+        width: `${itemToCraftDescription.width - 15}px`,
+      }) as HTMLElement
     } else {
+      this.craftableItemNameElem.innerText = craftableItem.name
+    }
+    if (!this.craftableItemName) {
       this.craftableItemName = this.scene.add
-        .dom(this.sprite.x + 12, yPos + 10, craftableItemName)
+        .dom(this.sprite.x + 12, yPos + 10, this.craftableItemNameElem)
         .setOrigin(0)
       this.container.add(this.craftableItemName)
     }
 
     // Add item description text
-    const itemDescriptionText = text(craftableItem.description, {
-      fontSize: '8px',
-      fontFamily: 'GraphicPixel',
-      color: 'white',
-      width: `${itemToCraftDescription.width - 15}px`,
-    }) as HTMLElement
-    if (this.craftableItemDescription) {
-      this.craftableItemDescription.setElement(itemDescriptionText)
+    if (!this.craftableItemDescriptionElem) {
+      this.craftableItemDescriptionElem = text(craftableItem.description, {
+        fontSize: '8px',
+        fontFamily: 'GraphicPixel',
+        color: 'white',
+        width: `${itemToCraftDescription.width - 15}px`,
+      }) as HTMLElement
     } else {
+      this.craftableItemDescriptionElem.innerText = craftableItem.description
+    }
+
+    if (!this.craftableItemDescription) {
       this.craftableItemDescription = this.scene.add
-        .dom(this.sprite.x - 5, yPos + this.craftableItemName.height + 15, itemDescriptionText)
+        .dom(
+          this.sprite.x - 5,
+          yPos + this.craftableItemName.height + 15,
+          this.craftableItemDescriptionElem
+        )
         .setOrigin(0)
       this.container.add(this.craftableItemDescription)
     }
@@ -134,7 +146,7 @@ export class CraftableItemDetails {
     this.statList = []
 
     // Populate the new statlist
-    let yPos = this.craftableItemDescription!.y + this.craftableItemDescription!.height + 10
+    let yPos = this.craftableItemDescription!.y + this.craftableItemDescription!.height + 20
     Object.keys(stats).forEach((stat: string, index: number) => {
       const statElement = itemStats(stat, craftableItem.stats![stat]) as HTMLElement
       if (this.statList[index]) {

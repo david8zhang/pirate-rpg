@@ -50,9 +50,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public isHit: boolean = false
   public itemOnHover: Item | null = null
   public onEquipWeaponHandler: Function = () => {}
+
+  // Structures
   public structureToBePlaced: any = null
-  public structureImage: Phaser.GameObjects.Image | null = null
+  public structureImage: Phaser.Physics.Arcade.Image | null = null
   public structureToEnter!: Structure | null
+  public structureColliders: Phaser.Physics.Arcade.Collider[] = []
 
   // Equipment and inventory
   public inventory: Inventory
@@ -144,7 +147,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   placeStructure() {
     const gameScene = this.scene as Game
-    if (this.structureImage && this.structureToBePlaced) {
+    if (this.structureImage && this.structureToBePlaced && !this.structureImage.body.embedded) {
       this.removeItem(this.structureToBePlaced.name, 1)
       gameScene.addStructure(
         this.structureToBePlaced.structureImage,
@@ -195,7 +198,26 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       let xPos = this.x
       let yPos = this.y
       if (!this.structureImage) {
-        this.structureImage = this.scene.add.image(xPos, yPos, structureImage).setAlpha(0.5)
+        this.structureImage = this.scene.physics.add.image(xPos, yPos, structureImage).setAlpha(0.5)
+        this.scene.physics.world.enableBody(this.structureImage, Phaser.Physics.Arcade.DYNAMIC_BODY)
+        const gameScene = this.scene as Game
+        this.structureColliders.push(
+          this.scene.physics.add.overlap(this.structureImage, gameScene.harvestables)
+        )
+        this.structureColliders.push(
+          this.scene.physics.add.overlap(this.structureImage, gameScene.items)
+        )
+        this.structureColliders.push(
+          this.scene.physics.add.overlap(this.structureImage, gameScene.mobs)
+        )
+        this.structureColliders.push(
+          this.scene.physics.add.overlap(this.structureImage, gameScene.structures)
+        )
+      }
+      if (this.structureImage.body.embedded) {
+        this.structureImage.setTint(0xff0000)
+      } else {
+        this.structureImage.setTint(0xffffff)
       }
       switch (this.direction) {
         case Direction.LEFT:
