@@ -87,8 +87,9 @@ export default class Game extends Phaser.Scene {
     this.initPlants()
     this.initMobs()
     this.initItems()
-
-    this.addStructure('tent', 400, 400)
+    const rowboat = this.add.image(400, 600, 'rowboat')
+    rowboat.setName('UI')
+    rowboat.setDepth(1)
   }
 
   initTilemap() {
