@@ -70,11 +70,8 @@ export class Harvestable {
     if (this.scene.player.getCurrState() === 'attack' && !this.isAttacked) {
       const weapon = this.scene.player.getWeapon()
       this.takeDamage(weapon ? weapon.damage : Player.UNARMED_DAMAGE)
-      const offsetX = this.getParticleExplosionOffset()
-      let x = weapon ? weapon.hitboxImage.x : this.scene.player.x
-      let y = weapon ? weapon.hitboxImage.y : this.scene.player.y
 
-      ParticleSpawner.instance.spawnParticle('wood-particle', x + offsetX, y + 5, 5)
+      ParticleSpawner.instance.spawnParticle('wood-particle', this.sprite.x, this.sprite.y, 5)
       this.isAttacked = true
       this.scene.time.delayedCall(Constants.ATTACK_DURATION, () => {
         this.isAttacked = false

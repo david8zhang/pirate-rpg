@@ -21,8 +21,10 @@ export class CraftableItemDetails {
   private craftableItemDescription: Phaser.GameObjects.DOMElement | null = null
   private craftableItemNameElem: HTMLElement | null = null
   private craftableItemDescriptionElem: HTMLElement | null = null
-
+  private itemCraftButtonElem: HTMLElement | null = null
   public craftableItem!: ItemConfig
+
+  public static MAX_ING_PER_RECIPE = 3
 
   public isVisible: boolean = false
 
@@ -94,15 +96,17 @@ export class CraftableItemDetails {
     }
 
     // Add item crafting button
-    const itemCraftButton = button('Craft', {
-      fontFamily: 'GraphicPixel',
-      fontSize: '10px',
-      width: itemToCraftDescription.width - 20,
-      height: '20px',
-    }) as HTMLElement
+    if (!this.itemCraftButtonElem) {
+      this.itemCraftButtonElem = button('Craft', {
+        fontFamily: 'GraphicPixel',
+        fontSize: '10px',
+        width: itemToCraftDescription.width - 20,
+        height: '20px',
+      }) as HTMLElement
+    }
     if (!this.craftButton) {
       this.craftButton = this.scene.add
-        .dom(this.sprite.x - 5, yPos + itemToCraftDescription.height - 30, itemCraftButton)
+        .dom(this.sprite.x - 5, yPos + itemToCraftDescription.height - 30, this.itemCraftButtonElem)
         .addListener('click')
         .on('click', () => {
           this.onCraftButtonClick(inventory, cb)
@@ -165,13 +169,39 @@ export class CraftableItemDetails {
   }
 
   setIngredientsRequired(craftableItem: ItemConfig, xPos: number, yPos: number) {
-    this.ingredientBoxes.forEach((ingBox: ItemBox) => {
-      ingBox.destroy()
-    })
-    this.ingredientBoxes = []
     const recipe = craftableItem.recipe
     if (!recipe) return
     let currXPos = xPos
+
+    if (this.ingredientBoxes.length === 0) {
+      for (let i = 0; i < CraftableItemDetails.MAX_ING_PER_RECIPE; i++) {
+        const itemToBeCrafted = new ItemBox(this.scene, currXPos, yPos)
+        itemToBeCrafted.tooltipPosition = TooltipPosition.TOP_MID
+        itemToBeCrafted.setVisible(this.isVisible)
+        this.ingredientBoxes.push(itemToBeCrafted)
+        currXPos += itemToBeCrafted.panel.width + 5
+      }
+    }
+
+    const ingredients = Object.keys(recipe)
+    this.ingredientBoxes.forEach((ingBox, index) => {
+      const ingredientName = ingredients[index]
+      const ing = this.getIngredientForName(ingredientName)
+      if (!ingredientName) {
+        ingBox.setVisible(false)
+      }
+      if (ing) {
+        if (index < ingredients.length) {
+          const playerHasEnough =
+            this.playerInventory[ing.name] &&
+            this.playerInventory[ing.name].count >= recipe[ingredientName]
+          ingBox.setTextColor(playerHasEnough ? 'white' : 'red')
+          ingBox.setItem(recipe[ingredientName], ingredientName, ing.image)
+          ingBox.setVisible(true)
+        }
+      }
+    })
+
     Object.keys(recipe).forEach((ingredient, index: number) => {
       const ing = this.getIngredientForName(ingredient)
       if (ing) {

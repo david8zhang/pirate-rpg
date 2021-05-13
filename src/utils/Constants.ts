@@ -1,5 +1,5 @@
 import { Harvestable } from '../objects/Harvestable'
-import { ItemTypes } from '../objects/ItemConfig'
+import { ItemConfig, ItemTypes } from '../objects/ItemConfig'
 
 export class Constants {
   static get TILE_SIZE() {
@@ -64,10 +64,20 @@ export const ALL_PARTICLES = [
   },
 ]
 
-export const ALL_ITEMS = [
+export const ALL_ITEMS: ItemConfig[] = [
+  {
+    name: 'Row boat',
+    inWorldImage: 'rowboat',
+    image: 'rowboat-inventory',
+    type: ItemTypes.transport,
+    description: 'Explore the oceans!',
+    recipe: {
+      Stick: 1,
+    },
+  },
   {
     name: 'Tent',
-    structureImage: 'tent',
+    inWorldImage: 'tent',
     image: 'tent-inventory',
     type: ItemTypes.structure,
     description: "It's not much, but it's an honest home",
@@ -120,7 +130,7 @@ export const ALL_ITEMS = [
   },
   {
     name: 'Stone Axe',
-    weaponImage: 'axe',
+    inWorldImage: 'axe',
     image: 'axe-inventory',
     description: 'And my axe!',
     recipe: {

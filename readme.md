@@ -11,4 +11,4 @@ Roadmap:
 - Armor (Head, Chest, Feet)
 - Refactor mobs to be dynamically instantiated
 - Refactor mob / layer collisions (too many colliders)
-- Fix lag issue when selecting different things to craft
+- Refactor structure / layer collisions

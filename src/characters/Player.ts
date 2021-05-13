@@ -12,6 +12,7 @@ import { ItemTypes, ItemConfig } from '~/objects/ItemConfig'
 import { ItemFactory } from '~/objects/ItemFactory'
 import { ItemBox } from '~/ui/InventoryMenu'
 import { Structure } from '~/objects/Structure'
+import { Placeable } from '~/objects/Placeable'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -52,10 +53,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public onEquipWeaponHandler: Function = () => {}
 
   // Structures
-  public structureToBePlaced: any = null
+  public structureToBePlaced: ItemConfig | null = null
   public structureImage: Phaser.Physics.Arcade.Image | null = null
   public structureToEnter!: Structure | null
   public structureColliders: Phaser.Physics.Arcade.Collider[] = []
+
+  // Transport (boats, etc.)
+  public transportToBePlaced: Placeable | null = null
 
   // Equipment and inventory
   public inventory: Inventory
@@ -145,15 +149,22 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     return this.stateMachine.getState()
   }
 
+  placeTransport() {
+    this.transportToBePlaced?.placeItem()
+  }
+
   placeStructure() {
     const gameScene = this.scene as Game
     if (this.structureImage && this.structureToBePlaced && !this.structureImage.body.embedded) {
       this.removeItem(this.structureToBePlaced.name, 1)
       gameScene.addStructure(
-        this.structureToBePlaced.structureImage,
+        this.structureToBePlaced.inWorldImage as string,
         this.structureImage.x,
         this.structureImage.y
       )
+      this.structureColliders.forEach((collider) => {
+        collider.destroy()
+      })
       this.structureImage.destroy()
       this.structureImage = null
       this.structureToBePlaced = null
@@ -180,6 +191,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   update() {
     this.showStructureToBePlaced()
+    if (this.transportToBePlaced) {
+      this.transportToBePlaced?.showPreview()
+    }
     this.stateMachine.step()
     const gameScene = this.scene as Game
     if (!this.body.embedded) {
@@ -194,25 +208,18 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   showStructureToBePlaced() {
     if (this.structureToBePlaced) {
-      const { structureImage } = this.structureToBePlaced
+      const { inWorldImage } = this.structureToBePlaced
       let xPos = this.x
       let yPos = this.y
       if (!this.structureImage) {
-        this.structureImage = this.scene.physics.add.image(xPos, yPos, structureImage).setAlpha(0.5)
+        this.structureImage = this.scene.physics.add
+          .image(xPos, yPos, inWorldImage as string)
+          .setAlpha(0.5)
         this.scene.physics.world.enableBody(this.structureImage, Phaser.Physics.Arcade.DYNAMIC_BODY)
         const gameScene = this.scene as Game
-        this.structureColliders.push(
-          this.scene.physics.add.overlap(this.structureImage, gameScene.harvestables)
-        )
-        this.structureColliders.push(
-          this.scene.physics.add.overlap(this.structureImage, gameScene.items)
-        )
-        this.structureColliders.push(
-          this.scene.physics.add.overlap(this.structureImage, gameScene.mobs)
-        )
-        this.structureColliders.push(
-          this.scene.physics.add.overlap(this.structureImage, gameScene.structures)
-        )
+        gameScene.getAllObjectGroups().forEach((group) => {
+          this.scene.physics.add.overlap(this.structureImage as Phaser.Physics.Arcade.Image, group)
+        })
       }
       if (this.structureImage.body.embedded) {
         this.structureImage.setTint(0xff0000)
@@ -259,7 +266,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         }
         this.removeItem(item.name, 1)
         const weapon = new Weapon(this.scene, this, {
-          texture: item.weaponImage as string,
+          texture: item.inWorldImage as string,
           damage: item.stats.damage as number,
           attackRange: item.stats['attack range'] as number,
           name: item.name,
@@ -270,6 +277,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       // Handle if the double-clicked item was a structure
       if (item.type === ItemTypes.structure) {
         this.structureToBePlaced = item
+      }
+
+      if (item.type === ItemTypes.transport) {
+        this.transportToBePlaced = new Placeable(this.scene as Game, item, ['Ocean'])
+        this.transportToBePlaced.setShowPreview(true)
       }
     }
   }

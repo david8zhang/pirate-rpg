@@ -21,7 +21,7 @@ import { Structure } from '~/objects/Structure'
 export default class Game extends Phaser.Scene {
   public player!: Player
   public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
-  private map!: Phaser.Tilemaps.Tilemap
+  public map!: Phaser.Tilemaps.Tilemap
 
   // Tilemap layers
   public oceanLayer!: Phaser.Tilemaps.TilemapLayer
@@ -87,17 +87,14 @@ export default class Game extends Phaser.Scene {
     this.initPlants()
     this.initMobs()
     this.initItems()
-    const rowboat = this.add.image(400, 600, 'rowboat')
-    rowboat.setName('UI')
-    rowboat.setDepth(1)
   }
 
   initTilemap() {
     this.map = this.make.tilemap({ key: 'starter-island-2' })
     const tileset = this.map.addTilesetImage('beach-tiles', 'beach-tiles')
-    this.oceanLayer = this.map.createLayer('Ocean', tileset)
-    this.sandLayer = this.map.createLayer('Sand', tileset)
-    this.grassLayer = this.map.createLayer('Grass', tileset)
+    this.oceanLayer = this.map.createLayer('Ocean', tileset).setName('Ocean')
+    this.sandLayer = this.map.createLayer('Sand', tileset).setName('Sand')
+    this.grassLayer = this.map.createLayer('Grass', tileset).setName('Grass')
     this.sandLayer.setCollisionByProperty({ collides: true })
     this.oceanLayer.setCollisionByProperty({ collides: true })
     this.grassLayer.setCollisionByProperty({ collides: true })
@@ -110,7 +107,6 @@ export default class Game extends Phaser.Scene {
       this.updateCollidersOnWeaponEquip()
     })
     this.physics.add.collider(this.player, this.oceanLayer)
-
     this.cameras.main.setBounds(0, 0, Constants.BG_WIDTH, Constants.BG_HEIGHT)
     this.cameras.main.startFollow(this.player, true)
   }
@@ -203,6 +199,40 @@ export default class Game extends Phaser.Scene {
     })
   }
 
+  initItems() {
+    const objectLayer = this.map.getObjectLayer('Objects')
+    if (!this.items) {
+      this.items = this.physics.add.group({ classType: Item })
+    }
+    objectLayer.objects.forEach((obj) => {
+      const xPos = obj.x! + obj.width! * 0.5
+      const yPos = obj.y! - obj.height! * 0.5
+      const randNum = Math.floor(Math.random() * 2)
+      let item: Item | null
+      if (randNum === 0) {
+        item = ItemFactory.instance.createItem('Rock', xPos, yPos)
+      } else {
+        item = ItemFactory.instance.createItem('Stick', xPos, yPos)
+      }
+      if (item) {
+        this.itemsOnGround.push(item)
+        this.items.add(item.sprite)
+      }
+    })
+    this.playerItemsCollider = this.physics.add.overlap(this.player, this.items, (obj1, obj2) => {
+      const item = obj2.getData('ref') as Item
+      item.onPlayerHoverItem()
+    })
+  }
+
+  getAllTileLayers(): Phaser.Tilemaps.TilemapLayer[] {
+    return [this.oceanLayer, this.sandLayer, this.grassLayer]
+  }
+
+  getAllObjectGroups(): Phaser.GameObjects.Group[] {
+    return [this.mobs, this.items, this.harvestables, this.structures]
+  }
+
   addStructure(texture: string, x: number, y: number) {
     if (!this.structures) {
       this.structures = this.physics.add.group({ classType: Structure })
@@ -285,32 +315,6 @@ export default class Game extends Phaser.Scene {
         }
       }
     )
-  }
-
-  initItems() {
-    const objectLayer = this.map.getObjectLayer('Objects')
-    if (!this.items) {
-      this.items = this.physics.add.group({ classType: Item })
-    }
-    objectLayer.objects.forEach((obj) => {
-      const xPos = obj.x! + obj.width! * 0.5
-      const yPos = obj.y! - obj.height! * 0.5
-      const randNum = Math.floor(Math.random() * 2)
-      let item: Item | null
-      if (randNum === 0) {
-        item = ItemFactory.instance.createItem('Rock', xPos, yPos)
-      } else {
-        item = ItemFactory.instance.createItem('Stick', xPos, yPos)
-      }
-      if (item) {
-        this.itemsOnGround.push(item)
-        this.items.add(item.sprite)
-      }
-    })
-    this.playerItemsCollider = this.physics.add.overlap(this.player, this.items, (obj1, obj2) => {
-      const item = obj2.getData('ref') as Item
-      item.onPlayerHoverItem()
-    })
   }
 
   dropItem(item: Item) {
