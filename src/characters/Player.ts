@@ -13,6 +13,7 @@ import { ItemFactory } from '~/objects/ItemFactory'
 import { ItemBox } from '~/ui/InventoryMenu'
 import { Structure } from '~/objects/Structure'
 import { Placeable } from '~/objects/Placeable'
+import { Transport } from '~/objects/Transport'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -60,6 +61,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   // Transport (boats, etc.)
   public transportToBePlaced: Placeable | null = null
+  public isInsideTransport: boolean = false
+  public currTransport: Transport | null = null
+  public enterableTransport: Transport | null = null
 
   // Equipment and inventory
   public inventory: Inventory
@@ -101,6 +105,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   configureKeyPresses() {
+    const gameScene = this.scene as Game
     this.scene.input.keyboard.on(
       'keydown',
       (keycode: any) => {
@@ -112,9 +117,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.itemOnHover = null
           }
 
-          const gameScene = this.scene as Game
+          // Enter a structure
           if (this.structureToEnter && !gameScene.isInsideStructure) {
             this.structureToEnter.enterStructure()
+          }
+
+          // Enter a transport
+          if (this.enterableTransport) {
+            this.enterableTransport.enterTransport()
           }
         }
 
@@ -150,7 +160,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   placeTransport() {
-    this.transportToBePlaced?.placeItem()
+    if (this.transportToBePlaced) {
+      this.transportToBePlaced?.placeItem()
+      this.transportToBePlaced = null
+    }
   }
 
   placeStructure() {
@@ -185,8 +198,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.structureToEnter = structure
   }
 
-  resetEnterableStructure() {
+  resetEnterables() {
     this.structureToEnter = null
+    this.enterableTransport = null
   }
 
   update() {
@@ -199,7 +213,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (!this.body.embedded) {
       this.itemOnHover = null
       gameScene.hoverText.hide()
-      this.resetEnterableStructure()
+      this.resetEnterables()
     }
     if (this.equipment.weapon) {
       this.equipment.weapon.show()

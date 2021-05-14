@@ -55,6 +55,9 @@ export default class Game extends Phaser.Scene {
   public structureInteriorCollider!: Phaser.Physics.Arcade.Collider
   public structureEntranceCollider!: Phaser.Physics.Arcade.Collider
 
+  // Transports
+  public transports!: Phaser.GameObjects.Group
+
   // sprite names to ignore during depth-sorting
   public ignoreNames = ['InAir', 'UI', 'Weapon', 'Structure']
 
@@ -231,6 +234,12 @@ export default class Game extends Phaser.Scene {
 
   getAllObjectGroups(): Phaser.GameObjects.Group[] {
     return [this.mobs, this.items, this.harvestables, this.structures]
+  }
+
+  addTransport(texture: string, x: number, y: number) {
+    if (!this.transports) {
+      this.transports = this.physics.add.group()
+    }
   }
 
   addStructure(texture: string, x: number, y: number) {
