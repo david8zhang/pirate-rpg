@@ -2,6 +2,11 @@ import { Direction } from '../characters/Player'
 import Game from '../scenes/Game'
 import { ItemConfig } from './ItemConfig'
 
+export enum PlaceableType {
+  transport = 'Transport',
+  structure = 'Structure',
+}
+
 export class Placeable {
   private scene: Game
   private itemRef: ItemConfig
@@ -24,26 +29,30 @@ export class Placeable {
     this.isShowingPreview = showPreview
   }
 
-  placeItem() {
+  placeItem(type: PlaceableType): boolean {
     const isWithinValidBounds = this.getWithinValidBounds()
     if (!this.previewSprite.body.embedded && isWithinValidBounds) {
       this.scene.player.removeItem(this.itemRef.name, 1)
-      this.scene.add.image(
-        this.previewSprite.x,
-        this.previewSprite.y,
-        this.itemRef.inWorldImage as string
-      )
-      // gameScene.addStructure(
-      //   this.structureToBePlaced.inWorldImage as string,
-      //   this.structureImage.x,
-      //   this.structureImage.y
-      // )
       this.isShowingPreview = false
+
+      // Add the object to the game's game object groups
+      if (type === PlaceableType.transport) {
+        this.scene.addTransport(this.itemRef, this.previewSprite.x, this.previewSprite.y)
+      } else if (type === PlaceableType.structure) {
+        this.scene.addStructure(
+          this.itemRef.inWorldImage as string,
+          this.previewSprite.x,
+          this.previewSprite.y
+        )
+      }
+
       this.colliders.forEach((collider) => {
         collider.destroy()
       })
       this.previewSprite.destroy()
+      return true
     }
+    return false
   }
 
   getWithinValidBounds() {
@@ -57,6 +66,13 @@ export class Placeable {
       }
     })
     return isWithinValidBounds
+  }
+
+  destroy() {
+    this.previewSprite.destroy()
+    this.colliders.forEach((collider) => {
+      collider.destroy()
+    })
   }
 
   showPreview() {

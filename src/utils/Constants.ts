@@ -6,10 +6,10 @@ export class Constants {
     return 16
   }
   static get BG_HEIGHT() {
-    return 150 * Constants.TILE_SIZE
+    return 100 * Constants.TILE_SIZE
   }
   static get BG_WIDTH() {
-    return 150 * Constants.TILE_SIZE
+    return 100 * Constants.TILE_SIZE
   }
   static get ATTACK_DURATION() {
     return 400

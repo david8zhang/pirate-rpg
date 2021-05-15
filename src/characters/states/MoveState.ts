@@ -8,37 +8,41 @@ export class MoveState extends State {
     const upDown = cursors.up?.isDown
     const downDown = cursors.down?.isDown
     const spaceDown = cursors.space?.isDown
-    const speed = 100
-    if (spaceDown) {
-      this.stateMachine.transition('attack')
-      return
-    }
 
-    if (!(leftDown || rightDown || upDown || downDown)) {
-      this.stateMachine.transition('idle')
-      return
-    }
+    // If the player is currently in a transport, let the transport override movement key mappings
+    if (!player.currTransport) {
+      const speed = 100
+      if (spaceDown) {
+        this.stateMachine.transition('attack')
+        return
+      }
 
-    if (leftDown) {
-      player.scaleX = -1
-      player.body.offset.x = 27
-      player.direction = Direction.LEFT
-      player.setVelocity(-speed, 0)
+      if (!(leftDown || rightDown || upDown || downDown)) {
+        this.stateMachine.transition('idle')
+        return
+      }
+
+      if (leftDown) {
+        player.scaleX = -1
+        player.body.offset.x = 27
+        player.direction = Direction.LEFT
+        player.setVelocity(-speed, 0)
+      }
+      if (rightDown) {
+        player.scaleX = 1
+        player.body.offset.x = 12
+        player.direction = Direction.RIGHT
+        player.setVelocity(speed, 0)
+      }
+      if (upDown) {
+        player.direction = Direction.UP
+        player.setVelocity(0, -speed)
+      }
+      if (downDown) {
+        player.direction = Direction.DOWN
+        player.setVelocity(0, speed)
+      }
+      player.anims.play(`player-walk-${player.getAnimDirection(player.direction)}`, true)
     }
-    if (rightDown) {
-      player.scaleX = 1
-      player.body.offset.x = 12
-      player.direction = Direction.RIGHT
-      player.setVelocity(speed, 0)
-    }
-    if (upDown) {
-      player.direction = Direction.UP
-      player.setVelocity(0, -speed)
-    }
-    if (downDown) {
-      player.direction = Direction.DOWN
-      player.setVelocity(0, speed)
-    }
-    player.anims.play(`player-walk-${player.getAnimDirection(player.direction)}`, true)
   }
 }

@@ -17,6 +17,8 @@ import { Harvestable } from '~/objects/Harvestable'
 import UIScene from './UIScene'
 import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
 import { Structure } from '~/objects/Structure'
+import { Transport } from '~/objects/Transport'
+import { ItemConfig } from '~/objects/ItemConfig'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -59,7 +61,7 @@ export default class Game extends Phaser.Scene {
   public transports!: Phaser.GameObjects.Group
 
   // sprite names to ignore during depth-sorting
-  public ignoreNames = ['InAir', 'UI', 'Weapon', 'Structure']
+  public ignoreNames = ['InAir', 'UI', 'Weapon', 'Structure', 'Transport']
 
   // UI text
   public hoverText!: HoverText
@@ -152,7 +154,7 @@ export default class Game extends Phaser.Scene {
   public setShipCamera() {
     this.isShipScale = true
     UIScene.instance.hide()
-    this.scale.setGameSize(1200, 800)
+    this.scale.setGameSize(600, 375)
   }
 
   updateCollidersOnWeaponEquip() {
@@ -236,10 +238,12 @@ export default class Game extends Phaser.Scene {
     return [this.mobs, this.items, this.harvestables, this.structures]
   }
 
-  addTransport(texture: string, x: number, y: number) {
+  addTransport(itemRef: ItemConfig, x: number, y: number) {
     if (!this.transports) {
-      this.transports = this.physics.add.group()
+      this.transports = this.physics.add.group({ classType: Transport })
     }
+    const transport = new Transport(this, itemRef, x, y)
+    this.transports.add(transport.sprite)
   }
 
   addStructure(texture: string, x: number, y: number) {

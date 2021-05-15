@@ -6,14 +6,14 @@ import Game from '../scenes/Game'
 import { StateMachine } from '../lib/StateMachine'
 import UIScene from '../scenes/UIScene'
 import { Item } from '../objects/Item'
-import { DamageNumber } from '~/ui/DamageNumber'
-import { Weapon } from '~/objects/Weapon'
-import { ItemTypes, ItemConfig } from '~/objects/ItemConfig'
-import { ItemFactory } from '~/objects/ItemFactory'
-import { ItemBox } from '~/ui/InventoryMenu'
-import { Structure } from '~/objects/Structure'
-import { Placeable } from '~/objects/Placeable'
-import { Transport } from '~/objects/Transport'
+import { DamageNumber } from '../ui/DamageNumber'
+import { Weapon } from '../objects/Weapon'
+import { ItemTypes, ItemConfig } from '../objects/ItemConfig'
+import { ItemFactory } from '../objects/ItemFactory'
+import { ItemBox } from '../ui/InventoryMenu'
+import { Structure } from '../objects/Structure'
+import { Placeable, PlaceableType } from '../objects/Placeable'
+import { Transport } from '../objects/Transport'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -161,8 +161,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   placeTransport() {
     if (this.transportToBePlaced) {
-      this.transportToBePlaced?.placeItem()
-      this.transportToBePlaced = null
+      const didPlaceTransport = this.transportToBePlaced?.placeItem(PlaceableType.transport)
+      if (didPlaceTransport) {
+        this.transportToBePlaced = null
+      }
     }
   }
 
@@ -204,19 +206,23 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   update() {
-    this.showStructureToBePlaced()
-    if (this.transportToBePlaced) {
-      this.transportToBePlaced?.showPreview()
-    }
-    this.stateMachine.step()
-    const gameScene = this.scene as Game
-    if (!this.body.embedded) {
-      this.itemOnHover = null
-      gameScene.hoverText.hide()
-      this.resetEnterables()
-    }
-    if (this.equipment.weapon) {
-      this.equipment.weapon.show()
+    if (this.currTransport) {
+      this.currTransport.update()
+    } else {
+      this.showStructureToBePlaced()
+      if (this.transportToBePlaced) {
+        this.transportToBePlaced?.showPreview()
+      }
+      this.stateMachine.step()
+      const gameScene = this.scene as Game
+      if (!this.body.embedded) {
+        this.itemOnHover = null
+        gameScene.hoverText.hide()
+        this.resetEnterables()
+      }
+      if (this.equipment.weapon) {
+        this.equipment.weapon.show()
+      }
     }
   }
 
@@ -294,8 +300,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       }
 
       if (item.type === ItemTypes.transport) {
-        this.transportToBePlaced = new Placeable(this.scene as Game, item, ['Ocean'])
-        this.transportToBePlaced.setShowPreview(true)
+        if (!this.transportToBePlaced) {
+          this.transportToBePlaced = new Placeable(this.scene as Game, item, ['Ocean'])
+          this.transportToBePlaced.setShowPreview(true)
+        } else {
+          this.transportToBePlaced.setShowPreview(false)
+          this.transportToBePlaced.destroy()
+          this.transportToBePlaced = null
+        }
       }
     }
   }

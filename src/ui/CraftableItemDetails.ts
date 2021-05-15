@@ -197,7 +197,7 @@ export class CraftableItemDetails {
             this.playerInventory[ing.name].count >= recipe[ingredientName]
           ingBox.setTextColor(playerHasEnough ? 'white' : 'red')
           ingBox.setItem(recipe[ingredientName], ingredientName, ing.image)
-          ingBox.setVisible(true)
+          ingBox.setVisible(this.isVisible)
         }
       }
     })
@@ -225,11 +225,15 @@ export class CraftableItemDetails {
   setVisible(isVisible: boolean) {
     this.isVisible = isVisible
     this.container.setVisible(isVisible)
-    this.ingredientBoxes.forEach((itemBox: ItemBox) => {
-      itemBox.setVisible(isVisible)
-    })
     this.statList.forEach((stat) => {
       stat.setVisible(isVisible)
     })
+    if (this.craftableItem) {
+      const { recipe } = this.craftableItem
+      const numBoxes = Object.keys(recipe).length
+      for (let i = 0; i < numBoxes; i++) {
+        this.ingredientBoxes[i].setVisible(isVisible)
+      }
+    }
   }
 }
