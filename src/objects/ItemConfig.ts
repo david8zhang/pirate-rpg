@@ -13,6 +13,7 @@ export interface ItemConfig {
   description: string
   type: ItemTypes
   inWorldImage?: string
+  inWorldImageSet?: any
   recipe?: any
   stats?: any
 }

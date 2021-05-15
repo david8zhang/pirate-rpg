@@ -8,8 +8,7 @@ Roadmap:
 
 - Rowboat
 
-  - Up and down sprite angles
-  - Enable user to get out of the rowboat
+  - Add hover text
 
 - Hills, mountains, etc.
 - Armor (Head, Chest, Feet)

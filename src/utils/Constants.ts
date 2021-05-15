@@ -67,6 +67,11 @@ export const ALL_PARTICLES = [
 export const ALL_ITEMS: ItemConfig[] = [
   {
     name: 'Row boat',
+    inWorldImageSet: {
+      side: 'rowboat',
+      up: 'rowboat-up',
+      down: 'rowboat-down',
+    },
     inWorldImage: 'rowboat',
     image: 'rowboat-inventory',
     type: ItemTypes.transport,

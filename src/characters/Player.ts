@@ -126,6 +126,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           if (this.enterableTransport) {
             this.enterableTransport.enterTransport()
           }
+
+          if (this.currTransport) {
+            this.currTransport.exitTransport()
+          }
         }
 
         // Toggle weapon equip
