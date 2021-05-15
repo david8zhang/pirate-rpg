@@ -37,6 +37,7 @@ export default class Game extends Phaser.Scene {
   public playerHarvestableCollider!: Physics.Arcade.Collider
   public playerMobsCollider!: Physics.Arcade.Collider
   public playerItemsCollider!: Physics.Arcade.Collider
+  public playerOceanCollider!: Physics.Arcade.Collider
 
   // Mobs
   public mobsList: Mob[] = []
@@ -111,7 +112,7 @@ export default class Game extends Phaser.Scene {
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()
     })
-    this.physics.add.collider(this.player, this.oceanLayer)
+    this.playerOceanCollider = this.physics.add.collider(this.player, this.oceanLayer)
     this.cameras.main.setBounds(0, 0, Constants.BG_WIDTH, Constants.BG_HEIGHT)
     this.cameras.main.startFollow(this.player, true)
   }

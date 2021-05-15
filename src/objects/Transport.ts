@@ -34,6 +34,7 @@ export class Transport {
     this.scene.player.isInsideTransport = true
     this.scene.player.currTransport = this
     this.transportObjGroup.add(this.scene.player)
+    this.scene.playerOceanCollider.active = false
   }
 
   update() {
@@ -56,6 +57,7 @@ export class Transport {
     }
 
     if (leftDown) {
+      this.sprite.setTexture('rowboat')
       player.scaleX = -1
       player.body.offset.x = 27
       player.direction = Direction.LEFT
@@ -64,6 +66,7 @@ export class Transport {
       this.sprite.setVelocity(-speed, 0)
     }
     if (rightDown) {
+      this.sprite.setTexture('rowboat')
       player.scaleX = 1
       player.body.offset.x = 12
       this.sprite.scaleX = 1
@@ -72,14 +75,16 @@ export class Transport {
       this.sprite.setVelocity(speed, 0)
     }
     if (upDown) {
+      this.sprite.setTexture('rowboat-up')
       player.setVelocity(0, -speed)
       this.sprite.setVelocity(0, -speed)
       player.direction = Direction.UP
     }
     if (downDown) {
+      this.sprite.setTexture('rowboat-down')
+      player.direction = Direction.DOWN
       player.setVelocity(0, speed)
       this.sprite.setVelocity(0, speed)
-      player.direction = Direction.DOWN
     }
     player.anims.play(`player-idle-${player.getAnimDirection(player.direction)}`, true)
   }

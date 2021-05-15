@@ -6,7 +6,11 @@ A top down pirate themed RPG game build using Phaser 3
 
 Roadmap:
 
-- Crafting boats
+- Rowboat
+
+  - Up and down sprite angles
+  - Enable user to get out of the rowboat
+
 - Hills, mountains, etc.
 - Armor (Head, Chest, Feet)
 - Refactor mobs to be dynamically instantiated
