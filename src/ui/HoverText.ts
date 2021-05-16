@@ -2,6 +2,7 @@ import Game from '../scenes/Game'
 
 export class HoverText {
   text: Phaser.GameObjects.Text
+  isVisible: boolean = false
   constructor(scene: Game, x: number, y: number) {
     this.text = scene.add.text(x, y, '', {
       fontSize: '10px',
@@ -19,10 +20,12 @@ export class HoverText {
     this.text.setText(text)
     this.text.x = x
     this.text.y = y
+    this.isVisible = true
     this.text.setVisible(true)
   }
 
   hide() {
+    this.isVisible = false
     this.text.setVisible(false)
   }
 }

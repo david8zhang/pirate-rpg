@@ -27,14 +27,19 @@ export class Transport {
     this.triggerImage.body.setSize(this.sprite.width * 2, this.sprite.height * 2)
     this.scene.physics.add.overlap(this.triggerImage, this.scene.player, () => {
       this.scene.player.enterableTransport = this
+      this.scene.hoverText.showText(
+        '(E) Enter ' + this.itemRef.name,
+        this.scene.player.x - this.scene.player.width,
+        this.scene.player.y + this.scene.player.height / 2 + 10
+      )
     })
 
     // Land detection collider to determine when player can disembark
     this.landDetector = this.scene.physics.add
-      .image(x + this.sprite.width + 10, y, '')
+      .image(x + this.sprite.width / 2, y, '')
       .setVisible(false)
     this.scene.physics.world.enableBody(this.landDetector, Phaser.Physics.Arcade.DYNAMIC_BODY)
-    this.landDetector.body.setSize(50, 50)
+    this.landDetector.body.setSize(20, 20)
 
     this.transportObjGroup = this.scene.add.group()
     this.transportObjGroup.add(this.sprite)
@@ -48,6 +53,7 @@ export class Transport {
     this.scene.player.currTransport = this
     this.transportObjGroup.add(this.scene.player)
     this.scene.playerOceanCollider.active = false
+    this.scene.hoverText.hide()
   }
 
   exitTransport() {
@@ -60,6 +66,7 @@ export class Transport {
       this.transportObjGroup.remove(this.scene.player)
       this.scene.playerOceanCollider.active = true
       this.isExitable = false
+      this.scene.hoverText.hide()
     }
   }
 
@@ -74,20 +81,20 @@ export class Transport {
     let yOffset = 0
     switch (this.currDirection) {
       case Direction.LEFT:
-        xOffset = -(this.sprite.width + 10)
+        xOffset = -(this.sprite.width / 2 + 10)
         yOffset = 0
         break
       case Direction.RIGHT:
-        xOffset = this.sprite.width + 10
+        xOffset = this.sprite.width / 2 + 10
         yOffset = 0
         break
       case Direction.UP:
         xOffset = 0
-        yOffset = -(this.sprite.height + 10)
+        yOffset = -(this.sprite.height / 2 + 10)
         break
       case Direction.DOWN:
         xOffset = 0
-        yOffset = this.sprite.height + 10
+        yOffset = this.sprite.height / 2 + 10
         break
     }
     this.landDetector.setPosition(this.sprite.x + xOffset, this.sprite.y + yOffset)
@@ -98,6 +105,15 @@ export class Transport {
         isExitable = true
       }
     })
+    if (this.isExitable) {
+      this.scene.hoverText.showText(
+        '(E) Exit ' + this.itemRef.name,
+        this.scene.player.x - this.scene.player.width,
+        this.scene.player.y - this.scene.player.height / 2 - 10
+      )
+    } else {
+      this.scene.hoverText.hide()
+    }
     this.isExitable = isExitable
   }
 
@@ -107,7 +123,7 @@ export class Transport {
     const upDown = cursors.up?.isDown
     const downDown = cursors.down?.isDown
     const player = this.scene.player
-    const speed = 100
+    const speed = this.isExitable ? 0 : 150
 
     if (!(leftDown || rightDown || upDown || downDown)) {
       this.sprite.setVelocity(0, 0)
