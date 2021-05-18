@@ -268,7 +268,12 @@ export default class Game extends Phaser.Scene {
     this.sandLayer.setVisible(true)
     this.grassLayer.setVisible(true)
     this.structures.setVisible(true)
+    this.elevatedLayer.setVisible(true)
     this.items.setVisible(true)
+
+    if (this.transports) {
+      this.transports.setVisible(true)
+    }
 
     this.structureEntranceLayer.setVisible(false)
     this.structureInteriorLayer.setVisible(false)
@@ -291,6 +296,9 @@ export default class Game extends Phaser.Scene {
     this.elevatedLayer.setVisible(false)
     this.structures.setVisible(false)
     this.items.setVisible(false)
+    if (this.transports) {
+      this.transports.setVisible(false)
+    }
 
     this.isInsideStructure = true
     this.playerHarvestableCollider.active = false
