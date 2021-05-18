@@ -51,6 +51,11 @@ export class Transport {
     this.scene.player.y = this.sprite.y - 15
     this.scene.player.isInsideTransport = true
     this.scene.player.currTransport = this
+    const weapon = this.scene.player.getWeapon()
+    if (weapon) {
+      weapon.isEquipped = false
+      weapon.hide()
+    }
     this.transportObjGroup.add(this.scene.player)
     this.scene.playerOceanCollider.active = false
     this.scene.hoverText.hide()

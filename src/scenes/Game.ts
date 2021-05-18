@@ -19,6 +19,7 @@ import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
 import { Structure } from '~/objects/Structure'
 import { Transport } from '~/objects/Transport'
 import { ItemConfig } from '~/objects/ItemConfig'
+import { debugDraw } from '~/utils/debug'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -30,6 +31,7 @@ export default class Game extends Phaser.Scene {
   public grassLayer!: Phaser.Tilemaps.TilemapLayer
   public sandLayer!: Phaser.Tilemaps.TilemapLayer
   public objectsLayer!: Phaser.Tilemaps.TilemapLayer
+  public elevatedLayer!: Phaser.Tilemaps.TilemapLayer
   public structureInteriorLayer!: Phaser.Tilemaps.TilemapLayer
   public structureEntranceLayer!: Phaser.Tilemaps.TilemapLayer
 
@@ -98,12 +100,15 @@ export default class Game extends Phaser.Scene {
   initTilemap() {
     this.map = this.make.tilemap({ key: 'starter-island-2' })
     const tileset = this.map.addTilesetImage('beach-tiles', 'beach-tiles')
+    const elevatedTileset = this.map.addTilesetImage('elevated-tiles', 'elevated-tiles')
     this.oceanLayer = this.map.createLayer('Ocean', tileset).setName('Ocean')
     this.sandLayer = this.map.createLayer('Sand', tileset).setName('Sand')
     this.grassLayer = this.map.createLayer('Grass', tileset).setName('Grass')
+    this.elevatedLayer = this.map.createLayer('Elevated', elevatedTileset).setName('Elevated')
     this.sandLayer.setCollisionByProperty({ collides: true })
     this.oceanLayer.setCollisionByProperty({ collides: true })
     this.grassLayer.setCollisionByProperty({ collides: true })
+    this.elevatedLayer.setCollisionByProperty({ collides: true })
   }
 
   initPlayer() {
@@ -113,6 +118,7 @@ export default class Game extends Phaser.Scene {
       this.updateCollidersOnWeaponEquip()
     })
     this.playerOceanCollider = this.physics.add.collider(this.player, this.oceanLayer)
+    this.physics.add.collider(this.player, this.elevatedLayer)
     this.cameras.main.setBounds(0, 0, Constants.BG_WIDTH, Constants.BG_HEIGHT)
     this.cameras.main.startFollow(this.player, true)
   }
@@ -282,6 +288,7 @@ export default class Game extends Phaser.Scene {
     this.oceanLayer.setVisible(false)
     this.sandLayer.setVisible(false)
     this.grassLayer.setVisible(false)
+    this.elevatedLayer.setVisible(false)
     this.structures.setVisible(false)
     this.items.setVisible(false)
 
@@ -294,6 +301,9 @@ export default class Game extends Phaser.Scene {
     const tileset = tentTileMap.addTilesetImage('tent-tiles', 'tent-tiles')
     this.structureEntranceLayer = tentTileMap.createLayer('Entrance', tileset)
     this.structureInteriorLayer = tentTileMap.createLayer('Ground', tileset)
+
+    this.player.x = Constants.BG_WIDTH / 2
+    this.player.y = Constants.BG_HEIGHT / 2
 
     this.structureEntranceLayer
       .setPosition(

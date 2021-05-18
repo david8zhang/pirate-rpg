@@ -23,7 +23,11 @@ const CRAB_ANIMATIONS = {
 export class Crab extends Mob {
   public isWalkAnimPlaying: boolean = false
   constructor(scene: Game, mobConfig: MobConfig) {
-    super(scene, mobConfig, CRAB_ANIMATIONS, [scene.oceanLayer, scene.grassLayer])
+    super(scene, mobConfig, CRAB_ANIMATIONS, [
+      scene.oceanLayer,
+      scene.grassLayer,
+      scene.elevatedLayer,
+    ])
     this.health = 20
     this.maxHealth = 20
     this.healthBar.maxValue = this.maxHealth

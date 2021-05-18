@@ -76,6 +76,10 @@ export class Weapon {
     this.sprite.setVisible(this.isEquipped)
   }
 
+  hide() {
+    this.sprite.setVisible(false)
+  }
+
   public activateWeaponHitbox() {
     this.hitboxImage.body.enable = true
     switch (this.player.direction) {

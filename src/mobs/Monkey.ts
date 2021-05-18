@@ -23,7 +23,11 @@ const MONKEY_ANIMATIONS = {
 export class Monkey extends Mob {
   public isAggro: boolean = false
   constructor(scene: Game, mobConfig: MobConfig) {
-    super(scene, mobConfig, MONKEY_ANIMATIONS, [scene.oceanLayer, scene.sandLayer])
+    super(scene, mobConfig, MONKEY_ANIMATIONS, [
+      scene.oceanLayer,
+      scene.sandLayer,
+      scene.elevatedLayer,
+    ])
     this.health = 50
     this.maxHealth = 50
     this.healthBar.maxValue = this.maxHealth
