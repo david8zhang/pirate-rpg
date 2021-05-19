@@ -23,11 +23,7 @@ const MONKEY_ANIMATIONS = {
 export class Monkey extends Mob {
   public isAggro: boolean = false
   constructor(scene: Game, mobConfig: MobConfig) {
-    super(scene, mobConfig, MONKEY_ANIMATIONS, [
-      scene.oceanLayer,
-      scene.sandLayer,
-      scene.elevatedLayer,
-    ])
+    super(scene, mobConfig, MONKEY_ANIMATIONS, [scene.oceanLayer, scene.sandLayer])
     this.health = 50
     this.maxHealth = 50
     this.healthBar.maxValue = this.maxHealth
@@ -58,11 +54,6 @@ export class Monkey extends Mob {
   }
 
   die() {
-    this.sprite.on('animationcomplete', () => {
-      this.scene.time.delayedCall(300, () => {
-        this.sprite.destroy()
-      })
-    })
     super.die()
   }
 }

@@ -4,6 +4,7 @@ import { HealthBar } from '../ui/HealthBar'
 import { Behavior, Direction } from '../lib/components/Behavior'
 import { PlayerMobCollision } from '../lib/components/PlayerMobCollision'
 import Game from '../scenes/Game'
+import { ItemFactory } from '~/objects/ItemFactory'
 
 export interface MobConfig {
   textureKey: string
@@ -38,6 +39,7 @@ export abstract class Mob {
   sprite: Phaser.Physics.Arcade.Sprite
   isAggro: boolean = false
   public playerMobCollision: PlayerMobCollision
+  drops: string[] = []
 
   // Components
   activeBehavior: Behavior
@@ -105,6 +107,19 @@ export abstract class Mob {
   }
 
   die(): void {
+    this.sprite.on('animationcomplete', () => {
+      this.scene.time.delayedCall(300, () => {
+        this.sprite.destroy()
+        if (this.drops.length > 0) {
+          this.drops.forEach((dropName: string) => {
+            const item = ItemFactory.instance.createItem(dropName, this.sprite.x, this.sprite.y)
+            if (item) {
+              item.drop()
+            }
+          })
+        }
+      })
+    })
     this.sprite.setVelocity(0)
     if (this.activeBehavior.direction === Direction.DOWN) {
       this.sprite.anims.play(this.animations.dieFront)

@@ -64,6 +64,265 @@ export const ALL_PARTICLES = [
   },
 ]
 
+export const ALL_MOBS = [
+  {
+    name: 'Monkey',
+    animFrameName: 'monkey',
+    animations: [
+      {
+        key: 'monkey-idle-front',
+        frames: {
+          start: 0,
+          end: 3,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+      {
+        key: 'monkey-idle-side',
+        frames: {
+          start: 8,
+          end: 11,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+      {
+        key: 'monkey-idle-back',
+        frames: {
+          start: 20,
+          end: 23,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+      // Walk animations
+      {
+        key: 'monkey-walk-front',
+        frames: {
+          start: 12,
+          end: 15,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+      {
+        key: 'monkey-walk-side',
+        frames: {
+          start: 4,
+          end: 7,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+      {
+        key: 'monkey-walk-back',
+        frames: {
+          start: 16,
+          end: 19,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+      // Hurt animations
+      {
+        key: 'monkey-hurt-front',
+        frames: {
+          start: 45,
+          end: 47,
+          suffix: '.png',
+        },
+        repeat: 0,
+        frameRate: 10,
+      },
+      {
+        key: 'monkey-hurt-side',
+        frames: {
+          start: 37,
+          end: 37,
+          suffix: '.png',
+        },
+        repeat: 0,
+        frameRate: 10,
+      },
+      {
+        key: 'monkey-hurt-back',
+        frames: {
+          start: 41,
+          end: 41,
+          suffix: '.png',
+        },
+        repeat: 0,
+        frameRate: 10,
+      },
+      // Death animations
+      {
+        key: 'monkey-die-front',
+        frames: {
+          start: 33,
+          end: 36,
+          suffix: '.png',
+        },
+        repeat: 0,
+        frameRate: 5,
+      },
+
+      {
+        key: 'monkey-die-side',
+        frames: {
+          start: 37,
+          end: 40,
+          suffix: '.png',
+        },
+        repeat: 0,
+        frameRate: 5,
+      },
+
+      {
+        key: 'monkey-die-back',
+        frames: {
+          start: 41,
+          end: 44,
+          suffix: '.png',
+        },
+        repeat: 0,
+        frameRate: 5,
+      },
+
+      // Attack animations
+      {
+        key: 'monkey-attack-front',
+        frames: {
+          start: 24,
+          end: 26,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 5,
+      },
+
+      {
+        key: 'monkey-attack-side',
+        frames: {
+          start: 27,
+          end: 29,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 5,
+      },
+      {
+        key: 'monkey-attack-back',
+        frames: {
+          start: 30,
+          end: 32,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 5,
+      },
+    ],
+    health: 50,
+    body: {
+      width: 0.6,
+      height: 0.5,
+      offsetY: 15,
+    },
+    moveOffsets: {
+      left: 8,
+      right: 25,
+    },
+    aggroBehavior: 'Melee',
+    drops: [],
+    collidableLayers: ['Sand', 'Ocean'],
+  },
+  {
+    name: 'Crab',
+    animFrameName: 'crab',
+    animations: [
+      {
+        key: 'crab-idle-front',
+        frames: {
+          start: 0,
+          end: 2,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+      {
+        key: 'crab-walk-front',
+        frames: {
+          start: 4,
+          end: 6,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+      {
+        key: 'crab-walk-side',
+        frames: {
+          start: 14,
+          end: 16,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+      {
+        key: 'crab-idle-side',
+        frames: {
+          start: 10,
+          end: 12,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+      {
+        key: 'crab-hurt-front',
+        frames: {
+          start: 8,
+          end: 8,
+          suffix: '.png',
+        },
+        repeat: 0,
+        frameRate: 10,
+      },
+      {
+        key: 'crab-die-front',
+        frames: {
+          start: 7,
+          end: 9,
+          suffix: '.png',
+        },
+        repeat: 0,
+        frameRate: 5,
+      },
+      {
+        key: 'crab-die-side',
+        frames: {
+          start: 16,
+          end: 18,
+          suffix: '.png',
+        },
+        repeat: 0,
+        frameRate: 5,
+      },
+    ],
+    health: 20,
+    drops: ['Crab claw'],
+    collidableLayers: ['Grass', 'Ocean'],
+  },
+]
+
 export const ALL_ITEMS: ItemConfig[] = [
   {
     name: 'Row boat',
