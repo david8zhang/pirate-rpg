@@ -56,8 +56,6 @@ export class Mob {
     if (this.mobConfig.body) {
       const body = this.mobConfig.body
       this.sprite.body.setSize(this.sprite.width * body.width, this.sprite.height * body.height)
-
-      console.log(body.offsetY)
       if (body.offsetY) {
         this.sprite.body.offset.y = body.offsetY
       }
