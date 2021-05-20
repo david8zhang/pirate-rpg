@@ -1,12 +1,9 @@
 import Phaser, { Physics } from 'phaser'
 import { ALL_HARVESTABLES, Constants } from '../utils/Constants'
 import '../characters/Player'
-import '../mobs/GiantCrab'
 import Player from '../characters/Player'
-import { Crab } from '../mobs/Crab'
 import { createCharacterAnims } from '../anims/CharacterAnims'
 import { Mob } from '../mobs/Mob'
-import { Monkey } from '~/mobs/Monkey'
 import { Item } from '~/objects/Item'
 import { HoverText } from '~/ui/HoverText'
 import { ItemFactory } from '~/objects/ItemFactory'
@@ -185,17 +182,20 @@ export default class Game extends Phaser.Scene {
     mobsLayer.objects.forEach((mobObj) => {
       const xPos = mobObj.x! + mobObj.width! * 0.5
       const yPos = mobObj.y! - mobObj.height! * 0.5
-      const crab = new Crab(this, { x: xPos, y: yPos, textureKey: 'crab' })
-      this.mobsList.push(crab)
-      this.mobs.add(crab.sprite)
+      const crabConfig = Constants.getMob('Crab')
+      if (crabConfig) {
+        const crab = new Mob(this, xPos, yPos, crabConfig)
+        this.mobsList.push(crab)
+        this.mobs.add(crab.sprite)
+      }
     })
-    const monkey = new Monkey(this, {
-      x: 300,
-      y: 300,
-      textureKey: 'monkey',
-    })
-    this.mobsList.push(monkey)
-    this.mobs.add(monkey.sprite)
+
+    const monkeyConfig = Constants.getMob('Monkey')
+    if (monkeyConfig) {
+      const monkey = new Mob(this, 300, 300, monkeyConfig)
+      this.mobsList.push(monkey)
+      this.mobs.add(monkey.sprite)
+    }
     this.playerMobsCollider = this.physics.add.collider(this.mobs, this.player, (obj1, obj2) => {
       const mobRef: Mob = obj2.getData('ref')
       mobRef.playerMobCollision.handlePlayerAttack()

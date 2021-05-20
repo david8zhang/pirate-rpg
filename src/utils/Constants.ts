@@ -17,6 +17,28 @@ export class Constants {
   static get WEAPON_SWING_DURATION() {
     return 300
   }
+
+  static getMob(mobName: string) {
+    return ALL_MOBS.find((mobConfig) => mobConfig.name === mobName)
+  }
+}
+
+export enum AnimationType {
+  IDLE_FRONT = 'idleFront',
+  IDLE_BACK = 'idleBack',
+  IDLE_SIDE = 'idleSide',
+  WALK_FRONT = 'walkFront',
+  WALK_SIDE = 'walkSide',
+  WALK_BACK = 'walkBack',
+  HURT_FRONT = 'hurtFront',
+  HURT_BACK = 'hurtBack',
+  HURT_SIDE = 'hurtSide',
+  ATTACK_FRONT = 'attackFront',
+  ATTACK_SIDE = 'attackSide',
+  ATTACK_BACK = 'attackBack',
+  DIE_FRONT = 'dieFront',
+  DIE_BACK = 'dieBack',
+  DIE_SIDE = 'dieSide',
 }
 
 export const ALL_HARVESTABLES = [
@@ -68,6 +90,23 @@ export const ALL_MOBS = [
   {
     name: 'Monkey',
     animFrameName: 'monkey',
+    animMapping: {
+      walkFront: 'monkey-walk-front',
+      walkSide: 'monkey-walk-side',
+      walkBack: 'monkey-walk-back',
+      idleFront: 'monkey-idle-front',
+      idleSide: 'monkey-idle-side',
+      idleBack: 'monkey-idle-back',
+      dieFront: 'monkey-die-front',
+      dieSide: 'monkey-die-side',
+      dieBack: 'monkey-die-back',
+      hurtFront: 'monkey-hurt-front',
+      hurtSide: 'monkey-hurt-side',
+      hurtBack: 'monkey-hurt-back',
+      attackFront: 'monkey-attack-front',
+      attackSide: 'monkey-attack-side',
+      attackBack: 'monkey-attack-back',
+    },
     animations: [
       {
         key: 'monkey-idle-front',
@@ -245,8 +284,20 @@ export const ALL_MOBS = [
   {
     name: 'Crab',
     animFrameName: 'crab',
+    animMapping: {
+      walkFront: 'crab-walk-side',
+      walkSide: 'crab-walk-front',
+      walkBack: 'crab-walk-side',
+      idleFront: 'crab-idle-side',
+      idleSide: 'crab-idle-front',
+      idleBack: 'crab-idle-side',
+      dieFront: 'crab-die-side',
+      dieSide: 'crab-die-front',
+      dieBack: 'crab-die-side',
+    },
     animations: [
       {
+        type: AnimationType.IDLE_FRONT,
         key: 'crab-idle-front',
         frames: {
           start: 0,
@@ -257,6 +308,7 @@ export const ALL_MOBS = [
         frameRate: 10,
       },
       {
+        type: AnimationType.WALK_FRONT,
         key: 'crab-walk-front',
         frames: {
           start: 4,
@@ -267,6 +319,7 @@ export const ALL_MOBS = [
         frameRate: 10,
       },
       {
+        type: AnimationType.WALK_SIDE,
         key: 'crab-walk-side',
         frames: {
           start: 14,
@@ -277,6 +330,7 @@ export const ALL_MOBS = [
         frameRate: 10,
       },
       {
+        type: AnimationType.IDLE_SIDE,
         key: 'crab-idle-side',
         frames: {
           start: 10,
@@ -287,6 +341,7 @@ export const ALL_MOBS = [
         frameRate: 10,
       },
       {
+        type: AnimationType.HURT_FRONT,
         key: 'crab-hurt-front',
         frames: {
           start: 8,
@@ -297,6 +352,7 @@ export const ALL_MOBS = [
         frameRate: 10,
       },
       {
+        type: AnimationType.DIE_FRONT,
         key: 'crab-die-front',
         frames: {
           start: 7,
@@ -307,6 +363,7 @@ export const ALL_MOBS = [
         frameRate: 5,
       },
       {
+        type: AnimationType.DIE_SIDE,
         key: 'crab-die-side',
         frames: {
           start: 16,

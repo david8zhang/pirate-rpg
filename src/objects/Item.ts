@@ -6,6 +6,7 @@ export class Item {
   scene: Game
   dropLength?: number
   disableHover?: boolean
+  texture: string
 
   constructor(
     scene: Game,
@@ -15,6 +16,7 @@ export class Item {
     dropLength?: number,
     disableHover?: boolean
   ) {
+    this.texture = textureKey
     this.scene = scene
     this.sprite = this.scene.physics.add.sprite(x, y, textureKey)
     this.scene.physics.world.enable(this.sprite)

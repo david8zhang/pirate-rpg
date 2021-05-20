@@ -1,4 +1,4 @@
-import { MobAnimations } from '../../mobs/Mob'
+import { AnimationType } from '~/utils/Constants'
 import { Direction } from './Behavior'
 import { MovementBehavior, MoveState } from './MovementBehavior'
 
@@ -14,7 +14,9 @@ export class RandomMovementBehavior extends MovementBehavior {
   private sprite: Phaser.Physics.Arcade.Sprite
   private scene: Phaser.Scene
   private isStopped: boolean = false
-  private animations: MobAnimations
+  private animations: {
+    [key: string]: string
+  }
 
   public direction: Direction | null = null
   public moveEvent!: Phaser.Time.TimerEvent
@@ -25,14 +27,16 @@ export class RandomMovementBehavior extends MovementBehavior {
   constructor(
     sprite: Phaser.Physics.Arcade.Sprite,
     scene: Phaser.Scene,
-    animations: MobAnimations,
+    animations: {
+      [key: string]: string
+    },
     onMoveFn?: Function
   ) {
     super()
     this.animations = animations
     this.sprite = sprite
     this.scene = scene
-    this.sprite.anims.play(animations.idleFront)
+    this.sprite.anims.play(animations[AnimationType.IDLE_FRONT])
     this.moveEvent = this.scene.time.addEvent({
       delay: 2000,
       callback: () => {
@@ -77,17 +81,23 @@ export class RandomMovementBehavior extends MovementBehavior {
     const isMoving = this.state === MoveState.MOVING
     switch (this.direction) {
       case Direction.UP: {
-        return isMoving ? this.animations.moveBack : this.animations.idleBack
+        return isMoving
+          ? this.animations[AnimationType.WALK_BACK]
+          : this.animations[AnimationType.IDLE_BACK]
       }
       case Direction.DOWN: {
-        return isMoving ? this.animations.moveFront : this.animations.idleFront
+        return isMoving
+          ? this.animations[AnimationType.WALK_FRONT]
+          : this.animations[AnimationType.IDLE_FRONT]
       }
       case Direction.RIGHT:
       case Direction.LEFT: {
-        return isMoving ? this.animations.moveSide : this.animations.idleSide
+        return isMoving
+          ? this.animations[AnimationType.WALK_SIDE]
+          : this.animations[AnimationType.IDLE_SIDE]
       }
       default:
-        return this.animations.idleFront
+        return this.animations[AnimationType.IDLE_FRONT]
     }
   }
 

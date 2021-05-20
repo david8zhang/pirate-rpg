@@ -1,3 +1,4 @@
+import { AnimationType } from '~/utils/Constants'
 import { Behavior, Direction } from './Behavior'
 
 export class AttackBehavior implements Behavior {
@@ -9,17 +10,23 @@ export class AttackBehavior implements Behavior {
   public getAnimBasedOnDirection(direction: Direction, animations: any, isAttacking?: boolean) {
     switch (direction) {
       case Direction.UP: {
-        return isAttacking ? animations.attackBack : animations.moveBack
+        return isAttacking
+          ? animations[AnimationType.ATTACK_BACK]
+          : animations[AnimationType.WALK_BACK]
       }
       case Direction.DOWN: {
-        return isAttacking ? animations.attackFront : animations.moveFront
+        return isAttacking
+          ? animations[AnimationType.ATTACK_FRONT]
+          : animations[AnimationType.WALK_FRONT]
       }
       case Direction.RIGHT:
       case Direction.LEFT: {
-        return isAttacking ? animations.attackSide : animations.moveSide
+        return isAttacking
+          ? animations[AnimationType.ATTACK_SIDE]
+          : animations[AnimationType.WALK_SIDE]
       }
       default:
-        return animations.idleFront
+        return animations[AnimationType.IDLE_FRONT]
     }
   }
 
