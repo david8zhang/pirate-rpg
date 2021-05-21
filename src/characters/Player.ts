@@ -54,8 +54,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public onEquipWeaponHandler: Function = () => {}
 
   // Structures
-  public structureToBePlaced: ItemConfig | null = null
-  public structureImage: Phaser.Physics.Arcade.Image | null = null
+  public structureToBePlaced: Placeable | null = null
   public structureToEnter!: Structure | null
   public structureColliders: Phaser.Physics.Arcade.Collider[] = []
 
@@ -173,20 +172,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   placeStructure() {
-    const gameScene = this.scene as Game
-    if (this.structureImage && this.structureToBePlaced && !this.structureImage.body.embedded) {
-      this.removeItem(this.structureToBePlaced.name, 1)
-      gameScene.addStructure(
-        this.structureToBePlaced.inWorldImage as string,
-        this.structureImage.x,
-        this.structureImage.y
-      )
-      this.structureColliders.forEach((collider) => {
-        collider.destroy()
-      })
-      this.structureImage.destroy()
-      this.structureImage = null
-      this.structureToBePlaced = null
+    if (this.structureToBePlaced) {
+      const didPlaceStructure = this.structureToBePlaced.placeItem(PlaceableType.structure)
+      if (didPlaceStructure) {
+        this.structureToBePlaced = null
+      }
     }
   }
 
@@ -213,7 +203,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.currTransport) {
       this.currTransport.update()
     } else {
-      this.showStructureToBePlaced()
+      // this.showStructureToBePlaced()
+      if (this.structureToBePlaced) {
+        this.structureToBePlaced.showPreview()
+      }
       if (this.transportToBePlaced) {
         this.transportToBePlaced?.showPreview()
       }
@@ -227,49 +220,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       if (this.equipment.weapon) {
         this.equipment.weapon.show()
       }
-    }
-  }
-
-  showStructureToBePlaced() {
-    if (this.structureToBePlaced) {
-      const { inWorldImage } = this.structureToBePlaced
-      let xPos = this.x
-      let yPos = this.y
-      if (!this.structureImage) {
-        this.structureImage = this.scene.physics.add
-          .image(xPos, yPos, inWorldImage as string)
-          .setAlpha(0.5)
-        this.scene.physics.world.enableBody(this.structureImage, Phaser.Physics.Arcade.DYNAMIC_BODY)
-        const gameScene = this.scene as Game
-        gameScene.getAllObjectGroups().forEach((group) => {
-          this.scene.physics.add.overlap(this.structureImage as Phaser.Physics.Arcade.Image, group)
-        })
-      }
-      if (this.structureImage.body.embedded) {
-        this.structureImage.setTint(0xff0000)
-      } else {
-        this.structureImage.setTint(0xffffff)
-      }
-      switch (this.direction) {
-        case Direction.LEFT:
-          xPos = this.x - (this.structureImage.width / 2 + 10)
-          yPos = this.y
-          break
-        case Direction.RIGHT:
-          xPos = this.x + (this.structureImage.width / 2 + 10)
-          yPos = this.y
-          break
-        case Direction.UP:
-          yPos = this.y - (this.structureImage.height / 2 + 10)
-          xPos = this.x
-          break
-        case Direction.DOWN:
-          yPos = this.y + (this.structureImage.height / 2 + 10)
-          xPos = this.x
-          break
-      }
-      this.structureImage.x = xPos
-      this.structureImage.y = yPos
     }
   }
 
@@ -300,7 +250,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
       // Handle if the double-clicked item was a structure
       if (item.type === ItemTypes.structure) {
-        this.structureToBePlaced = item
+        if (!this.structureToBePlaced) {
+          this.structureToBePlaced = new Placeable(this.scene as Game, item, ['Grass', 'Sand'])
+          this.structureToBePlaced.setShowPreview(true)
+        } else {
+          this.structureToBePlaced?.setShowPreview(false)
+          this.structureToBePlaced?.destroy()
+          this.structureToBePlaced = null
+        }
       }
 
       if (item.type === ItemTypes.transport) {
