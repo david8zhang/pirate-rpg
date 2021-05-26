@@ -59,6 +59,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('rowboat-up', 'transport/rowboat-up.png')
     this.load.image('rowboat-down', 'transport/rowboat-down.png')
     this.load.image('rowboat-inventory', 'transport/rowboat-inventory.png')
+    this.load.image('sloop', 'transport/sloop/sloop.png')
 
     // Structures
     this.load.image('tent', 'structures/tent.png')

@@ -87,6 +87,9 @@ export default class Game extends Phaser.Scene {
     this.initPlants()
     this.initMobs()
     this.initItems()
+
+    const sloopImg = this.add.image(1000, 1000, 'sloop')
+    sloopImg.setName('Transport')
   }
 
   initTilemap() {
@@ -149,7 +152,7 @@ export default class Game extends Phaser.Scene {
   public setShipCamera() {
     this.isShipScale = true
     UIScene.instance.hide()
-    this.scale.setGameSize(600, 375)
+    this.scale.setGameSize(1200, 750)
   }
 
   updateCollidersOnWeaponEquip() {

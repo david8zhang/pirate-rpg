@@ -59,6 +59,7 @@ export class Transport {
     this.transportObjGroup.add(this.scene.player)
     this.scene.playerOceanCollider.active = false
     this.scene.hoverText.hide()
+    this.scene.setShipCamera()
   }
 
   exitTransport() {

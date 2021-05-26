@@ -44,8 +44,9 @@ export class Mob {
     this.scene = scene
     this.x = x
     this.y = y
-    this.maxHealth = 100
-    this.health = 100
+
+    this.maxHealth = mobConfig.health
+    this.health = mobConfig.health
     this.sprite = scene.physics.add.sprite(x, y, animFrameName)
     this.sprite.setData('ref', this)
     this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
