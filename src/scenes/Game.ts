@@ -88,8 +88,7 @@ export default class Game extends Phaser.Scene {
     this.initMobs()
     this.initItems()
 
-    const sloopImg = this.add.image(1000, 1000, 'sloop')
-    sloopImg.setName('Transport')
+    this.add.image(500, 500, 'sloop')
   }
 
   initTilemap() {
@@ -124,7 +123,7 @@ export default class Game extends Phaser.Scene {
       classType: Harvestable,
     })
 
-    // Add other plant types
+    // TODO: Add other plant types
     const palmTreeConfig = ALL_HARVESTABLES[0]
 
     sortedByY.forEach((plantObj) => {
