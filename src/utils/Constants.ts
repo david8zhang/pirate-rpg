@@ -41,6 +41,21 @@ export enum AnimationType {
   DIE_SIDE = 'dieSide',
 }
 
+export const ALL_SHIPS = [
+  {
+    hullImages: {
+      up: 'sloop-up',
+      down: 'sloop-down',
+      side: 'sloop-side',
+    },
+    sailsImages: {
+      up: 'sails-up',
+      down: 'sails-down',
+      side: 'sails-side',
+    },
+  },
+]
+
 export const ALL_HARVESTABLES = [
   {
     name: 'PalmTree',

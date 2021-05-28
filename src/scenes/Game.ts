@@ -1,5 +1,5 @@
 import Phaser, { Physics } from 'phaser'
-import { ALL_HARVESTABLES, Constants } from '../utils/Constants'
+import { ALL_HARVESTABLES, ALL_SHIPS, Constants } from '../utils/Constants'
 import '../characters/Player'
 import Player from '../characters/Player'
 import { createCharacterAnims } from '../anims/CharacterAnims'
@@ -15,6 +15,7 @@ import { Transport } from '~/objects/Transport'
 import { ItemConfig } from '~/objects/ItemConfig'
 import { createMobAnims } from '~/anims/MobAnims'
 import { ALL_MOBS } from '../utils/Constants'
+import { Ship } from '~/objects/Ship'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -88,7 +89,7 @@ export default class Game extends Phaser.Scene {
     this.initMobs()
     this.initItems()
 
-    this.add.image(500, 500, 'sloop')
+    const ship = new Ship(this, ALL_SHIPS[0], { x: 1000, y: 1000 })
   }
 
   initTilemap() {
@@ -103,12 +104,13 @@ export default class Game extends Phaser.Scene {
   }
 
   initPlayer() {
-    this.player = this.add.player(256, 256, 'player')
+    // TODO: Fix this
+    this.player = this.add.player(1100, 1100, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()
     })
-    this.playerOceanCollider = this.physics.add.collider(this.player, this.oceanLayer)
+    // this.playerOceanCollider = this.physics.add.collider(this.player, this.oceanLayer)
     this.cameras.main.setBounds(0, 0, Constants.BG_WIDTH, Constants.BG_HEIGHT)
     this.cameras.main.startFollow(this.player, true)
   }
