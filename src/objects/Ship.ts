@@ -31,7 +31,7 @@ export class Ship {
   public hullSprite: Phaser.GameObjects.Sprite
   // public sailsSprite: Phaser.GameObjects.Sprite
   public scene: Game
-  public currDirection = Direction.RIGHT
+  public currDirection = Direction.UP
   public wallImages: Phaser.Physics.Arcade.Image[] = []
   public hitboxImages: Phaser.Physics.Arcade.Image[] = []
 
@@ -39,7 +39,7 @@ export class Ship {
     this.scene = scene
     const { x, y } = position
     const { hullImages, sailsImages, colliderConfig, hitboxConfig } = shipConfig
-    this.hullSprite = this.scene.add.sprite(x, y, hullImages.side)
+    this.hullSprite = this.scene.add.sprite(x, y, hullImages.up)
     this.group = this.scene.add.group()
     // this.sailsSprite = this.scene.physics.add.sprite(x, y, sailsImages.side)
 
