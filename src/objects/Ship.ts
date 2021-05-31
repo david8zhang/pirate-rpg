@@ -28,31 +28,23 @@ export interface ShipConfig {
 
 export class Ship {
   public group: Phaser.GameObjects.Group
-  public hullSprite: Phaser.GameObjects.Sprite
-  // public sailsSprite: Phaser.GameObjects.Sprite
+  public hullSprite!: Phaser.GameObjects.Sprite
+  public sailsSprite!: Phaser.GameObjects.Sprite
   public scene: Game
-  public currDirection = Direction.UP
+  public currDirection = Direction.RIGHT
   public wallImages: Phaser.Physics.Arcade.Image[] = []
   public hitboxImages: Phaser.Physics.Arcade.Image[] = []
+  public isAnchored: boolean = true
 
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
     const { x, y } = position
     const { hullImages, sailsImages, colliderConfig, hitboxConfig } = shipConfig
-    this.hullSprite = this.scene.add.sprite(x, y, hullImages.up)
     this.group = this.scene.add.group()
-    // this.sailsSprite = this.scene.physics.add.sprite(x, y, sailsImages.side)
 
-    this.hullSprite.setName('Transport')
-    this.hullSprite.setDepth(this.scene.player.depth - 1)
-
-    // this.addCollider({ x, y }, { width: 264, height: 231 }, { x: -37, y: 80 })
-    // this.addCollider({ x, y }, { width: 100, height: 251 }, { x: -140, y: 50 })
-    // this.addCollider({ x, y }, { width: 100, height: 251 }, { x: 205, y: 50 })
+    this.setupSprites(x, y, hullImages, sailsImages, this.group)
     this.setupHitbox(hitboxConfig)
     this.setupWalls(colliderConfig)
-
-    this.group.add(this.hullSprite)
 
     this.scene.input.on(
       'pointerdown',
@@ -64,7 +56,35 @@ export class Ship {
       },
       this
     )
-    this.hullSprite.scaleX = -1
+  }
+  setupSprites(
+    x: number,
+    y: number,
+    hullImages: any,
+    sailsImages: any,
+    group: Phaser.GameObjects.Group
+  ) {
+    const direction =
+      this.currDirection === Direction.LEFT || this.currDirection === Direction.RIGHT
+        ? 'side'
+        : this.currDirection
+    const hullImage = hullImages[direction]
+    const sailsImage = sailsImages[direction]
+    this.hullSprite = this.scene.add.sprite(x, y, hullImage)
+    this.sailsSprite = this.scene.add.sprite(x, y, sailsImage)
+
+    if (this.isAnchored) {
+      this.sailsSprite.setAlpha(0.5)
+    }
+
+    this.hullSprite.setName('Transport')
+    this.hullSprite.setDepth(this.scene.player.depth - 1)
+
+    this.hullSprite.scaleX = this.currDirection === Direction.RIGHT ? -1 : 1
+    this.sailsSprite.scaleX = this.currDirection === Direction.RIGHT ? -1 : 1
+
+    group.add(this.hullSprite)
+    group.add(this.sailsSprite)
   }
 
   setupHitbox(hitboxConfig: any) {
