@@ -14,6 +14,15 @@ export interface ShipConfig {
   }
   colliderConfig: {
     left: any[]
+    right: any[]
+    up: any[]
+    down: any[]
+  }
+  hitboxConfig: {
+    left: any[]
+    right: any[]
+    up: any[]
+    down: any[]
   }
 }
 
@@ -22,13 +31,14 @@ export class Ship {
   public hullSprite: Phaser.GameObjects.Sprite
   // public sailsSprite: Phaser.GameObjects.Sprite
   public scene: Game
-  public currDirection = Direction.LEFT
+  public currDirection = Direction.RIGHT
   public wallImages: Phaser.Physics.Arcade.Image[] = []
+  public hitboxImages: Phaser.Physics.Arcade.Image[] = []
 
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
     const { x, y } = position
-    const { hullImages, sailsImages, colliderConfig } = shipConfig
+    const { hullImages, sailsImages, colliderConfig, hitboxConfig } = shipConfig
     this.hullSprite = this.scene.add.sprite(x, y, hullImages.side)
     this.group = this.scene.add.group()
     // this.sailsSprite = this.scene.physics.add.sprite(x, y, sailsImages.side)
@@ -36,9 +46,10 @@ export class Ship {
     this.hullSprite.setName('Transport')
     this.hullSprite.setDepth(this.scene.player.depth - 1)
 
-    this.addCollider({ x, y }, { width: 264, height: 231 }, { x: -37, y: 80 })
-    this.addCollider({ x, y }, { width: 100, height: 251 }, { x: -140, y: 50 })
-    this.addCollider({ x, y }, { width: 100, height: 251 }, { x: 205, y: 50 })
+    // this.addCollider({ x, y }, { width: 264, height: 231 }, { x: -37, y: 80 })
+    // this.addCollider({ x, y }, { width: 100, height: 251 }, { x: -140, y: 50 })
+    // this.addCollider({ x, y }, { width: 100, height: 251 }, { x: 205, y: 50 })
+    this.setupHitbox(hitboxConfig)
     this.setupWalls(colliderConfig)
 
     this.group.add(this.hullSprite)
@@ -53,6 +64,19 @@ export class Ship {
       },
       this
     )
+    this.hullSprite.scaleX = -1
+  }
+
+  setupHitbox(hitboxConfig: any) {
+    const configs = hitboxConfig[this.currDirection]
+    configs.forEach((hitbox) => {
+      const hitboxImg = this.addCollider(
+        { x: this.hullSprite.x, y: this.hullSprite.y },
+        { width: hitbox.width, height: hitbox.height },
+        { x: hitbox.xOffset, y: hitbox.yOffset }
+      )
+      this.hitboxImages.push(hitboxImg)
+    })
   }
 
   setupWalls(colliderConfig: any) {
