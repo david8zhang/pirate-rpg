@@ -18,6 +18,12 @@ export interface ShipConfig {
     up: any[]
     down: any[]
   }
+  wheelConfig: {
+    left: any
+    right: any
+    up: any
+    down: any
+  }
   hitboxConfig: {
     left: any[]
     right: any[]
@@ -29,6 +35,7 @@ export interface ShipConfig {
 export class Ship {
   public group: Phaser.GameObjects.Group
   public hullSprite!: Phaser.GameObjects.Sprite
+  public wheelSprite!: Phaser.GameObjects.Sprite
   public sailsSprite!: Phaser.GameObjects.Sprite
   public scene: Game
   public currDirection = Direction.LEFT
@@ -39,12 +46,13 @@ export class Ship {
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
     const { x, y } = position
-    const { hullImages, sailsImages, colliderConfig, hitboxConfig } = shipConfig
+    const { hullImages, sailsImages, colliderConfig, hitboxConfig, wheelConfig } = shipConfig
     this.group = this.scene.add.group()
 
     this.setupSprites(x, y, hullImages, sailsImages, this.group)
     this.setupHitbox(hitboxConfig)
     this.setupWalls(colliderConfig)
+    this.setupWheel(wheelConfig)
 
     this.scene.input.on(
       'pointerdown',
@@ -57,6 +65,25 @@ export class Ship {
       this
     )
   }
+
+  setupWheel(wheelConfig) {
+    const directionConfig = wheelConfig[this.currDirection]
+    const xPos = this.hullSprite.x + directionConfig.xOffset
+    const yPos = this.hullSprite.y + directionConfig.yOffset
+    if (!this.wheelSprite) {
+      this.wheelSprite = this.scene.add.sprite(xPos, yPos, directionConfig.image)
+    } else {
+      this.wheelSprite.setTexture(directionConfig.image)
+      this.wheelSprite.setX(xPos)
+      this.wheelSprite.setY(yPos)
+    }
+    if (this.currDirection === Direction.RIGHT) {
+      this.wheelSprite.scaleX = -1
+    } else {
+      this.wheelSprite.scaleX = 1
+    }
+  }
+
   setupSprites(
     x: number,
     y: number,
@@ -133,4 +160,10 @@ export class Ship {
     image.body.setSize(width, height)
     return image
   }
+
+  update() {
+    this.handleMovement()
+  }
+
+  handleMovement() {}
 }

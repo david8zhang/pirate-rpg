@@ -54,6 +54,28 @@ export const ALL_SHIPS = [
       down: 'sails-down',
       side: 'sails-side',
     },
+    wheelConfig: {
+      up: {
+        image: 'wheel-up',
+        xOffset: 0,
+        yOffset: 281,
+      },
+      left: {
+        image: 'wheel-side',
+        xOffset: 233,
+        yOffset: 128,
+      },
+      right: {
+        image: 'wheel-side',
+        xOffset: -233,
+        yOffset: 128,
+      },
+      down: {
+        image: 'wheel-down',
+        xOffset: -16,
+        yOffset: -122,
+      },
+    },
     colliderConfig: {
       left: [
         {
