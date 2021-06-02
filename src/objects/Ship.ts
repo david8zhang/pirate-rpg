@@ -31,7 +31,7 @@ export class Ship {
   public hullSprite!: Phaser.GameObjects.Sprite
   public sailsSprite!: Phaser.GameObjects.Sprite
   public scene: Game
-  public currDirection = Direction.RIGHT
+  public currDirection = Direction.LEFT
   public wallImages: Phaser.Physics.Arcade.Image[] = []
   public hitboxImages: Phaser.Physics.Arcade.Image[] = []
   public isAnchored: boolean = true
