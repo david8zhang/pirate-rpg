@@ -14,6 +14,7 @@ import { ItemBox } from '../ui/InventoryMenu'
 import { Structure } from '../objects/Structure'
 import { Placeable, PlaceableType } from '../objects/Placeable'
 import { Transport } from '../objects/Transport'
+import { Ship } from '~/objects/Ship'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -64,6 +65,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public currTransport: Transport | null = null
   public enterableTransport: Transport | null = null
 
+  // Ships (Should be a subclass of transport but it's behavior is slightly different. Refactor this later...)
+  public ship: Ship | null = null
+  public isSteeringShip: boolean = false
+
   // Equipment and inventory
   public inventory: Inventory
   public equipment: Equipment
@@ -103,6 +108,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  canMove() {
+    if (this.ship) {
+      return this.ship.isAnchored
+    }
+    return !this.currTransport
+  }
+
   configureKeyPresses() {
     const gameScene = this.scene as Game
     this.scene.input.keyboard.on(
@@ -128,6 +140,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
           if (this.currTransport) {
             this.currTransport.exitTransport()
+          }
+
+          // Take the wheel of the ship, enabling it to be moved around like a boat
+          if (this.ship && this.ship.canTakeWheel && this.ship.isAnchored) {
+            this.ship.takeWheel()
+            this.isSteeringShip = true
           }
         }
 

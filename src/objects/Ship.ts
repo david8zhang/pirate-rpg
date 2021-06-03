@@ -1,5 +1,6 @@
 import { Direction } from '~/characters/Player'
 import Game from '../scenes/Game'
+import { Transport } from './Transport'
 
 export interface ShipConfig {
   hullImages: {
@@ -34,14 +35,17 @@ export interface ShipConfig {
 
 export class Ship {
   public group: Phaser.GameObjects.Group
-  public hullSprite!: Phaser.GameObjects.Sprite
-  public wheelSprite!: Phaser.GameObjects.Sprite
-  public sailsSprite!: Phaser.GameObjects.Sprite
+  public hullSprite!: Phaser.Physics.Arcade.Sprite
+  public wheelSprite!: Phaser.Physics.Arcade.Sprite
+  public sailsSprite!: Phaser.Physics.Arcade.Sprite
   public scene: Game
   public currDirection = Direction.LEFT
   public wallImages: Phaser.Physics.Arcade.Image[] = []
   public hitboxImages: Phaser.Physics.Arcade.Image[] = []
   public isAnchored: boolean = true
+  public wheelCollider!: Phaser.Physics.Arcade.Collider
+  public shipConfig: ShipConfig
+  public canTakeWheel: boolean = false
 
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
@@ -49,21 +53,13 @@ export class Ship {
     const { hullImages, sailsImages, colliderConfig, hitboxConfig, wheelConfig } = shipConfig
     this.group = this.scene.add.group()
 
+    // Setup the sprites and hitboxes
     this.setupSprites(x, y, hullImages, sailsImages, this.group)
     this.setupHitbox(hitboxConfig)
     this.setupWalls(colliderConfig)
     this.setupWheel(wheelConfig)
 
-    this.scene.input.on(
-      'pointerdown',
-      function (pointer) {
-        if (pointer.leftButtonDown()) {
-          console.log('X:', Math.round(pointer.worldX - x))
-          console.log('Y:', Math.round(pointer.worldY - y))
-        }
-      },
-      this
-    )
+    this.shipConfig = shipConfig
   }
 
   setupWheel(wheelConfig) {
@@ -71,7 +67,7 @@ export class Ship {
     const xPos = this.hullSprite.x + directionConfig.xOffset
     const yPos = this.hullSprite.y + directionConfig.yOffset
     if (!this.wheelSprite) {
-      this.wheelSprite = this.scene.add.sprite(xPos, yPos, directionConfig.image)
+      this.wheelSprite = this.scene.physics.add.sprite(xPos, yPos, directionConfig.image)
     } else {
       this.wheelSprite.setTexture(directionConfig.image)
       this.wheelSprite.setX(xPos)
@@ -81,6 +77,30 @@ export class Ship {
       this.wheelSprite.scaleX = -1
     } else {
       this.wheelSprite.scaleX = 1
+    }
+    this.wheelSprite.body.setSize(this.wheelSprite.width * 2, this.wheelSprite.height * 1.5)
+    this.scene.physics.world.enableBody(this.wheelSprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
+    if (!this.wheelCollider) {
+      this.wheelCollider = this.scene.physics.add.overlap(
+        this.scene.player,
+        this.wheelSprite,
+        () => {
+          this.onWheelOverlap()
+        }
+      )
+    }
+  }
+
+  onWheelOverlap() {
+    if (this.scene.player.direction === this.currDirection) {
+      this.canTakeWheel = true
+      this.scene.hoverText.showText(
+        '(E) Take the wheel',
+        this.scene.player.x - this.scene.player.width,
+        this.scene.player.y + this.scene.player.height / 2
+      )
+    } else {
+      this.scene.hoverText.hide()
     }
   }
 
@@ -97,8 +117,8 @@ export class Ship {
         : this.currDirection
     const hullImage = hullImages[direction]
     const sailsImage = sailsImages[direction]
-    this.hullSprite = this.scene.add.sprite(x, y, hullImage)
-    this.sailsSprite = this.scene.add.sprite(x, y, sailsImage)
+    this.hullSprite = this.scene.physics.add.sprite(x, y, hullImage)
+    this.sailsSprite = this.scene.physics.add.sprite(x, y, sailsImage)
 
     if (this.isAnchored) {
       this.sailsSprite.setAlpha(0.5)
@@ -115,6 +135,9 @@ export class Ship {
   }
 
   setupHitbox(hitboxConfig: any) {
+    if (this.hitboxImages.length > 0) {
+      this.hitboxImages.forEach((img) => img.destroy())
+    }
     const configs = hitboxConfig[this.currDirection]
     configs.forEach((hitbox) => {
       const hitboxImg = this.addCollider(
@@ -127,6 +150,9 @@ export class Ship {
   }
 
   setupWalls(colliderConfig: any) {
+    if (this.wallImages.length > 0) {
+      this.wallImages.forEach((img) => img.destroy())
+    }
     const configs = colliderConfig[this.currDirection]
     configs.forEach((wall) => {
       const wallImg = this.addWall(
@@ -162,8 +188,123 @@ export class Ship {
   }
 
   update() {
-    this.handleMovement()
+    if (!this.wheelSprite.body.embedded || this.currDirection !== this.scene.player.direction) {
+      this.canTakeWheel = false
+    }
+    if (this.scene.player.isSteeringShip) {
+      this.handleMovement(this.scene.cursors)
+    }
   }
 
-  handleMovement() {}
+  takeWheel() {
+    this.isAnchored = false
+    this.canTakeWheel = false
+    this.setPlayerAtWheelPosition()
+    this.scene.hoverText.hide()
+    this.scene.setShipCamera()
+  }
+
+  setPlayerAtWheelPosition() {
+    switch (this.currDirection) {
+      case Direction.RIGHT: {
+        this.scene.player.x = this.wheelSprite.x - this.wheelSprite.width
+        this.scene.player.y = this.wheelSprite.y - 5
+        break
+      }
+      case Direction.LEFT:
+        this.scene.player.x = this.wheelSprite.x + this.wheelSprite.width
+        this.scene.player.y = this.wheelSprite.y - 5
+        break
+      case Direction.UP: {
+        this.scene.player.x = this.wheelSprite.x
+        this.scene.player.y = this.wheelSprite.y + this.wheelSprite.height / 2
+        break
+      }
+      case Direction.DOWN: {
+        this.scene.player.x = this.wheelSprite.x
+        this.scene.player.y = this.wheelSprite.y - this.wheelSprite.height
+        break
+      }
+    }
+  }
+
+  handleMovement(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
+    const leftDown = cursors.left?.isDown
+    const rightDown = cursors.right?.isDown
+    const upDown = cursors.up?.isDown
+    const downDown = cursors.down?.isDown
+    const player = this.scene.player
+    const speed = 150
+
+    const { hullImages, sailsImages, colliderConfig, hitboxConfig, wheelConfig } = this.shipConfig
+
+    if (!(leftDown || rightDown || upDown || downDown)) {
+      this.setAllVelocity(0, 0)
+      return
+    }
+
+    if (leftDown) {
+      player.scaleX = -1
+      player.body.offset.x = 27
+      player.direction = Direction.LEFT
+      this.currDirection = Direction.LEFT
+      this.setupWalls(colliderConfig)
+      this.setupHitbox(hitboxConfig)
+      this.setupWheel(wheelConfig)
+      this.setPlayerAtWheelPosition()
+      this.hullSprite.setTexture(hullImages.side)
+      this.sailsSprite.setTexture(sailsImages.side)
+      this.hullSprite.scaleX = 1
+      this.sailsSprite.scaleX = 1
+      this.setAllVelocity(-speed, 0)
+    }
+    if (rightDown) {
+      player.scaleX = 1
+      player.body.offset.x = 12
+      player.direction = Direction.RIGHT
+      this.currDirection = Direction.RIGHT
+      this.setupWalls(colliderConfig)
+      this.setupHitbox(hitboxConfig)
+      this.setupWheel(wheelConfig)
+      this.setPlayerAtWheelPosition()
+      this.hullSprite.setTexture(hullImages.side)
+      this.sailsSprite.setTexture(sailsImages.side)
+      this.sailsSprite.scaleX = -1
+      this.hullSprite.scaleX = -1
+      this.setAllVelocity(speed, 0)
+    }
+    if (upDown) {
+      player.direction = Direction.UP
+      this.currDirection = Direction.UP
+      this.hullSprite.scaleX = 1
+      this.sailsSprite.scaleX = 1
+      this.setupWalls(colliderConfig)
+      this.setupHitbox(hitboxConfig)
+      this.setupWheel(wheelConfig)
+      this.setPlayerAtWheelPosition()
+      this.hullSprite.setTexture(hullImages.up)
+      this.sailsSprite.setTexture(sailsImages.up)
+      this.setAllVelocity(0, -speed)
+    }
+    if (downDown) {
+      player.direction = Direction.DOWN
+      this.currDirection = Direction.DOWN
+      this.hullSprite.scaleX = 1
+      this.sailsSprite.scaleX = 1
+      this.setupWalls(colliderConfig)
+      this.setupHitbox(hitboxConfig)
+      this.setupWheel(wheelConfig)
+      this.setPlayerAtWheelPosition()
+      this.hullSprite.setTexture(hullImages.down)
+      this.sailsSprite.setTexture(sailsImages.down)
+      this.setAllVelocity(0, speed)
+    }
+    player.anims.play(`player-idle-${player.getAnimDirection(player.direction)}`, true)
+  }
+
+  setAllVelocity(xVelocity, yVelocity) {
+    this.hullSprite.setVelocity(xVelocity, yVelocity)
+    this.sailsSprite.setVelocity(xVelocity, yVelocity)
+    this.wheelSprite.setVelocity(xVelocity, yVelocity)
+  }
 }

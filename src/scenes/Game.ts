@@ -57,6 +57,7 @@ export default class Game extends Phaser.Scene {
 
   // Transports
   public transports!: Phaser.GameObjects.Group
+  public ship!: Ship
 
   // sprite names to ignore during depth-sorting
   public ignoreNames = ['InAir', 'UI', 'Weapon', 'Structure', 'Transport']
@@ -89,7 +90,8 @@ export default class Game extends Phaser.Scene {
     this.initMobs()
     this.initItems()
 
-    const ship = new Ship(this, ALL_SHIPS[0], { x: 1000, y: 1000 })
+    this.ship = new Ship(this, ALL_SHIPS[0], { x: 1000, y: 1000 })
+    this.player.ship = this.ship
   }
 
   initTilemap() {
@@ -355,6 +357,7 @@ export default class Game extends Phaser.Scene {
       })
     }
     this.updateSortingLayers()
+    this.ship.update()
   }
 
   updateSortingLayers() {

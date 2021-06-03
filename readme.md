@@ -1,13 +1,10 @@
 # Avast!
 
-A top down pirate themed RPG game build using Phaser 3
+A top down pirate themed survival/crafting game build using Phaser 3
 
-## TODO:
-
-Roadmap:
+## Feature Roadmap:
 
 - Pirate ships
-  - Sails based movement
   - Cannons firing
   - Ship health / damage
   - Enemy ships
@@ -18,4 +15,9 @@ Roadmap:
   - Random mob placement based on maps
 - Make rowboats + tents have health
 - Make structures removable
-- Investigate random lag spikes (if they still occurr)
+- Sails
+  - Sails unfurling animations
+
+## Technical Debt Roadmap:
+
+- Extract components out of Transport class for reusability (Land detection, movement, etc.)
