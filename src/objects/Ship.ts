@@ -205,6 +205,8 @@ export class Ship {
     this.scene.setShipCamera()
     this.sailsSprite.setAlpha(1)
     this.destroyAllColliders()
+    this.scene.cameras.main.stopFollow()
+    this.scene.cameras.main.startFollow(this.hullSprite)
   }
 
   setPlayerAtWheelPosition() {
