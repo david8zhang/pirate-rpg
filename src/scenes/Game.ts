@@ -107,12 +107,12 @@ export default class Game extends Phaser.Scene {
 
   initPlayer() {
     // TODO: Fix this
-    this.player = this.add.player(1000, 1200, 'player')
+    this.player = this.add.player(1000, 1100, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()
     })
-    // this.playerOceanCollider = this.physics.add.collider(this.player, this.oceanLayer)
+    this.playerOceanCollider = this.physics.add.collider(this.player, this.oceanLayer)
     this.cameras.main.setBounds(0, 0, Constants.BG_WIDTH, Constants.BG_HEIGHT)
     this.cameras.main.startFollow(this.player, true)
   }

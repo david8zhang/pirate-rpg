@@ -46,6 +46,7 @@ export class Ship {
   public wheelCollider!: Phaser.Physics.Arcade.Collider
   public shipConfig: ShipConfig
   public canTakeWheel: boolean = false
+  public landDetectorImg!: Phaser.Physics.Arcade.Image
 
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
@@ -60,6 +61,35 @@ export class Ship {
     this.setupWheel(wheelConfig)
 
     this.shipConfig = shipConfig
+    this.setupLandDetector(x, y)
+  }
+
+  setupLandDetector(x: number, y: number) {
+    if (!this.landDetectorImg) {
+      this.landDetectorImg = this.scene.physics.add.image(x, y, '').setVisible(false)
+    }
+    this.scene.physics.world.enableBody(this.landDetectorImg, Phaser.Physics.Arcade.DYNAMIC_BODY)
+    this.landDetectorImg.body.setSize(100, 100)
+    switch (this.currDirection) {
+      case Direction.UP: {
+        this.landDetectorImg.y = this.hullSprite.y - 400
+        break
+      }
+      case Direction.DOWN: {
+        this.landDetectorImg.y = this.hullSprite.y + 400
+        break
+      }
+      case Direction.LEFT: {
+        this.landDetectorImg.x = this.hullSprite.x - 400
+        this.landDetectorImg.y = this.hullSprite.y + this.hullSprite.height / 4
+        break
+      }
+      case Direction.RIGHT: {
+        this.landDetectorImg.x = this.hullSprite.x + 400
+        this.landDetectorImg.y = this.hullSprite.y + this.hullSprite.height / 4
+        break
+      }
+    }
   }
 
   setupWheel(wheelConfig) {
@@ -207,6 +237,7 @@ export class Ship {
     this.destroyAllColliders()
     this.scene.cameras.main.stopFollow()
     this.scene.cameras.main.startFollow(this.hullSprite)
+    this.scene.player.setVelocity(0, 0)
   }
 
   setPlayerAtWheelPosition() {
@@ -291,6 +322,7 @@ export class Ship {
     }
     this.setupWheel(wheelConfig)
     this.setPlayerAtWheelPosition()
+    this.setupLandDetector(this.hullSprite.x, this.hullSprite.y)
     player.anims.play(`player-idle-${player.getAnimDirection(player.direction)}`, true)
   }
 
