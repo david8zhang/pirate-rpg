@@ -1,6 +1,5 @@
 import { Direction } from '~/characters/Player'
 import Game from '../scenes/Game'
-import { Transport } from './Transport'
 
 export interface ShipConfig {
   hullImages: {
@@ -49,6 +48,8 @@ export class Ship {
   public isAnchored: boolean = true
   public canTakeWheel: boolean = false
   public canAnchor: boolean = false
+  public canExitShip: boolean = false
+  public canEnterShip: boolean = false
 
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
@@ -80,12 +81,19 @@ export class Ship {
   setupLandDetector(x: number, y: number) {
     if (!this.landDetectorImg) {
       this.landDetectorImg = this.scene.physics.add.image(x, y, '').setVisible(false)
+      this.scene.physics.world.enableBody(this.landDetectorImg, Phaser.Physics.Arcade.DYNAMIC_BODY)
+      this.scene.physics.add.overlap(this.landDetectorImg, this.scene.player, () => {
+        if (this.scene.player.ship !== null) {
+          this.canExitShip = !this.canMove()
+        } else {
+          this.scene.player.enterableShip = this
+        }
+      })
     }
-    this.scene.physics.world.enableBody(this.landDetectorImg, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.landDetectorImg.body.setSize(100, 100)
     switch (this.currDirection) {
       case Direction.UP: {
-        this.landDetectorImg.y = this.hullSprite.y - 350
+        this.landDetectorImg.y = this.hullSprite.y - 100
         this.landDetectorImg.x = this.hullSprite.x
         break
       }
@@ -237,16 +245,87 @@ export class Ship {
     if (!this.wheelSprite.body.embedded || this.currDirection !== this.scene.player.direction) {
       this.canTakeWheel = false
     }
+    if (!this.landDetectorImg.body.embedded) {
+      this.canExitShip = false
+      this.scene.player.enterableShip = null
+    }
+
+    // If the player is steering the ship, handle movement
     if (this.scene.player.isSteeringShip) {
       this.handleMovement(this.scene.cursors)
     }
+
+    // Show text to anchor if the ship is not moving
     if (this.canAnchor) {
       this.scene.hoverText.showText(
         '(E) Anchor',
-        this.scene.player.x + this.scene.player.width / 2,
-        this.scene.player.y
+        this.scene.player.x - this.scene.player.width / 2,
+        this.scene.player.y + this.scene.player.height / 2
       )
     }
+
+    // If the player is at the front of the ship when it is touching land, allow the player to get off
+    if (this.canExitShip) {
+      this.scene.hoverText.showText(
+        '(E) Go ashore',
+        this.scene.player.x - this.scene.player.width / 2,
+        this.scene.player.y + this.scene.player.height / 2
+      )
+    }
+    if (this.scene.player.enterableShip !== null) {
+      this.scene.hoverText.showText(
+        '(E) Board ship',
+        this.scene.player.x - this.scene.player.width / 2,
+        this.scene.player.y + this.scene.player.height / 2
+      )
+    }
+  }
+
+  playerEnterShip() {
+    this.setupLandDetector(this.hullSprite.x, this.hullSprite.y)
+    switch (this.currDirection) {
+      case Direction.UP:
+        this.scene.player.x = this.landDetectorImg.x
+        this.scene.player.y = this.landDetectorImg.y + 100
+        break
+      case Direction.DOWN:
+        this.scene.player.x = this.landDetectorImg.x
+        this.scene.player.y = this.landDetectorImg.y - 100
+        break
+      case Direction.LEFT:
+        this.scene.player.x = this.landDetectorImg.x + 100
+        this.scene.player.y = this.landDetectorImg.y
+        break
+      case Direction.RIGHT:
+        this.scene.player.x = this.landDetectorImg.x - 100
+        this.scene.player.y = this.landDetectorImg.y
+        break
+    }
+  }
+
+  playerExitShip() {
+    this.scene.player.ship = null
+    switch (this.currDirection) {
+      case Direction.UP:
+        this.scene.player.y = this.landDetectorImg.y - 100
+        this.scene.player.x = this.landDetectorImg.x
+        break
+      case Direction.DOWN:
+        this.scene.player.y = this.landDetectorImg.y + 100
+        this.scene.player.x = this.landDetectorImg.x
+        break
+      case Direction.LEFT:
+        this.scene.player.x = this.landDetectorImg.x - 100
+        this.scene.player.y = this.landDetectorImg.y
+        break
+      case Direction.RIGHT:
+        this.scene.player.x = this.landDetectorImg.x + 100
+        this.scene.player.y = this.landDetectorImg.y
+        break
+    }
+    this.landDetectorImg.x = this.scene.player.x
+    this.landDetectorImg.y = this.scene.player.y
+    this.scene.hoverText.hide()
   }
 
   anchor() {

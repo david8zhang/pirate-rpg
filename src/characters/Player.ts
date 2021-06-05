@@ -68,6 +68,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   // Ships (Should be a subclass of transport but it's behavior is slightly different. Refactor this later...)
   public ship: Ship | null = null
   public isSteeringShip: boolean = false
+  public enterableShip: Ship | null = null
 
   // Equipment and inventory
   public inventory: Inventory
@@ -138,6 +139,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.enterableTransport.enterTransport()
           }
 
+          // Exit a transport
           if (this.currTransport) {
             this.currTransport.exitTransport()
           }
@@ -151,7 +153,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             } else if (this.ship.canAnchor) {
               this.ship.anchor()
               this.isSteeringShip = false
+            } else if (this.ship.canExitShip) {
+              this.ship.playerExitShip()
             }
+          }
+
+          if (this.enterableShip) {
+            this.ship = this.enterableShip
+            this.enterableShip = null
+            this.ship.playerEnterShip()
           }
         }
 

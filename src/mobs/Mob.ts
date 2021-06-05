@@ -53,6 +53,7 @@ export class Mob {
     this.sprite.setPushable(false)
     this.animations = animMapping
     this.playerMobCollision = new PlayerMobCollision(this.scene as Game, this)
+    this.drops = mobConfig.drops
 
     if (this.mobConfig.body) {
       const body = this.mobConfig.body
@@ -72,6 +73,7 @@ export class Mob {
       this.sprite.y - this.sprite.height,
       healthBarWidth,
       3,
+      this.maxHealth,
       0x00ff00
     )
     this.healthBar.setVisible(false)

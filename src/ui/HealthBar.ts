@@ -16,14 +16,15 @@ export class HealthBar {
     y: number,
     width: number,
     height: number,
+    maxValue: number,
     fillColor?: number,
     showBorder?: boolean
   ) {
     this.bar = new Phaser.GameObjects.Graphics(scene)
     this.x = x
     this.y = y
-    this.maxValue = 100
-    this.currValue = 100
+    this.maxValue = maxValue
+    this.currValue = maxValue
     this.width = width
     this.height = height
     this.fillColor = fillColor || 0x2ecc71
