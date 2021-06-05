@@ -24,6 +24,10 @@ export class HoverText {
     this.text.setVisible(true)
   }
 
+  setTextSize(size: number) {
+    this.text.setFontSize(size)
+  }
+
   hide() {
     this.isVisible = false
     this.text.setVisible(false)

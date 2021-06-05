@@ -39,14 +39,16 @@ export class Ship {
   public wheelSprite!: Phaser.Physics.Arcade.Sprite
   public sailsSprite!: Phaser.Physics.Arcade.Sprite
   public scene: Game
-  public currDirection = Direction.RIGHT
+  public currDirection = Direction.LEFT
   public wallImages: Phaser.Physics.Arcade.Image[] = []
   public hitboxImages: Phaser.Physics.Arcade.Image[] = []
-  public isAnchored: boolean = true
   public wheelCollider!: Phaser.Physics.Arcade.Collider
   public shipConfig: ShipConfig
-  public canTakeWheel: boolean = false
   public landDetectorImg!: Phaser.Physics.Arcade.Image
+
+  public isAnchored: boolean = true
+  public canTakeWheel: boolean = false
+  public canAnchor: boolean = false
 
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
@@ -64,6 +66,17 @@ export class Ship {
     this.setupLandDetector(x, y)
   }
 
+  canMove() {
+    let moveable = true
+    this.scene.getAllTileLayers().forEach((tileMap) => {
+      const check = tileMap.getTileAtWorldXY(this.landDetectorImg.x, this.landDetectorImg.y)
+      if (check && check.layer.name !== 'Ocean') {
+        moveable = false
+      }
+    })
+    return moveable
+  }
+
   setupLandDetector(x: number, y: number) {
     if (!this.landDetectorImg) {
       this.landDetectorImg = this.scene.physics.add.image(x, y, '').setVisible(false)
@@ -72,20 +85,22 @@ export class Ship {
     this.landDetectorImg.body.setSize(100, 100)
     switch (this.currDirection) {
       case Direction.UP: {
-        this.landDetectorImg.y = this.hullSprite.y - 400
+        this.landDetectorImg.y = this.hullSprite.y - 350
+        this.landDetectorImg.x = this.hullSprite.x
         break
       }
       case Direction.DOWN: {
-        this.landDetectorImg.y = this.hullSprite.y + 400
+        this.landDetectorImg.y = this.hullSprite.y + 300
+        this.landDetectorImg.x = this.hullSprite.x
         break
       }
       case Direction.LEFT: {
-        this.landDetectorImg.x = this.hullSprite.x - 400
+        this.landDetectorImg.x = this.hullSprite.x - 200
         this.landDetectorImg.y = this.hullSprite.y + this.hullSprite.height / 4
         break
       }
       case Direction.RIGHT: {
-        this.landDetectorImg.x = this.hullSprite.x + 400
+        this.landDetectorImg.x = this.hullSprite.x + 200
         this.landDetectorImg.y = this.hullSprite.y + this.hullSprite.height / 4
         break
       }
@@ -225,19 +240,48 @@ export class Ship {
     if (this.scene.player.isSteeringShip) {
       this.handleMovement(this.scene.cursors)
     }
+    if (this.canAnchor) {
+      this.scene.hoverText.showText(
+        '(E) Anchor',
+        this.scene.player.x + this.scene.player.width / 2,
+        this.scene.player.y
+      )
+    }
+  }
+
+  anchor() {
+    this.isAnchored = true
+    this.canTakeWheel = true
+    this.canAnchor = false
+    this.scene.hoverText.hide()
+    this.sailsSprite.setAlpha(0.5)
+
+    const { colliderConfig, hitboxConfig } = this.shipConfig
+    this.setupHitbox(hitboxConfig)
+    this.setupWalls(colliderConfig)
+
+    this.scene.disableShipCamera()
+    this.scene.cameras.main.stopFollow()
+    this.scene.cameras.main.startFollow(this.scene.player, true)
   }
 
   takeWheel() {
     this.isAnchored = false
     this.canTakeWheel = false
-    this.setPlayerAtWheelPosition()
     this.scene.hoverText.hide()
-    this.scene.setShipCamera()
+
+    // Zoom the camera out to see the whole picture
+    // this.scene.enableShipCamera()
     this.sailsSprite.setAlpha(1)
     this.destroyAllColliders()
-    this.scene.cameras.main.stopFollow()
-    this.scene.cameras.main.startFollow(this.hullSprite)
+
+    // Set player in position in front of wheel
+    this.setPlayerAtWheelPosition()
     this.scene.player.setVelocity(0, 0)
+
+    // Follow the ship instead of the main character
+    this.scene.cameras.main.startFollow(this.hullSprite)
+    this.scene.enableShipCamera()
   }
 
   setPlayerAtWheelPosition() {
@@ -276,10 +320,15 @@ export class Ship {
 
     if (!(leftDown || rightDown || upDown || downDown)) {
       this.setAllVelocity(0, 0)
+      this.canAnchor = true
       return
     }
-
+    this.canAnchor = false
     if (leftDown) {
+      if (this.currDirection === Direction.LEFT && !this.canMove()) {
+        this.setAllVelocity(0, 0)
+        return
+      }
       player.scaleX = -1
       player.body.offset.x = 27
       player.direction = Direction.LEFT
@@ -291,6 +340,10 @@ export class Ship {
       this.setAllVelocity(-speed, 0)
     }
     if (rightDown) {
+      if (this.currDirection === Direction.RIGHT && !this.canMove()) {
+        this.setAllVelocity(0, 0)
+        return
+      }
       player.scaleX = 1
       player.body.offset.x = 12
       player.direction = Direction.RIGHT
@@ -303,6 +356,10 @@ export class Ship {
       this.setAllVelocity(speed, 0)
     }
     if (upDown) {
+      if (this.currDirection === Direction.UP && !this.canMove()) {
+        this.setAllVelocity(0, 0)
+        return
+      }
       player.direction = Direction.UP
       this.currDirection = Direction.UP
       this.hullSprite.scaleX = 1
@@ -312,6 +369,10 @@ export class Ship {
       this.setAllVelocity(0, -speed)
     }
     if (downDown) {
+      if (this.currDirection === Direction.DOWN && !this.canMove()) {
+        this.setAllVelocity(0, 0)
+        return
+      }
       player.direction = Direction.DOWN
       this.currDirection = Direction.DOWN
       this.hullSprite.scaleX = 1

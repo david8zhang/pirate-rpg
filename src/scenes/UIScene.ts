@@ -37,6 +37,10 @@ export default class UIScene extends Phaser.Scene {
     this.scene.setVisible(false)
   }
 
+  show() {
+    this.scene.setVisible(true)
+  }
+
   public static get instance() {
     return UIScene._instance
   }

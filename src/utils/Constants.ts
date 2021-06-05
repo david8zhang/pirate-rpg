@@ -893,7 +893,14 @@ export const ALL_SHIPS = [
           width: 185,
         },
       ],
-      down: [],
+      down: [
+        {
+          xOffset: -90,
+          yOffset: -160,
+          height: 540,
+          width: 185,
+        },
+      ],
     },
   },
 ]

@@ -112,7 +112,7 @@ export default class Game extends Phaser.Scene {
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()
     })
-    this.playerOceanCollider = this.physics.add.collider(this.player, this.oceanLayer)
+    // this.playerOceanCollider = this.physics.add.collider(this.player, this.oceanLayer)
     this.cameras.main.setBounds(0, 0, Constants.BG_WIDTH, Constants.BG_HEIGHT)
     this.cameras.main.startFollow(this.player, true)
   }
@@ -152,10 +152,14 @@ export default class Game extends Phaser.Scene {
     )
   }
 
-  public setShipCamera() {
-    this.isShipScale = true
+  public enableShipCamera() {
     UIScene.instance.hide()
     this.scale.setGameSize(1200, 750)
+  }
+
+  public disableShipCamera() {
+    UIScene.instance.show()
+    this.scale.setGameSize(600, 375)
   }
 
   updateCollidersOnWeaponEquip() {

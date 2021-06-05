@@ -142,10 +142,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.currTransport.exitTransport()
           }
 
-          // Take the wheel of the ship, enabling it to be moved around like a boat
-          if (this.ship && this.ship.canTakeWheel && this.ship.isAnchored) {
-            this.ship.takeWheel()
-            this.isSteeringShip = true
+          // Take the wheel of the ship, enabling it to be moved around like a boat, or let go of the wheel, allowing
+          // player to walk around it freely
+          if (this.ship) {
+            if (this.ship.canTakeWheel && this.ship.isAnchored) {
+              this.ship.takeWheel()
+              this.isSteeringShip = true
+            } else if (this.ship.canAnchor) {
+              this.ship.anchor()
+              this.isSteeringShip = false
+            }
           }
         }
 
