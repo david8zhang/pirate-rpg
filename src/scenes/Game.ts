@@ -91,6 +91,7 @@ export default class Game extends Phaser.Scene {
     this.initItems()
 
     this.ship = new Ship(this, ALL_SHIPS[0], { x: 1000, y: 1000 })
+    this.player.ship = this.ship
   }
 
   initTilemap() {
@@ -106,7 +107,7 @@ export default class Game extends Phaser.Scene {
 
   initPlayer() {
     // TODO: Fix this
-    this.player = this.add.player(500, 500, 'player')
+    this.player = this.add.player(1000, 1100, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()

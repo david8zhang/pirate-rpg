@@ -902,6 +902,28 @@ export const ALL_SHIPS = [
         },
       ],
     },
+    ladderConfig: {
+      up: {
+        image: 'ladder-up',
+        xOffset: 85,
+        yOffset: 150,
+      },
+      down: {
+        image: 'ladder-down',
+        xOffset: -102,
+        yOffset: 70,
+      },
+      left: {
+        image: 'ladder-side',
+        xOffset: 91,
+        yOffset: 263,
+      },
+      right: {
+        image: 'ladder-side',
+        xOffset: -65,
+        yOffset: 263,
+      },
+    },
   },
 ]
 

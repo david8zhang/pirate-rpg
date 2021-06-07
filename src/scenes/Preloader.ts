@@ -70,6 +70,9 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('wheel-up', 'transport/sloop/wheel-up.png')
     this.load.image('wheel-down', 'transport/sloop/wheel-down.png')
     this.load.image('wheel-side', 'transport/sloop/wheel-side.png')
+    this.load.image('ladder-side', 'transport/sloop/ladder-side.png')
+    this.load.image('ladder-up', 'transport/sloop/ladder-up.png')
+    this.load.image('ladder-down', 'transport/sloop/ladder-down.png')
 
     // Structures
     this.load.image('tent', 'structures/tent.png')

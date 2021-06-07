@@ -3,7 +3,7 @@ import Game from '~/scenes/Game'
 export class Structure {
   public sprite: Phaser.Physics.Arcade.Image
   private scene: Game
-  private boundsImage: Phaser.Physics.Arcade.Image
+  public boundsImage: Phaser.Physics.Arcade.Image
 
   constructor(scene: Game, texture: string, x: number, y: number) {
     this.scene = scene

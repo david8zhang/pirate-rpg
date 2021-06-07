@@ -24,6 +24,12 @@ export interface ShipConfig {
     up: any
     down: any
   }
+  ladderConfig: {
+    left: any
+    right: any
+    up: any
+    down: any
+  }
   hitboxConfig: {
     left: any[]
     right: any[]
@@ -36,6 +42,7 @@ export class Ship {
   public group: Phaser.GameObjects.Group
   public hullSprite!: Phaser.Physics.Arcade.Sprite
   public wheelSprite!: Phaser.Physics.Arcade.Sprite
+  public ladderSprite!: Phaser.Physics.Arcade.Sprite
   public sailsSprite!: Phaser.Physics.Arcade.Sprite
   public scene: Game
   public currDirection = Direction.LEFT
@@ -54,7 +61,8 @@ export class Ship {
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
     const { x, y } = position
-    const { hullImages, sailsImages, colliderConfig, hitboxConfig, wheelConfig } = shipConfig
+    const { hullImages, sailsImages, colliderConfig, hitboxConfig, wheelConfig, ladderConfig } =
+      shipConfig
     this.group = this.scene.add.group()
 
     // Setup the sprites and hitboxes
@@ -62,9 +70,21 @@ export class Ship {
     this.setupHitbox(hitboxConfig)
     this.setupWalls(colliderConfig)
     this.setupWheel(wheelConfig)
+    this.setupLadder(ladderConfig)
 
     this.shipConfig = shipConfig
     this.setupLandDetector(x, y)
+
+    this.scene.input.on(
+      'pointerdown',
+      function (pointer) {
+        if (pointer.leftButtonDown()) {
+          console.log('X:', Math.round(pointer.worldX - x))
+          console.log('Y:', Math.round(pointer.worldY - y))
+        }
+      },
+      this
+    )
   }
 
   canMove() {
@@ -112,6 +132,26 @@ export class Ship {
         this.landDetectorImg.y = this.hullSprite.y + this.hullSprite.height / 4
         break
       }
+    }
+  }
+
+  setupLadder(ladderConfig) {
+    const directionConfig = ladderConfig[this.currDirection]
+    const xPos = this.hullSprite.x + directionConfig.xOffset
+    const yPos = this.hullSprite.y + directionConfig.yOffset
+    if (!this.ladderSprite) {
+      this.ladderSprite = this.scene.physics.add.sprite(xPos, yPos, directionConfig.image)
+    } else {
+      this.ladderSprite.setTexture(directionConfig.image)
+      this.ladderSprite.setX(xPos)
+      this.ladderSprite.setY(yPos)
+    }
+
+    if (this.currDirection === Direction.RIGHT) {
+      this.ladderSprite.scaleX = -1
+      this.ladderSprite.body.offset.x = this.ladderSprite.width * 1.5
+    } else {
+      this.ladderSprite.scaleX = 1
     }
   }
 
@@ -395,7 +435,7 @@ export class Ship {
     const player = this.scene.player
     const speed = 200
 
-    const { hullImages, sailsImages, wheelConfig } = this.shipConfig
+    const { hullImages, sailsImages, wheelConfig, ladderConfig } = this.shipConfig
 
     if (!(leftDown || rightDown || upDown || downDown)) {
       this.setAllVelocity(0, 0)
@@ -461,6 +501,7 @@ export class Ship {
       this.setAllVelocity(0, speed)
     }
     this.setupWheel(wheelConfig)
+    this.setupLadder(ladderConfig)
     this.setPlayerAtWheelPosition()
     this.setupLandDetector(this.hullSprite.x, this.hullSprite.y)
     player.anims.play(`player-idle-${player.getAnimDirection(player.direction)}`, true)
