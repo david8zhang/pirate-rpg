@@ -51,6 +51,8 @@ export class Ship {
   public wheelCollider!: Phaser.Physics.Arcade.Collider
   public shipConfig: ShipConfig
   public landDetectorImg!: Phaser.Physics.Arcade.Image
+  public disembarkPoint: Phaser.Physics.Arcade.Image | null = null
+  public embarkPoint: Phaser.Physics.Arcade.Image | null = null
 
   public isAnchored: boolean = true
   public canTakeWheel: boolean = false
@@ -104,8 +106,10 @@ export class Ship {
       this.scene.physics.world.enableBody(this.landDetectorImg, Phaser.Physics.Arcade.DYNAMIC_BODY)
       this.scene.physics.add.overlap(this.landDetectorImg, this.scene.player, () => {
         if (this.scene.player.ship !== null) {
+          this.disembarkPoint = this.landDetectorImg
           this.canExitShip = !this.canMove()
         } else {
+          this.embarkPoint = this.landDetectorImg
           this.scene.player.enterableShip = this
         }
       })
@@ -141,17 +145,38 @@ export class Ship {
     const yPos = this.hullSprite.y + directionConfig.yOffset
     if (!this.ladderSprite) {
       this.ladderSprite = this.scene.physics.add.sprite(xPos, yPos, directionConfig.image)
+      this.scene.physics.world.enableBody(this.ladderSprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
+      this.scene.physics.add.overlap(this.ladderSprite, this.scene.player, () => {
+        if (this.scene.player.ship !== null) {
+          this.disembarkPoint = this.ladderSprite
+          this.canExitShip = true
+        } else {
+          this.embarkPoint = this.ladderSprite
+          this.scene.player.enterableShip = this
+        }
+      })
     } else {
       this.ladderSprite.setTexture(directionConfig.image)
       this.ladderSprite.setX(xPos)
       this.ladderSprite.setY(yPos)
     }
+    this.ladderSprite.body.setSize(this.ladderSprite.width * 2, this.ladderSprite.height * 1.5)
 
     if (this.currDirection === Direction.RIGHT) {
       this.ladderSprite.scaleX = -1
       this.ladderSprite.body.offset.x = this.ladderSprite.width * 1.5
     } else {
       this.ladderSprite.scaleX = 1
+    }
+
+    if (!this.wheelCollider) {
+      this.wheelCollider = this.scene.physics.add.overlap(
+        this.scene.player,
+        this.wheelSprite,
+        () => {
+          this.onWheelOverlap()
+        }
+      )
     }
   }
 
@@ -173,15 +198,6 @@ export class Ship {
       this.wheelSprite.body.offset.x = this.wheelSprite.width * 1.5
     } else {
       this.wheelSprite.scaleX = 1
-    }
-    if (!this.wheelCollider) {
-      this.wheelCollider = this.scene.physics.add.overlap(
-        this.scene.player,
-        this.wheelSprite,
-        () => {
-          this.onWheelOverlap()
-        }
-      )
     }
   }
 
@@ -285,7 +301,7 @@ export class Ship {
     if (!this.wheelSprite.body.embedded || this.currDirection !== this.scene.player.direction) {
       this.canTakeWheel = false
     }
-    if (!this.landDetectorImg.body.embedded) {
+    if (!this.landDetectorImg.body.embedded && !this.ladderSprite.body.embedded) {
       this.canExitShip = false
       this.scene.player.enterableShip = null
     }
@@ -307,7 +323,7 @@ export class Ship {
     // If the player is at the front of the ship when it is touching land, allow the player to get off
     if (this.canExitShip) {
       this.scene.hoverText.showText(
-        '(E) Go ashore',
+        '(E) Disembark',
         this.scene.player.x - this.scene.player.width / 2,
         this.scene.player.y + this.scene.player.height / 2
       )
@@ -323,48 +339,95 @@ export class Ship {
 
   playerEnterShip() {
     this.setupLandDetector(this.hullSprite.x, this.hullSprite.y)
-    switch (this.currDirection) {
-      case Direction.UP:
-        this.scene.player.x = this.landDetectorImg.x
-        this.scene.player.y = this.landDetectorImg.y + 100
-        break
-      case Direction.DOWN:
-        this.scene.player.x = this.landDetectorImg.x
-        this.scene.player.y = this.landDetectorImg.y - 100
-        break
-      case Direction.LEFT:
-        this.scene.player.x = this.landDetectorImg.x + 100
-        this.scene.player.y = this.landDetectorImg.y
-        break
-      case Direction.RIGHT:
-        this.scene.player.x = this.landDetectorImg.x - 100
-        this.scene.player.y = this.landDetectorImg.y
-        break
+    if (this.embarkPoint == this.landDetectorImg) {
+      switch (this.currDirection) {
+        case Direction.UP:
+          this.scene.player.x = this.landDetectorImg.x
+          this.scene.player.y = this.landDetectorImg.y + 80
+          break
+        case Direction.DOWN:
+          this.scene.player.x = this.landDetectorImg.x
+          this.scene.player.y = this.landDetectorImg.y - 80
+          break
+        case Direction.LEFT:
+          this.scene.player.x = this.landDetectorImg.x + 100
+          this.scene.player.y = this.landDetectorImg.y
+          break
+        case Direction.RIGHT:
+          this.scene.player.x = this.landDetectorImg.x - 100
+          this.scene.player.y = this.landDetectorImg.y
+          break
+      }
+    } else if (this.embarkPoint === this.ladderSprite) {
+      switch (this.currDirection) {
+        case Direction.UP:
+          this.scene.player.y = this.ladderSprite.y
+          this.scene.player.x = this.ladderSprite.x - 20
+          break
+        case Direction.DOWN:
+          this.scene.player.y = this.ladderSprite.y
+          this.scene.player.x = this.ladderSprite.x + 20
+          break
+        case Direction.LEFT:
+          this.scene.player.y = this.ladderSprite.y - 50
+          this.scene.player.x = this.ladderSprite.x
+          break
+        case Direction.RIGHT:
+          this.scene.player.y = this.ladderSprite.y + 50
+          this.scene.player.x = this.ladderSprite.x
+          break
+      }
     }
+    this.embarkPoint = null
+    this.canEnterShip = false
+    this.scene.hoverText.hide()
   }
 
   playerExitShip() {
     this.scene.player.ship = null
-    switch (this.currDirection) {
-      case Direction.UP:
-        this.scene.player.y = this.landDetectorImg.y - 100
-        this.scene.player.x = this.landDetectorImg.x
-        break
-      case Direction.DOWN:
-        this.scene.player.y = this.landDetectorImg.y + 100
-        this.scene.player.x = this.landDetectorImg.x
-        break
-      case Direction.LEFT:
-        this.scene.player.x = this.landDetectorImg.x - 100
-        this.scene.player.y = this.landDetectorImg.y
-        break
-      case Direction.RIGHT:
-        this.scene.player.x = this.landDetectorImg.x + 100
-        this.scene.player.y = this.landDetectorImg.y
-        break
+    if (this.disembarkPoint == this.landDetectorImg) {
+      switch (this.currDirection) {
+        case Direction.UP:
+          this.scene.player.y = this.landDetectorImg.y - 100
+          this.scene.player.x = this.landDetectorImg.x
+          break
+        case Direction.DOWN:
+          this.scene.player.y = this.landDetectorImg.y + 100
+          this.scene.player.x = this.landDetectorImg.x
+          break
+        case Direction.LEFT:
+          this.scene.player.x = this.landDetectorImg.x - 100
+          this.scene.player.y = this.landDetectorImg.y
+          break
+        case Direction.RIGHT:
+          this.scene.player.x = this.landDetectorImg.x + 100
+          this.scene.player.y = this.landDetectorImg.y
+          break
+      }
+      this.landDetectorImg.x = this.scene.player.x
+      this.landDetectorImg.y = this.scene.player.y
+    } else if (this.disembarkPoint === this.ladderSprite) {
+      switch (this.currDirection) {
+        case Direction.UP:
+          this.scene.player.y = this.ladderSprite.y
+          this.scene.player.x = this.ladderSprite.x + 20
+          break
+        case Direction.DOWN:
+          this.scene.player.y = this.ladderSprite.y
+          this.scene.player.x = this.ladderSprite.x - 20
+          break
+        case Direction.LEFT:
+          this.scene.player.y = this.ladderSprite.y + 50
+          this.scene.player.x = this.ladderSprite.x
+          break
+        case Direction.RIGHT:
+          this.scene.player.y = this.ladderSprite.y - 50
+          this.scene.player.x = this.ladderSprite.x
+          break
+      }
     }
-    this.landDetectorImg.x = this.scene.player.x
-    this.landDetectorImg.y = this.scene.player.y
+    this.disembarkPoint = null
+    this.canExitShip = false
     this.scene.hoverText.hide()
   }
 
