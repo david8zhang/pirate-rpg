@@ -9,9 +9,15 @@ interface CannonConfig {
     offsetX?: number
     offsetY?: number
   }
+  size: {
+    width: number
+    height: number
+  }
   scaleX?: number
   scaleY?: number
   texture: string
+  displayHeight?: number
+  displayWidth?: number
 }
 
 export class Cannon {
@@ -25,19 +31,12 @@ export class Cannon {
       config.y,
       config.texture
     )
-    this.sprite.scaleX = config.scaleX ? config.scaleX : 1
-    this.sprite.scaleY = config.scaleY ? config.scaleY : 1
     this.scene.physics.world.enableBody(
       this.sprite,
       Phaser.Physics.Arcade.DYNAMIC_BODY
     )
-    if (config.body) {
-      const { body } = config
-      this.sprite.body.setSize(
-        this.sprite.body.width * (body.width ? body.width : 1),
-        this.sprite.body.height * (body.height ? body.height : 1)
-      )
-    }
+    this.setScale(config.scaleX, config.scaleY)
+    this.setBody(config.body ? config.body : null)
     this.playerOverlap = this.scene.physics.add.overlap(
       this.sprite,
       this.scene.player,
@@ -56,8 +55,43 @@ export class Cannon {
     this.sprite.setY(y)
   }
 
+  setBody(
+    config: {
+      width?: number
+      height?: number
+      offsetX?: number
+      offsetY?: number
+    } | null
+  ) {
+    if (!config) {
+      return
+    }
+    const { width, height, offsetX, offsetY } = config
+    const bodyWidth = width ? width : 1
+    const bodyHeight = height ? height : 1
+    this.sprite.body.setSize(
+      this.sprite.width * bodyWidth,
+      this.sprite.height * bodyHeight
+    )
+    if (offsetX) {
+      this.sprite.body.offset.x = offsetX
+    }
+    if (offsetY) {
+      this.sprite.body.offset.y = offsetY
+    }
+  }
+
   setTexture(texture: string) {
     this.sprite.setTexture(texture)
+  }
+
+  setScale(scaleX: number | undefined, scaleY: number | undefined) {
+    if (scaleX !== undefined) {
+      this.sprite.scaleX *= scaleX
+    }
+    if (scaleY !== undefined) {
+      this.sprite.scaleY *= scaleY
+    }
   }
 
   update() {

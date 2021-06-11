@@ -52,7 +52,7 @@ export class Ship {
   public ladderSprite!: Phaser.Physics.Arcade.Sprite
   public sailsSprite!: Phaser.Physics.Arcade.Sprite
   public scene: Game
-  public currDirection = Direction.LEFT
+  public currDirection = Direction.UP
   public wallImages: Phaser.Physics.Arcade.Image[] = []
   public hitboxImages: Phaser.Physics.Arcade.Image[] = []
   public wheelCollider!: Phaser.Physics.Arcade.Collider
@@ -140,8 +140,11 @@ export class Ship {
       config.forEach((c, index) => {
         const xPos = this.hullSprite.x + c.x
         const yPos = this.hullSprite.y + c.y
-        this.cannons[index].setPosition(xPos, yPos)
-        this.cannons[index].setTexture(c.texture)
+        if (this.cannons[index]) {
+          this.cannons[index].setBody(c.body)
+          this.cannons[index].setPosition(xPos, yPos)
+          this.cannons[index].setTexture(c.texture)
+        }
       })
     }
   }
@@ -233,7 +236,7 @@ export class Ship {
 
     if (this.currDirection === Direction.RIGHT) {
       this.ladderSprite.scaleX = -1
-      this.ladderSprite.body.offset.x = this.ladderSprite.width * 1.5
+      this.ladderSprite.body.offset.x = this.ladderSprite.width
     } else {
       this.ladderSprite.scaleX = 1
     }

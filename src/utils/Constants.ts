@@ -911,7 +911,7 @@ export const ALL_SHIPS = [
       down: {
         image: 'ladder-down',
         xOffset: -102,
-        yOffset: 70,
+        yOffset: 60,
       },
       left: {
         image: 'ladder-side',
@@ -928,6 +928,22 @@ export const ALL_SHIPS = [
       left: [
         {
           x: 13,
+          y: 80,
+          body: {
+            height: 2,
+          },
+          texture: 'cannon-up',
+        },
+        {
+          x: 148,
+          y: 80,
+          body: {
+            height: 2,
+          },
+          texture: 'cannon-up',
+        },
+        {
+          x: 13,
           y: 225,
           body: {
             height: 2,
@@ -941,6 +957,120 @@ export const ALL_SHIPS = [
             height: 2,
           },
           texture: 'cannon-down',
+        },
+      ],
+      right: [
+        {
+          x: -142,
+          y: 82,
+          body: {
+            height: 2,
+          },
+          texture: 'cannon-up',
+        },
+        {
+          x: -3,
+          y: 82,
+          body: {
+            height: 2,
+          },
+          texture: 'cannon-up',
+        },
+        {
+          x: -142,
+          y: 225,
+          body: {
+            height: 2,
+          },
+          texture: 'cannon-down',
+        },
+        {
+          x: -3,
+          y: 225,
+          body: {
+            height: 2,
+          },
+          texture: 'cannon-down',
+        },
+      ],
+      up: [
+        {
+          x: 65,
+          y: 95,
+          body: {
+            width: 1.5,
+          },
+          scaleX: 1,
+          texture: 'cannon-side',
+        },
+        {
+          x: 65,
+          y: 200,
+          body: {
+            width: 1.5,
+          },
+          scaleX: 1,
+          texture: 'cannon-side',
+        },
+        {
+          x: -70,
+          y: 95,
+          body: {
+            offsetX: 80,
+            width: 1.5,
+          },
+          scaleX: -1,
+          texture: 'cannon-side',
+        },
+        {
+          x: -70,
+          y: 200,
+          body: {
+            offsetX: 80,
+            width: 1.5,
+          },
+          scaleX: -1,
+          texture: 'cannon-side',
+        },
+      ],
+      down: [
+        {
+          x: 50,
+          y: -5,
+          scaleX: 1,
+          texture: 'cannon-side',
+          body: {
+            width: 1.5,
+          },
+        },
+        {
+          x: 50,
+          y: 95,
+          scaleX: 1,
+          texture: 'cannon-side',
+          body: {
+            width: 1.5,
+          },
+        },
+        {
+          x: -80,
+          y: 95,
+          scaleX: -1,
+          texture: 'cannon-side',
+          body: {
+            width: 1.5,
+            offsetX: 100,
+          },
+        },
+        {
+          x: -80,
+          y: -5,
+          scaleX: -1,
+          texture: 'cannon-side',
+          body: {
+            width: 1.5,
+            offsetX: 100,
+          },
         },
       ],
     },
