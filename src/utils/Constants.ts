@@ -924,6 +924,26 @@ export const ALL_SHIPS = [
         yOffset: 263,
       },
     },
+    cannonConfig: {
+      left: [
+        {
+          x: 13,
+          y: 225,
+          body: {
+            height: 2,
+          },
+          texture: 'cannon-down',
+        },
+        {
+          x: 148,
+          y: 225,
+          body: {
+            height: 2,
+          },
+          texture: 'cannon-down',
+        },
+      ],
+    },
   },
 ]
 

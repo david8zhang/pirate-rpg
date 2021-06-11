@@ -25,7 +25,7 @@ const config: any = {
     global: [NineSlicePlugin.DefaultCfg],
   },
   scale: {
-    zoom: 2,
+    mode: Phaser.Scale.FIT
   },
   scene: [Preloader, Game, UIScene],
 }
