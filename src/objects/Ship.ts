@@ -52,7 +52,7 @@ export class Ship {
   public ladderSprite!: Phaser.Physics.Arcade.Sprite
   public sailsSprite!: Phaser.Physics.Arcade.Sprite
   public scene: Game
-  public currDirection = Direction.UP
+  public currDirection = Direction.LEFT
   public wallImages: Phaser.Physics.Arcade.Image[] = []
   public hitboxImages: Phaser.Physics.Arcade.Image[] = []
   public wheelCollider!: Phaser.Physics.Arcade.Collider
@@ -68,11 +68,7 @@ export class Ship {
   public canExitShip: boolean = false
   public canEnterShip: boolean = false
 
-  constructor(
-    scene: Game,
-    shipConfig: ShipConfig,
-    position: { x: number; y: number }
-  ) {
+  constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
     const { x, y } = position
     const {
@@ -112,10 +108,7 @@ export class Ship {
   canMove() {
     let moveable = true
     this.scene.getAllTileLayers().forEach((tileMap) => {
-      const check = tileMap.getTileAtWorldXY(
-        this.landDetectorImg.x,
-        this.landDetectorImg.y
-      )
+      const check = tileMap.getTileAtWorldXY(this.landDetectorImg.x, this.landDetectorImg.y)
       if (check && check.layer.name !== 'Ocean') {
         moveable = false
       }
@@ -125,52 +118,34 @@ export class Ship {
 
   setupCannon(cannonConfig: any) {
     const config = cannonConfig[this.currDirection]
-    if (this.cannons.length === 0) {
-      config.forEach((c, index) => {
-        const xPos = this.hullSprite.x + c.x
-        const yPos = this.hullSprite.y + c.y
-        this.cannons[index] = new Cannon(this.scene, {
-          ...c,
-          x: xPos,
-          y: yPos,
-        })
-      })
+    if (this.cannons.length > 0) {
+      this.cannons.forEach((c) => c.destroy())
+      this.cannons = []
     }
-    if (config) {
-      config.forEach((c, index) => {
-        const xPos = this.hullSprite.x + c.x
-        const yPos = this.hullSprite.y + c.y
-        if (this.cannons[index]) {
-          this.cannons[index].setBody(c.body)
-          this.cannons[index].setPosition(xPos, yPos)
-          this.cannons[index].setTexture(c.texture)
-        }
+    config.forEach((c, index) => {
+      const xPos = this.hullSprite.x + c.x
+      const yPos = this.hullSprite.y + c.y
+      this.cannons[index] = new Cannon(this.scene, {
+        ...c,
+        x: xPos,
+        y: yPos,
       })
-    }
+    })
   }
 
   setupLandDetector(x: number, y: number) {
     if (!this.landDetectorImg) {
-      this.landDetectorImg = this.scene.physics.add
-        .image(x, y, '')
-        .setVisible(false)
-      this.scene.physics.world.enableBody(
-        this.landDetectorImg,
-        Phaser.Physics.Arcade.DYNAMIC_BODY
-      )
-      this.scene.physics.add.overlap(
-        this.landDetectorImg,
-        this.scene.player,
-        () => {
-          if (this.scene.player.ship !== null) {
-            this.disembarkPoint = this.landDetectorImg
-            this.canExitShip = !this.canMove()
-          } else {
-            this.embarkPoint = this.landDetectorImg
-            this.scene.player.enterableShip = this
-          }
+      this.landDetectorImg = this.scene.physics.add.image(x, y, '').setVisible(false)
+      this.scene.physics.world.enableBody(this.landDetectorImg, Phaser.Physics.Arcade.DYNAMIC_BODY)
+      this.scene.physics.add.overlap(this.landDetectorImg, this.scene.player, () => {
+        if (this.scene.player.ship !== null) {
+          this.disembarkPoint = this.landDetectorImg
+          this.canExitShip = !this.canMove()
+        } else {
+          this.embarkPoint = this.landDetectorImg
+          this.scene.player.enterableShip = this
         }
-      )
+      })
     }
     this.landDetectorImg.body.setSize(100, 100)
     switch (this.currDirection) {
@@ -202,37 +177,23 @@ export class Ship {
     const xPos = this.hullSprite.x + directionConfig.xOffset
     const yPos = this.hullSprite.y + directionConfig.yOffset
     if (!this.ladderSprite) {
-      this.ladderSprite = this.scene.physics.add.sprite(
-        xPos,
-        yPos,
-        directionConfig.image
-      )
-      this.scene.physics.world.enableBody(
-        this.ladderSprite,
-        Phaser.Physics.Arcade.DYNAMIC_BODY
-      )
-      this.scene.physics.add.overlap(
-        this.ladderSprite,
-        this.scene.player,
-        () => {
-          if (this.scene.player.ship !== null) {
-            this.disembarkPoint = this.ladderSprite
-            this.canExitShip = true
-          } else {
-            this.embarkPoint = this.ladderSprite
-            this.scene.player.enterableShip = this
-          }
+      this.ladderSprite = this.scene.physics.add.sprite(xPos, yPos, directionConfig.image)
+      this.scene.physics.world.enableBody(this.ladderSprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
+      this.scene.physics.add.overlap(this.ladderSprite, this.scene.player, () => {
+        if (this.scene.player.ship !== null) {
+          this.disembarkPoint = this.ladderSprite
+          this.canExitShip = true
+        } else {
+          this.embarkPoint = this.ladderSprite
+          this.scene.player.enterableShip = this
         }
-      )
+      })
     } else {
       this.ladderSprite.setTexture(directionConfig.image)
       this.ladderSprite.setX(xPos)
       this.ladderSprite.setY(yPos)
     }
-    this.ladderSprite.body.setSize(
-      this.ladderSprite.width,
-      this.ladderSprite.height * 1.5
-    )
+    this.ladderSprite.body.setSize(this.ladderSprite.width, this.ladderSprite.height * 1.5)
 
     if (this.currDirection === Direction.RIGHT) {
       this.ladderSprite.scaleX = -1
@@ -257,24 +218,14 @@ export class Ship {
     const xPos = this.hullSprite.x + directionConfig.xOffset
     const yPos = this.hullSprite.y + directionConfig.yOffset
     if (!this.wheelSprite) {
-      this.wheelSprite = this.scene.physics.add.sprite(
-        xPos,
-        yPos,
-        directionConfig.image
-      )
+      this.wheelSprite = this.scene.physics.add.sprite(xPos, yPos, directionConfig.image)
     } else {
       this.wheelSprite.setTexture(directionConfig.image)
       this.wheelSprite.setX(xPos)
       this.wheelSprite.setY(yPos)
     }
-    this.wheelSprite.body.setSize(
-      this.wheelSprite.width * 2,
-      this.wheelSprite.height * 1.5
-    )
-    this.scene.physics.world.enableBody(
-      this.wheelSprite,
-      Phaser.Physics.Arcade.DYNAMIC_BODY
-    )
+    this.wheelSprite.body.setSize(this.wheelSprite.width * 2, this.wheelSprite.height * 1.5)
+    this.scene.physics.world.enableBody(this.wheelSprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     if (this.currDirection === Direction.RIGHT) {
       this.wheelSprite.scaleX = -1
       this.wheelSprite.body.offset.x = this.wheelSprite.width * 1.5
@@ -304,8 +255,7 @@ export class Ship {
     group: Phaser.GameObjects.Group
   ) {
     const direction =
-      this.currDirection === Direction.LEFT ||
-      this.currDirection === Direction.RIGHT
+      this.currDirection === Direction.LEFT || this.currDirection === Direction.RIGHT
         ? 'side'
         : this.currDirection
     const hullImage = hullImages[direction]
@@ -363,13 +313,8 @@ export class Ship {
     size: { width: number; height: number },
     offset: { x: number; y: number }
   ): Phaser.Physics.Arcade.Image {
-    const image = this.scene.physics.add
-      .image(position.x, position.y, '')
-      .setVisible(false)
-    this.scene.physics.world.enableBody(
-      image,
-      Phaser.Physics.Arcade.DYNAMIC_BODY
-    )
+    const image = this.scene.physics.add.image(position.x, position.y, '').setVisible(false)
+    this.scene.physics.world.enableBody(image, Phaser.Physics.Arcade.DYNAMIC_BODY)
     image.body.setSize(size.width, size.height)
     image.body.offset.x = offset.x
     image.body.offset.y = offset.y
@@ -377,36 +322,19 @@ export class Ship {
     return image
   }
 
-  addWall(
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ): Phaser.Physics.Arcade.Image {
-    const image = this.scene.physics.add
-      .image(x, y, '')
-      .setVisible(false)
-      .setImmovable(true)
-    this.scene.physics.world.enableBody(
-      image,
-      Phaser.Physics.Arcade.DYNAMIC_BODY
-    )
+  addWall(x: number, y: number, width: number, height: number): Phaser.Physics.Arcade.Image {
+    const image = this.scene.physics.add.image(x, y, '').setVisible(false).setImmovable(true)
+    this.scene.physics.world.enableBody(image, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.scene.physics.add.collider(this.scene.player, image)
     image.body.setSize(width, height)
     return image
   }
 
   update() {
-    if (
-      !this.wheelSprite.body.embedded ||
-      this.currDirection !== this.scene.player.direction
-    ) {
+    if (!this.wheelSprite.body.embedded || this.currDirection !== this.scene.player.direction) {
       this.canTakeWheel = false
     }
-    if (
-      !this.landDetectorImg.body.embedded &&
-      !this.ladderSprite.body.embedded
-    ) {
+    if (!this.landDetectorImg.body.embedded && !this.ladderSprite.body.embedded) {
       this.canExitShip = false
       this.scene.player.enterableShip = null
     }
@@ -603,8 +531,7 @@ export class Ship {
     const player = this.scene.player
     const speed = 200
 
-    const { hullImages, sailsImages, wheelConfig, ladderConfig, cannonConfig } =
-      this.shipConfig
+    const { hullImages, sailsImages, wheelConfig, ladderConfig, cannonConfig } = this.shipConfig
 
     if (!(leftDown || rightDown || upDown || downDown)) {
       this.setAllVelocity(0, 0)
@@ -674,10 +601,7 @@ export class Ship {
     this.setupCannon(cannonConfig)
     this.setPlayerAtWheelPosition()
     this.setupLandDetector(this.hullSprite.x, this.hullSprite.y)
-    player.anims.play(
-      `player-idle-${player.getAnimDirection(player.direction)}`,
-      true
-    )
+    player.anims.play(`player-idle-${player.getAnimDirection(player.direction)}`, true)
   }
 
   destroyAllColliders() {
