@@ -552,6 +552,8 @@ export class Ship {
       this.sailsSprite.setTexture(sailsImages.side)
       this.hullSprite.scaleX = 1
       this.sailsSprite.scaleX = 1
+      this.hullSprite.body.offset.x = 0
+      this.sailsSprite.body.offset.x = 0
       this.setAllVelocity(-speed, 0)
     }
     if (rightDown) {
@@ -567,6 +569,8 @@ export class Ship {
       this.sailsSprite.setTexture(sailsImages.side)
       this.sailsSprite.scaleX = -1
       this.hullSprite.scaleX = -1
+      this.hullSprite.body.offset.x = this.hullSprite.width
+      this.sailsSprite.body.offset.x = this.sailsSprite.width
       this.wheelSprite.body.offset.x = this.wheelSprite.width
       this.setAllVelocity(speed, 0)
     }
@@ -579,6 +583,8 @@ export class Ship {
       this.currDirection = Direction.UP
       this.hullSprite.scaleX = 1
       this.sailsSprite.scaleX = 1
+      this.hullSprite.body.offset.x = 0
+      this.sailsSprite.body.offset.x = 0
       this.hullSprite.setTexture(hullImages.up)
       this.sailsSprite.setTexture(sailsImages.up)
       this.setAllVelocity(0, -speed)
@@ -592,6 +598,8 @@ export class Ship {
       this.currDirection = Direction.DOWN
       this.hullSprite.scaleX = 1
       this.sailsSprite.scaleX = 1
+      this.hullSprite.body.offset.x = 0
+      this.sailsSprite.body.offset.x = 0
       this.hullSprite.setTexture(hullImages.down)
       this.sailsSprite.setTexture(sailsImages.down)
       this.setAllVelocity(0, speed)
