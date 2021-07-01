@@ -1,3 +1,4 @@
+import { Direction } from '~/characters/Player'
 import { Harvestable } from '../objects/Harvestable'
 import { ItemConfig, ItemTypes } from '../objects/ItemConfig'
 
@@ -927,6 +928,7 @@ export const ALL_SHIPS = [
     cannonConfig: {
       left: [
         {
+          direction: Direction.UP,
           x: 13,
           y: 80,
           body: {
@@ -935,6 +937,7 @@ export const ALL_SHIPS = [
           texture: 'cannon-up',
         },
         {
+          direction: Direction.UP,
           x: 148,
           y: 80,
           body: {
@@ -943,6 +946,7 @@ export const ALL_SHIPS = [
           texture: 'cannon-up',
         },
         {
+          direction: Direction.DOWN,
           x: 13,
           y: 225,
           body: {
@@ -951,6 +955,7 @@ export const ALL_SHIPS = [
           texture: 'cannon-down',
         },
         {
+          direction: Direction.DOWN,
           x: 148,
           y: 225,
           body: {
@@ -961,6 +966,7 @@ export const ALL_SHIPS = [
       ],
       right: [
         {
+          direction: Direction.UP,
           x: -142,
           y: 82,
           body: {
@@ -969,6 +975,7 @@ export const ALL_SHIPS = [
           texture: 'cannon-up',
         },
         {
+          direction: Direction.UP,
           x: -3,
           y: 82,
           body: {
@@ -977,6 +984,7 @@ export const ALL_SHIPS = [
           texture: 'cannon-up',
         },
         {
+          direction: Direction.DOWN,
           x: -142,
           y: 225,
           body: {
@@ -985,6 +993,7 @@ export const ALL_SHIPS = [
           texture: 'cannon-down',
         },
         {
+          direction: Direction.DOWN,
           x: -3,
           y: 225,
           body: {
@@ -995,6 +1004,7 @@ export const ALL_SHIPS = [
       ],
       up: [
         {
+          direction: Direction.RIGHT,
           x: 65,
           y: 95,
           body: {
@@ -1004,6 +1014,7 @@ export const ALL_SHIPS = [
           texture: 'cannon-side',
         },
         {
+          direction: Direction.RIGHT,
           x: 65,
           y: 200,
           body: {
@@ -1013,6 +1024,7 @@ export const ALL_SHIPS = [
           texture: 'cannon-side',
         },
         {
+          direction: Direction.LEFT,
           x: -70,
           y: 95,
           body: {
@@ -1023,6 +1035,7 @@ export const ALL_SHIPS = [
           texture: 'cannon-side',
         },
         {
+          direction: Direction.LEFT,
           x: -70,
           y: 200,
           body: {
@@ -1035,6 +1048,7 @@ export const ALL_SHIPS = [
       ],
       down: [
         {
+          direction: Direction.RIGHT,
           x: 50,
           y: -5,
           scaleX: 1,
@@ -1044,6 +1058,7 @@ export const ALL_SHIPS = [
           },
         },
         {
+          direction: Direction.RIGHT,
           x: 50,
           y: 95,
           scaleX: 1,
@@ -1053,6 +1068,7 @@ export const ALL_SHIPS = [
           },
         },
         {
+          direction: Direction.LEFT,
           x: -80,
           y: 95,
           scaleX: -1,
@@ -1063,6 +1079,7 @@ export const ALL_SHIPS = [
           },
         },
         {
+          direction: Direction.LEFT,
           x: -80,
           y: -5,
           scaleX: -1,

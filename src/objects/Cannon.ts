@@ -1,4 +1,6 @@
+import { Direction } from '~/characters/Player'
 import Game from '../scenes/Game'
+import { Projectile } from './Projectile'
 
 interface CannonConfig {
   x: number
@@ -18,14 +20,20 @@ interface CannonConfig {
   texture: string
   displayHeight?: number
   displayWidth?: number
+  direction: Direction
 }
 
 export class Cannon {
   private scene: Game
   private sprite: Phaser.Physics.Arcade.Sprite
   private playerOverlap: Phaser.Physics.Arcade.Collider
+  private fireable: boolean = false
+  private isFiring: boolean = false
+  public direction: Direction
+
   constructor(scene: Game, config: CannonConfig) {
     this.scene = scene
+    this.direction = config.direction
     this.sprite = this.scene.physics.add.sprite(config.x, config.y, config.texture)
     this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.setScale(config.scaleX, config.scaleY)
@@ -36,7 +44,26 @@ export class Cannon {
         this.scene.player.x - this.scene.player.width / 2,
         this.scene.player.y + this.scene.player.height / 2
       )
+      this.fireable = true
     })
+    this.scene.input.keyboard.on('keydown', (keycode: any) => {
+      if (keycode.code === 'KeyE') {
+        if (this.fireable) {
+          this.fireCannon()
+        }
+      }
+    })
+  }
+
+  fireCannon() {
+    if (!this.isFiring) {
+      this.isFiring = true
+      const cannonball = new Projectile(this.scene, this.sprite.x, this.sprite.y, 'cannonball')
+      cannonball.fire(this.direction, 300)
+      this.scene.time.delayedCall(1500, () => {
+        this.isFiring = false
+      })
+    }
   }
 
   setPosition(x: number, y: number) {
@@ -83,7 +110,7 @@ export class Cannon {
 
   update() {
     if (!this.sprite.body.embedded) {
-      this.scene.hoverText.hide()
+      this.fireable = false
     }
   }
 

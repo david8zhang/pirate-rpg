@@ -339,6 +339,11 @@ export class Ship {
       this.scene.player.enterableShip = null
     }
 
+    // update cannon
+    this.cannons.forEach((c) => {
+      c.update()
+    })
+
     // If the player is steering the ship, handle movement
     if (this.scene.player.isSteeringShip) {
       this.handleMovement(this.scene.cursors)
