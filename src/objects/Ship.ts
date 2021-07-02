@@ -1,4 +1,5 @@
 import { Direction } from '~/characters/Player'
+import { HoverText } from '~/ui/HoverText'
 import Game from '../scenes/Game'
 import { Cannon } from './Cannon'
 
@@ -52,7 +53,7 @@ export class Ship {
   public ladderSprite!: Phaser.Physics.Arcade.Sprite
   public sailsSprite!: Phaser.Physics.Arcade.Sprite
   public scene: Game
-  public currDirection = Direction.LEFT
+  public currDirection = Direction.UP
   public wallImages: Phaser.Physics.Arcade.Image[] = []
   public hitboxImages: Phaser.Physics.Arcade.Image[] = []
   public wheelCollider!: Phaser.Physics.Arcade.Collider
@@ -103,6 +104,52 @@ export class Ship {
       },
       this
     )
+
+    this.scene.input.keyboard.on('keydown', (keycode: any) => {
+      if (keycode.code === 'KeyQ') {
+        const leftCannons = this.getCannons('left')
+        console.log(leftCannons)
+        leftCannons.forEach((cannon) => {
+          cannon.fireCannon()
+        })
+      }
+      if (keycode.code === 'KeyR') {
+        const rightCannons = this.getCannons('right')
+        rightCannons.forEach((cannon) => {
+          cannon.fireCannon()
+        })
+      }
+    })
+  }
+
+  getCannons(direction: 'left' | 'right'): Cannon[] {
+    if (direction === 'left') {
+      switch (this.currDirection) {
+        case Direction.LEFT:
+        case Direction.RIGHT:
+          return this.cannons.filter((c) => {
+            return c.direction === Direction.UP
+          })
+        case Direction.UP:
+        case Direction.DOWN:
+          return this.cannons.filter((c) => {
+            return c.direction === Direction.LEFT
+          })
+      }
+    } else {
+      switch (this.currDirection) {
+        case Direction.LEFT:
+        case Direction.RIGHT:
+          return this.cannons.filter((c) => {
+            return c.direction === Direction.DOWN
+          })
+        case Direction.UP:
+        case Direction.DOWN:
+          return this.cannons.filter((c) => {
+            return c.direction === Direction.RIGHT
+          })
+      }
+    }
   }
 
   canMove() {
@@ -549,6 +596,7 @@ export class Ship {
         this.setAllVelocity(0, 0)
         return
       }
+      this.sailsSprite.setAlpha(1)
       player.scaleX = -1
       player.body.offset.x = 27
       player.direction = Direction.LEFT
@@ -566,6 +614,7 @@ export class Ship {
         this.setAllVelocity(0, 0)
         return
       }
+      this.sailsSprite.setAlpha(1)
       player.scaleX = 1
       player.body.offset.x = 12
       player.direction = Direction.RIGHT
@@ -584,6 +633,7 @@ export class Ship {
         this.setAllVelocity(0, 0)
         return
       }
+      this.sailsSprite.setAlpha(1)
       player.direction = Direction.UP
       this.currDirection = Direction.UP
       this.hullSprite.scaleX = 1
@@ -599,6 +649,7 @@ export class Ship {
         this.setAllVelocity(0, 0)
         return
       }
+      this.sailsSprite.setAlpha(0.5)
       player.direction = Direction.DOWN
       this.currDirection = Direction.DOWN
       this.hullSprite.scaleX = 1

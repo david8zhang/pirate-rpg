@@ -1,6 +1,7 @@
 import { Direction } from '~/characters/Player'
 import Game from '../scenes/Game'
 import { Projectile } from './Projectile'
+import { Ship } from './Ship'
 
 interface CannonConfig {
   x: number
@@ -21,6 +22,10 @@ interface CannonConfig {
   displayHeight?: number
   displayWidth?: number
   direction: Direction
+  projectileInitPosition?: {
+    xOffset: number
+    yOffset: number
+  }
 }
 
 export class Cannon {
@@ -31,20 +36,30 @@ export class Cannon {
   private isFiring: boolean = false
   public direction: Direction
 
+  private projectileInitPosition?: {
+    xOffset: number
+    yOffset: number
+  }
+
   constructor(scene: Game, config: CannonConfig) {
     this.scene = scene
     this.direction = config.direction
+    if (config.projectileInitPosition) {
+      this.projectileInitPosition = config.projectileInitPosition
+    }
     this.sprite = this.scene.physics.add.sprite(config.x, config.y, config.texture)
     this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.setScale(config.scaleX, config.scaleY)
     this.setBody(config.body ? config.body : null)
     this.playerOverlap = this.scene.physics.add.overlap(this.sprite, this.scene.player, () => {
-      this.scene.hoverText.showText(
-        '(E) Fire',
-        this.scene.player.x - this.scene.player.width / 2,
-        this.scene.player.y + this.scene.player.height / 2
-      )
-      this.fireable = true
+      if (this.scene.player.ship) {
+        this.scene.hoverText.showText(
+          '(E) Fire',
+          this.scene.player.x - this.scene.player.width / 2,
+          this.scene.player.y + this.scene.player.height / 2
+        )
+        this.fireable = true
+      }
     })
     this.scene.input.keyboard.on('keydown', (keycode: any) => {
       if (keycode.code === 'KeyE') {
@@ -57,8 +72,16 @@ export class Cannon {
 
   fireCannon() {
     if (!this.isFiring) {
+      this.scene.cameras.main.shake(100, 0.005)
+      let xPos = this.sprite.x
+      let yPos = this.sprite.y
+      if (this.projectileInitPosition) {
+        const { xOffset, yOffset } = this.projectileInitPosition
+        xPos += xOffset
+        yPos += yOffset
+      }
       this.isFiring = true
-      const cannonball = new Projectile(this.scene, this.sprite.x, this.sprite.y, 'cannonball')
+      const cannonball = new Projectile(this.scene, xPos, yPos, 'cannonball')
       cannonball.fire(this.direction, 300)
       this.scene.time.delayedCall(1500, () => {
         this.isFiring = false

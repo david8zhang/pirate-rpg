@@ -1012,6 +1012,10 @@ export const ALL_SHIPS = [
           },
           scaleX: 1,
           texture: 'cannon-side',
+          projectileInitPosition: {
+            xOffset: 10,
+            yOffset: -10,
+          },
         },
         {
           direction: Direction.RIGHT,
@@ -1022,6 +1026,10 @@ export const ALL_SHIPS = [
           },
           scaleX: 1,
           texture: 'cannon-side',
+          projectileInitPosition: {
+            xOffset: 10,
+            yOffset: -10,
+          },
         },
         {
           direction: Direction.LEFT,
@@ -1033,6 +1041,10 @@ export const ALL_SHIPS = [
           },
           scaleX: -1,
           texture: 'cannon-side',
+          projectileInitPosition: {
+            xOffset: -10,
+            yOffset: -10,
+          },
         },
         {
           direction: Direction.LEFT,
@@ -1044,6 +1056,10 @@ export const ALL_SHIPS = [
           },
           scaleX: -1,
           texture: 'cannon-side',
+          projectileInitPosition: {
+            xOffset: -10,
+            yOffset: -10,
+          },
         },
       ],
       down: [
@@ -1056,6 +1072,10 @@ export const ALL_SHIPS = [
           body: {
             width: 1.5,
           },
+          projectileInitPosition: {
+            xOffset: 10,
+            yOffset: -10,
+          },
         },
         {
           direction: Direction.RIGHT,
@@ -1065,6 +1085,10 @@ export const ALL_SHIPS = [
           texture: 'cannon-side',
           body: {
             width: 1.5,
+          },
+          projectileInitPosition: {
+            xOffset: 10,
+            yOffset: -10,
           },
         },
         {
@@ -1076,6 +1100,10 @@ export const ALL_SHIPS = [
           body: {
             width: 1.5,
             offsetX: 100,
+          },
+          projectileInitPosition: {
+            xOffset: -10,
+            yOffset: -10,
           },
         },
         {
@@ -1087,6 +1115,10 @@ export const ALL_SHIPS = [
           body: {
             width: 1.5,
             offsetX: 100,
+          },
+          projectileInitPosition: {
+            xOffset: -10,
+            yOffset: -10,
           },
         },
       ],
