@@ -9,6 +9,12 @@ export interface ShipConfig {
     down: string
     side: string
   }
+  hullBodyConfig: {
+    up: any
+    down: any
+    left: any
+    right: any
+  }
   sailsImages: {
     up: string
     down: string
@@ -62,6 +68,7 @@ export class Ship {
   public disembarkPoint: Phaser.Physics.Arcade.Image | null = null
   public embarkPoint: Phaser.Physics.Arcade.Image | null = null
   public cannons: Cannon[] = []
+  public hullBodyConfig: any
 
   public isAnchored: boolean = true
   public canTakeWheel: boolean = false
@@ -80,8 +87,10 @@ export class Ship {
       wheelConfig,
       ladderConfig,
       cannonConfig,
+      hullBodyConfig,
     } = shipConfig
     this.group = this.scene.add.group()
+    this.hullBodyConfig = hullBodyConfig
 
     // Setup the sprites and hitboxes
     this.setupSprites(x, y, hullImages, sailsImages, this.group)
@@ -93,6 +102,8 @@ export class Ship {
 
     this.shipConfig = shipConfig
     this.setupLandDetector(x, y)
+
+    this.hullSprite.setData('ref', this)
 
     this.scene.input.on(
       'pointerdown',
@@ -107,16 +118,20 @@ export class Ship {
 
     this.scene.input.keyboard.on('keydown', (keycode: any) => {
       if (keycode.code === 'KeyQ') {
-        const leftCannons = this.getCannons('left')
-        leftCannons.forEach((cannon) => {
-          cannon.fireCannon()
-        })
+        if (this === this.scene.player.ship) {
+          const leftCannons = this.getCannons('left')
+          leftCannons.forEach((cannon) => {
+            cannon.fireCannon()
+          })
+        }
       }
       if (keycode.code === 'KeyR') {
-        const rightCannons = this.getCannons('right')
-        rightCannons.forEach((cannon) => {
-          cannon.fireCannon()
-        })
+        if (this === this.scene.player.ship) {
+          const rightCannons = this.getCannons('right')
+          rightCannons.forEach((cannon) => {
+            cannon.fireCannon()
+          })
+        }
       }
     })
   }
@@ -308,16 +323,13 @@ export class Ship {
     const sailsImage = sailsImages[direction]
     this.hullSprite = this.scene.physics.add.sprite(x, y, hullImage)
     this.sailsSprite = this.scene.physics.add.sprite(x, y, sailsImage)
-
-    if (this.isAnchored) {
-      this.sailsSprite.setAlpha(0.5)
-    }
-
     this.hullSprite.setName('Transport')
     this.hullSprite.setDepth(this.scene.player.depth - 1)
 
     this.hullSprite.scaleX = this.currDirection === Direction.RIGHT ? -1 : 1
     this.sailsSprite.scaleX = this.currDirection === Direction.RIGHT ? -1 : 1
+    this.configureHullBody()
+    this.sailsSprite.setSize(1, 1)
 
     group.add(this.hullSprite)
     group.add(this.sailsSprite)
@@ -380,9 +392,9 @@ export class Ship {
     if (!this.wheelSprite.body.embedded || this.currDirection !== this.scene.player.direction) {
       this.canTakeWheel = false
     }
+
     if (!this.landDetectorImg.body.embedded && !this.ladderSprite.body.embedded) {
       this.canExitShip = false
-      this.scene.player.enterableShip = null
     }
 
     // update cannon
@@ -422,6 +434,7 @@ export class Ship {
   }
 
   playerEnterShip() {
+    this.sailsSprite.setAlpha(0.5)
     this.setupLandDetector(this.hullSprite.x, this.hullSprite.y)
     if (this.embarkPoint == this.landDetectorImg) {
       switch (this.currDirection) {
@@ -468,6 +481,7 @@ export class Ship {
   }
 
   playerExitShip() {
+    this.sailsSprite.setAlpha(1)
     this.scene.player.ship = null
     if (this.disembarkPoint == this.landDetectorImg) {
       switch (this.currDirection) {
@@ -584,6 +598,10 @@ export class Ship {
 
     const { hullImages, sailsImages, wheelConfig, ladderConfig, cannonConfig } = this.shipConfig
 
+    if (this !== this.scene.player.ship) {
+      return
+    }
+
     if (!(leftDown || rightDown || upDown || downDown)) {
       this.setAllVelocity(0, 0)
       this.canAnchor = true
@@ -604,8 +622,7 @@ export class Ship {
       this.sailsSprite.setTexture(sailsImages.side)
       this.hullSprite.scaleX = 1
       this.sailsSprite.scaleX = 1
-      this.hullSprite.body.offset.x = 0
-      this.sailsSprite.body.offset.x = 0
+      this.configureHullBody()
       this.setAllVelocity(-speed, 0)
     }
     if (rightDown) {
@@ -622,9 +639,8 @@ export class Ship {
       this.sailsSprite.setTexture(sailsImages.side)
       this.sailsSprite.scaleX = -1
       this.hullSprite.scaleX = -1
-      this.hullSprite.body.offset.x = this.hullSprite.width
-      this.sailsSprite.body.offset.x = this.sailsSprite.width
       this.wheelSprite.body.offset.x = this.wheelSprite.width
+      this.configureHullBody()
       this.setAllVelocity(speed, 0)
     }
     if (upDown) {
@@ -637,10 +653,9 @@ export class Ship {
       this.currDirection = Direction.UP
       this.hullSprite.scaleX = 1
       this.sailsSprite.scaleX = 1
-      this.hullSprite.body.offset.x = 0
-      this.sailsSprite.body.offset.x = 0
       this.hullSprite.setTexture(hullImages.up)
       this.sailsSprite.setTexture(sailsImages.up)
+      this.configureHullBody()
       this.setAllVelocity(0, -speed)
     }
     if (downDown) {
@@ -653,10 +668,9 @@ export class Ship {
       this.currDirection = Direction.DOWN
       this.hullSprite.scaleX = 1
       this.sailsSprite.scaleX = 1
-      this.hullSprite.body.offset.x = 0
-      this.sailsSprite.body.offset.x = 0
       this.hullSprite.setTexture(hullImages.down)
       this.sailsSprite.setTexture(sailsImages.down)
+      this.configureHullBody()
       this.setAllVelocity(0, speed)
     }
     this.setupWheel(wheelConfig)
@@ -665,6 +679,16 @@ export class Ship {
     this.setPlayerAtWheelPosition()
     this.setupLandDetector(this.hullSprite.x, this.hullSprite.y)
     player.anims.play(`player-idle-${player.getAnimDirection(player.direction)}`, true)
+  }
+
+  configureHullBody() {
+    const config = this.hullBodyConfig[this.currDirection]
+    this.hullSprite.body.setSize(
+      this.hullSprite.width * config.width,
+      this.hullSprite.height * config.height
+    )
+    this.hullSprite.body.offset.y = this.hullSprite.height * config.yOffset
+    this.hullSprite.body.offset.x = this.hullSprite.width * config.xOffset
   }
 
   destroyAllColliders() {

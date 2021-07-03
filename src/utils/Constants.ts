@@ -42,7 +42,7 @@ export enum AnimationType {
   DIE_SIDE = 'dieSide',
 }
 
-export const ALL_SHIPS = [
+export const ALL_SHIP_TYPES = [
   {
     name: 'Sloop',
     hullImages: {
@@ -54,6 +54,32 @@ export const ALL_SHIPS = [
       up: 'sails-up',
       down: 'sails-down',
       side: 'sails-side',
+    },
+    hullBodyConfig: {
+      left: {
+        xOffset: 0,
+        yOffset: 0.5,
+        width: 1,
+        height: 0.5,
+      },
+      right: {
+        xOffset: 1,
+        yOffset: 0.5,
+        width: 1,
+        height: 0.5,
+      },
+      up: {
+        xOffset: 0.35,
+        yOffset: 0.3,
+        width: 0.3,
+        height: 0.7,
+      },
+      down: {
+        xOffset: 0.33,
+        yOffset: 0.25,
+        width: 0.3,
+        height: 0.7,
+      },
     },
     wheelConfig: {
       up: {

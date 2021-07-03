@@ -1,7 +1,7 @@
 import Phaser, { Physics } from 'phaser'
-import { ALL_HARVESTABLES, ALL_SHIPS, Constants } from '../utils/Constants'
+import { ALL_HARVESTABLES, ALL_SHIP_TYPES, Constants } from '../utils/Constants'
 import '../characters/Player'
-import Player from '../characters/Player'
+import Player, { Direction } from '../characters/Player'
 import { createCharacterAnims } from '../anims/CharacterAnims'
 import { Mob } from '../mobs/Mob'
 import { Item } from '~/objects/Item'
@@ -51,6 +51,9 @@ export default class Game extends Phaser.Scene {
   // Projectiles
   public projectiles!: Phaser.GameObjects.Group
 
+  // Ships
+  public ships!: Phaser.GameObjects.Group
+
   // Structures
   public structures!: Phaser.GameObjects.Group
   public structureLayer!: Phaser.Tilemaps.TilemapLayer
@@ -67,7 +70,6 @@ export default class Game extends Phaser.Scene {
 
   // UI text
   public hoverText!: HoverText
-  public isShipScale: boolean = false
 
   // Item Factory
   public itemFactory: ItemFactory
@@ -93,9 +95,7 @@ export default class Game extends Phaser.Scene {
     this.initMobs()
     this.initItems()
     this.initProjectiles()
-
-    this.ship = new Ship(this, ALL_SHIPS[0], { x: 1000, y: 1000 })
-    this.player.ship = this.ship
+    this.initShips()
   }
 
   initTilemap() {
@@ -156,7 +156,7 @@ export default class Game extends Phaser.Scene {
     )
   }
 
-  public initProjectiles() {
+  initProjectiles() {
     this.projectiles = this.physics.add.group({ classType: Projectile })
     this.physics.add.collider(this.projectiles, this.mobs, (obj1, obj2) => {
       const projectile: Projectile = obj1.getData('ref')
@@ -170,8 +170,16 @@ export default class Game extends Phaser.Scene {
     })
   }
 
-  public addProjectile(projectile: Projectile) {
+  addProjectile(projectile: Projectile) {
     this.projectiles.add(projectile.sprite)
+  }
+
+  initShips() {
+    this.ships = this.physics.add.group({ classType: Ship })
+    const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1000, y: 1000 })
+    const ship2 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1150, y: 200 })
+    this.ships.add(ship1.hullSprite)
+    this.ships.add(ship2.hullSprite)
   }
 
   public enableShipCamera() {
@@ -387,7 +395,10 @@ export default class Game extends Phaser.Scene {
       })
     }
     this.updateSortingLayers()
-    this.ship.update()
+    this.ships.children.entries.forEach((child) => {
+      const ship = child.getData('ref')
+      ship.update()
+    })
   }
 
   updateSortingLayers() {

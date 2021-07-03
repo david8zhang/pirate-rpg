@@ -5,7 +5,6 @@ A top down pirate themed survival/crafting game build using Phaser 3
 ## Feature Roadmap:
 
 - Pirate ships
-  - Cannons firing
   - Ship health / damage
   - Enemy ships
 - Armor (Head, Chest, Feet)
