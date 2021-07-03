@@ -46,7 +46,7 @@ export class MeleeAttackBehavior extends AttackBehavior {
     if (
       !gameScene.player.isHit &&
       gameScene.player.getCurrState() !== 'attack' &&
-      !this.mob.isHit()
+      !this.mob.isHit
     ) {
       gameScene.player.takeDamage(this.attackDamage)
       gameScene.player.isHit = true

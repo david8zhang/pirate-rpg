@@ -5,8 +5,9 @@ import { Behavior, Direction } from '../lib/components/Behavior'
 import { PlayerMobCollision } from '../lib/components/PlayerMobCollision'
 import Game from '../scenes/Game'
 import { ItemFactory } from '~/objects/ItemFactory'
-import { AnimationType } from '~/utils/Constants'
+import { AnimationType, Constants } from '~/utils/Constants'
 import { MeleeAttackBehavior } from '~/lib/components/MeleeAttackBehavior'
+import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
 
 export interface MobAnimation {
   key: string
@@ -30,6 +31,7 @@ export class Mob {
   playerMobCollision: PlayerMobCollision
   drops: string[] = []
   mobConfig: any
+  isHit: boolean = false
 
   // Components
   activeBehavior: Behavior
@@ -98,10 +100,6 @@ export class Mob {
     )
   }
 
-  isHit() {
-    return this.playerMobCollision.isHit
-  }
-
   setActiveBehavior(behavior: Behavior) {
     this.activeBehavior.stop()
     this.activeBehavior = behavior
@@ -138,13 +136,58 @@ export class Mob {
     this.healthBar.destroy()
   }
 
+  playHurtAnimBasedOnDirection() {
+    const { sprite, animations, activeBehavior } = this
+    if (!animations.hurtBack || !animations.hurtFront || !animations.hurtSide) {
+      return
+    }
+    switch (activeBehavior.direction) {
+      case Direction.UP: {
+        sprite.anims.play(animations.hurtBack)
+        break
+      }
+      case Direction.DOWN: {
+        sprite.anims.play(animations.hurtFront)
+        break
+      }
+      case Direction.LEFT:
+      case Direction.RIGHT:
+        sprite.anims.play(animations.hurtSide)
+        break
+      default:
+        sprite.anims.play(animations.hurtFront)
+        break
+    }
+  }
+
+  onHit(damage: number) {
+    this.scene.cameras.main.shake(100, 0.005)
+    if (!this.isHit) {
+      this.isHit = true
+      ParticleSpawner.instance.spawnParticle('blood-particle', this.sprite.x, this.sprite.y, 4)
+      this.activeBehavior.stop()
+      this.takeDamage(damage)
+      this.playHurtAnimBasedOnDirection()
+      if (this.health > 0) {
+        this.sprite.setTint(0xff0000)
+        this.scene.time.delayedCall(Constants.ATTACK_DURATION, () => {
+          this.isHit = false
+          this.sprite.setTint(0xffffff)
+          this.activeBehavior.start()
+        })
+      }
+    }
+  }
+
   takeDamage(damage: number) {
     this.health -= damage
     this.health = Math.max(0, this.health)
     this.healthBar.decrease(damage)
     this.healthBar.setVisible(true)
     DamageNumber.createDamageNumber(damage, this.scene, this.sprite.x, this.sprite.y - 10)
-    if (!this.isAggro && this.mobConfig.aggroBehavior) {
+    if (this.health === 0) {
+      this.die()
+    } else if (!this.isAggro && this.mobConfig.aggroBehavior) {
       const behaviorMapping = {
         Melee: MeleeAttackBehavior,
       }

@@ -20,34 +20,7 @@ export class PlayerMobCollision {
     const weapon = this.scene.player.getWeapon()
     if (weapon && this.scene.player.getCurrState() === 'attack' && !this.isHit) {
       const damage = weapon.damage
-      this.handleMobHit(damage)
-    }
-  }
-
-  handleMobHit(damage: number = Player.UNARMED_DAMAGE) {
-    this.scene.cameras.main.shake(100, 0.005)
-    if (!this.isHit) {
-      ParticleSpawner.instance.spawnParticle(
-        'blood-particle',
-        this.mob.sprite.x,
-        this.mob.sprite.y,
-        4
-      )
-      this.isHit = true
-    }
-    this.mob.activeBehavior.stop()
-
-    this.mob.takeDamage(damage)
-    this.playHurtAnimBasedOnDirection()
-    if (this.mob.health === 0) {
-      this.mob.die()
-    } else {
-      this.mob.sprite.setTint(0xff0000)
-      this.scene.time.delayedCall(Constants.ATTACK_DURATION, () => {
-        this.isHit = false
-        this.mob.sprite.setTint(0xffffff)
-        this.mob.activeBehavior.start()
-      })
+      this.mob.onHit(damage)
     }
   }
 
@@ -57,31 +30,8 @@ export class PlayerMobCollision {
       return
     }
     if (this.scene.player.getCurrState() === 'attack' && !this.isHit) {
-      this.handleMobHit()
-    }
-  }
-
-  playHurtAnimBasedOnDirection() {
-    const { sprite, animations, activeBehavior } = this.mob
-    if (!animations.hurtBack || !animations.hurtFront || !animations.hurtSide) {
-      return
-    }
-    switch (activeBehavior.direction) {
-      case Direction.UP: {
-        sprite.anims.play(animations.hurtBack)
-        break
-      }
-      case Direction.DOWN: {
-        sprite.anims.play(animations.hurtFront)
-        break
-      }
-      case Direction.LEFT:
-      case Direction.RIGHT:
-        sprite.anims.play(animations.hurtSide)
-        break
-      default:
-        sprite.anims.play(animations.hurtFront)
-        break
+      this.mob.onHit(Player.UNARMED_DAMAGE)
+      this.isHit = true
     }
   }
 }

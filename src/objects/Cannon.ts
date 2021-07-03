@@ -81,7 +81,14 @@ export class Cannon {
         yPos += yOffset
       }
       this.isFiring = true
-      const cannonball = new Projectile(this.scene, xPos, yPos, 'cannonball')
+      const projectileConfig = {
+        x: xPos,
+        y: yPos,
+        texture: 'cannonball',
+        damage: 100,
+      }
+      const cannonball = new Projectile(this.scene, projectileConfig)
+      this.scene.addProjectile(cannonball)
       cannonball.fire(this.direction, 300)
       this.scene.time.delayedCall(1500, () => {
         this.isFiring = false

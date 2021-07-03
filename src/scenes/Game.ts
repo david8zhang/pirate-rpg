@@ -16,6 +16,7 @@ import { ItemConfig } from '~/objects/ItemConfig'
 import { createMobAnims } from '~/anims/MobAnims'
 import { ALL_MOBS } from '../utils/Constants'
 import { Ship } from '~/objects/Ship'
+import { Projectile } from '~/objects/Projectile'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -26,7 +27,6 @@ export default class Game extends Phaser.Scene {
   public oceanLayer!: Phaser.Tilemaps.TilemapLayer
   public grassLayer!: Phaser.Tilemaps.TilemapLayer
   public sandLayer!: Phaser.Tilemaps.TilemapLayer
-  public objectsLayer!: Phaser.Tilemaps.TilemapLayer
   public structureInteriorLayer!: Phaser.Tilemaps.TilemapLayer
   public structureEntranceLayer!: Phaser.Tilemaps.TilemapLayer
 
@@ -47,6 +47,9 @@ export default class Game extends Phaser.Scene {
   // Items
   public items!: Phaser.GameObjects.Group
   public itemsOnGround: Item[] = []
+
+  // Projectiles
+  public projectiles!: Phaser.GameObjects.Group
 
   // Structures
   public structures!: Phaser.GameObjects.Group
@@ -89,6 +92,7 @@ export default class Game extends Phaser.Scene {
     this.initPlants()
     this.initMobs()
     this.initItems()
+    this.initProjectiles()
 
     this.ship = new Ship(this, ALL_SHIPS[0], { x: 1000, y: 1000 })
     this.player.ship = this.ship
@@ -107,7 +111,7 @@ export default class Game extends Phaser.Scene {
 
   initPlayer() {
     // TODO: Fix this
-    this.player = this.add.player(1000, 1100, 'player')
+    this.player = this.add.player(200, 400, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()
@@ -152,6 +156,19 @@ export default class Game extends Phaser.Scene {
     )
   }
 
+  public initProjectiles() {
+    this.projectiles = this.physics.add.group({ classType: Projectile })
+    this.physics.add.collider(this.projectiles, this.mobs, (obj1, obj2) => {
+      const projectile: Projectile = obj1.getData('ref')
+      const mob: Mob = obj2.getData('ref')
+      projectile.onHit(mob)
+    })
+  }
+
+  public addProjectile(projectile: Projectile) {
+    this.projectiles.add(projectile.sprite)
+  }
+
   public enableShipCamera() {
     UIScene.instance.hide()
     this.scale.setGameSize(1200, 750)
@@ -177,7 +194,9 @@ export default class Game extends Phaser.Scene {
       weapon ? weapon.hitboxImage : this.player,
       (obj1, obj2) => {
         const mobRef: Mob = obj2.getData('ref')
-        mobRef.playerMobCollision.handlePlayerWeaponAttack()
+        if (this.player.getCurrState() === 'attack') {
+          mobRef.onHit(weapon ? weapon.damage : Player.UNARMED_DAMAGE)
+        }
       }
     )
   }
@@ -208,7 +227,9 @@ export default class Game extends Phaser.Scene {
     }
     this.playerMobsCollider = this.physics.add.collider(this.mobs, this.player, (obj1, obj2) => {
       const mobRef: Mob = obj2.getData('ref')
-      mobRef.playerMobCollision.handlePlayerAttack()
+      if (this.player.getCurrState() === 'attack') {
+        mobRef.onHit(Player.UNARMED_DAMAGE)
+      }
     })
   }
 

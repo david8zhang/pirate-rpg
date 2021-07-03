@@ -108,7 +108,6 @@ export class Ship {
     this.scene.input.keyboard.on('keydown', (keycode: any) => {
       if (keycode.code === 'KeyQ') {
         const leftCannons = this.getCannons('left')
-        console.log(leftCannons)
         leftCannons.forEach((cannon) => {
           cannon.fireCannon()
         })
