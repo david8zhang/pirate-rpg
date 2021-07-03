@@ -2,7 +2,6 @@ import { DamageNumber } from '../ui/DamageNumber'
 import { RandomMovementBehavior } from '../lib/components/RandomMovementBehavior'
 import { HealthBar } from '../ui/HealthBar'
 import { Behavior, Direction } from '../lib/components/Behavior'
-import { PlayerMobCollision } from '../lib/components/PlayerMobCollision'
 import Game from '../scenes/Game'
 import { ItemFactory } from '~/objects/ItemFactory'
 import { AnimationType, Constants } from '~/utils/Constants'
@@ -28,7 +27,6 @@ export class Mob {
   health: number
   sprite: Phaser.Physics.Arcade.Sprite
   isAggro: boolean = false
-  playerMobCollision: PlayerMobCollision
   drops: string[] = []
   mobConfig: any
   isHit: boolean = false
@@ -54,7 +52,6 @@ export class Mob {
     this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.sprite.setPushable(false)
     this.animations = animMapping
-    this.playerMobCollision = new PlayerMobCollision(this.scene as Game, this)
     this.drops = mobConfig.drops
 
     if (this.mobConfig.body) {
