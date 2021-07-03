@@ -111,7 +111,7 @@ export default class Game extends Phaser.Scene {
 
   initPlayer() {
     // TODO: Fix this
-    this.player = this.add.player(200, 400, 'player')
+    this.player = this.add.player(1000, 1100, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()
@@ -161,7 +161,12 @@ export default class Game extends Phaser.Scene {
     this.physics.add.collider(this.projectiles, this.mobs, (obj1, obj2) => {
       const projectile: Projectile = obj1.getData('ref')
       const mob: Mob = obj2.getData('ref')
-      projectile.onHit(mob)
+      projectile.onHitMob(mob)
+    })
+    this.physics.add.collider(this.projectiles, this.harvestables, (obj1, obj2) => {
+      const projectile: Projectile = obj1.getData('ref')
+      const harvestable: Harvestable = obj2.getData('ref')
+      projectile.onHitHarvestable(harvestable)
     })
   }
 

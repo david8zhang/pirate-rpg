@@ -1,6 +1,7 @@
 import { Direction } from '~/characters/Player'
 import { Mob } from '../mobs/Mob'
 import Game from '../scenes/Game'
+import { Harvestable } from './Harvestable'
 
 interface ProjectileConfig {
   x: number
@@ -22,9 +23,14 @@ export class Projectile {
     this.sprite.setData('ref', this)
   }
 
-  public onHit(mob: Mob) {
+  public onHitMob(mob: Mob) {
     this.sprite.destroy()
     mob.onHit(this.damage)
+  }
+
+  public onHitHarvestable(harvestable: Harvestable) {
+    this.sprite.destroy()
+    harvestable.takeDamage(this.damage)
   }
 
   fire(direction: Direction, speed: number) {

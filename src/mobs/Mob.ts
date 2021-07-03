@@ -111,6 +111,7 @@ export class Mob {
   }
 
   die(): void {
+    this.activeBehavior.stop()
     this.sprite.on('animationcomplete', () => {
       this.scene.time.delayedCall(300, () => {
         this.sprite.destroy()
@@ -168,7 +169,9 @@ export class Mob {
       this.activeBehavior.stop()
       this.takeDamage(damage)
       this.playHurtAnimBasedOnDirection()
-      if (this.health > 0) {
+      if (this.health === 0) {
+        this.die()
+      } else {
         this.sprite.setTint(0xff0000)
         this.scene.time.delayedCall(Constants.ATTACK_DURATION, () => {
           this.isHit = false
@@ -185,9 +188,7 @@ export class Mob {
     this.healthBar.decrease(damage)
     this.healthBar.setVisible(true)
     DamageNumber.createDamageNumber(damage, this.scene, this.sprite.x, this.sprite.y - 10)
-    if (this.health === 0) {
-      this.die()
-    } else if (!this.isAggro && this.mobConfig.aggroBehavior) {
+    if (!this.isAggro && this.mobConfig.aggroBehavior) {
       const behaviorMapping = {
         Melee: MeleeAttackBehavior,
       }
