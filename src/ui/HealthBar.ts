@@ -27,6 +27,7 @@ export class HealthBar {
     this.currValue = maxValue
     this.width = width
     this.height = height
+
     this.fillColor = fillColor || 0x2ecc71
     this.showBorder = showBorder || false
     scene.add.existing(this.bar)

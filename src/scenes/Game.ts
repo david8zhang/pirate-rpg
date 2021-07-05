@@ -17,6 +17,7 @@ import { createMobAnims } from '~/anims/MobAnims'
 import { ALL_MOBS } from '../utils/Constants'
 import { Ship } from '~/objects/Ship'
 import { Projectile } from '~/objects/Projectile'
+import { ShipUIScene } from './ShipUIScene'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -184,11 +185,13 @@ export default class Game extends Phaser.Scene {
 
   public enableShipCamera() {
     UIScene.instance.hide()
+    ShipUIScene.instance.show()
     this.scale.setGameSize(1200, 750)
   }
 
   public disableShipCamera() {
     UIScene.instance.show()
+    ShipUIScene.instance.hide()
     this.scale.setGameSize(600, 375)
   }
 
@@ -388,6 +391,11 @@ export default class Game extends Phaser.Scene {
   }
 
   update() {
+    if (this.player.ship && !this.player.ship.isAnchored) {
+      ShipUIScene.instance.show()
+    } else {
+      ShipUIScene.instance.hide()
+    }
     this.player.update()
     if (!this.isInsideStructure) {
       this.mobsList.forEach((mob: Mob) => {

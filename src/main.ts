@@ -3,6 +3,7 @@ import { Plugin as NineSlicePlugin } from 'phaser3-nineslice'
 
 import Game from './scenes/Game'
 import Preloader from './scenes/Preloader'
+import { ShipUIScene } from './scenes/ShipUIScene'
 import UIScene from './scenes/UIScene'
 
 const config: any = {
@@ -27,7 +28,7 @@ const config: any = {
   scale: {
     mode: Phaser.Scale.FIT,
   },
-  scene: [Preloader, Game, UIScene],
+  scene: [Preloader, Game, UIScene, ShipUIScene],
 }
 
 export default new Phaser.Game(config)

@@ -44,6 +44,7 @@ export enum AnimationType {
 
 export const ALL_SHIP_TYPES = [
   {
+    defaultHealth: 1000,
     name: 'Sloop',
     hullImages: {
       up: 'sloop-up',

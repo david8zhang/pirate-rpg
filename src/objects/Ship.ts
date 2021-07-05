@@ -1,9 +1,11 @@
 import { Direction } from '~/characters/Player'
+import { ShipUIScene } from '~/scenes/ShipUIScene'
 import { HoverText } from '~/ui/HoverText'
 import Game from '../scenes/Game'
 import { Cannon } from './Cannon'
 
 export interface ShipConfig {
+  defaultHealth: number
   hullImages: {
     up: string
     down: string
@@ -75,6 +77,9 @@ export class Ship {
   public canAnchor: boolean = false
   public canExitShip: boolean = false
   public canEnterShip: boolean = false
+  public isFiringRightCannon: boolean = false
+  public isFiringLeftCannon: boolean = false
+  public health: number
 
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
@@ -104,6 +109,7 @@ export class Ship {
     this.setupLandDetector(x, y)
 
     this.hullSprite.setData('ref', this)
+    this.health = shipConfig.defaultHealth
 
     this.scene.input.on(
       'pointerdown',
@@ -118,18 +124,26 @@ export class Ship {
 
     this.scene.input.keyboard.on('keydown', (keycode: any) => {
       if (keycode.code === 'KeyQ') {
-        if (this === this.scene.player.ship) {
+        if (this === this.scene.player.ship && !this.isFiringLeftCannon) {
+          this.isFiringLeftCannon = true
           const leftCannons = this.getCannons('left')
           leftCannons.forEach((cannon) => {
             cannon.fireCannon()
           })
+          this.scene.time.delayedCall(300, () => {
+            this.isFiringLeftCannon = false
+          })
         }
       }
       if (keycode.code === 'KeyR') {
-        if (this === this.scene.player.ship) {
+        if (this === this.scene.player.ship && !this.isFiringRightCannon) {
+          this.isFiringRightCannon = true
           const rightCannons = this.getCannons('right')
           rightCannons.forEach((cannon) => {
             cannon.fireCannon()
+          })
+          this.scene.time.delayedCall(300, () => {
+            this.isFiringRightCannon = false
           })
         }
       }
@@ -546,6 +560,8 @@ export class Ship {
   }
 
   takeWheel() {
+    ShipUIScene.instance.shipHealthBar.setCurrHealth(this.health)
+    ShipUIScene.instance.shipHealthBar.setMaxHealth(this.health)
     this.isAnchored = false
     this.canTakeWheel = false
     this.scene.hoverText.hide()
@@ -560,7 +576,7 @@ export class Ship {
     this.scene.player.setVelocity(0, 0)
 
     // Follow the ship instead of the main character
-    this.scene.cameras.main.startFollow(this.hullSprite)
+    this.scene.cameras.main.startFollow(this.hullSprite, true)
     this.scene.enableShipCamera()
   }
 
