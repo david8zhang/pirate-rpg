@@ -181,6 +181,14 @@ export default class Game extends Phaser.Scene {
     const ship2 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1150, y: 200 })
     this.ships.add(ship1.hullSprite)
     this.ships.add(ship2.hullSprite)
+
+    this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
+      const ship: Ship = obj1.getData('ref')
+      const projectile: Projectile = obj2.getData('ref')
+      if (projectile.sourceShip !== ship) {
+        projectile.onHitShip(ship)
+      }
+    })
   }
 
   public enableShipCamera() {

@@ -80,6 +80,7 @@ export class Ship {
   public isFiringRightCannon: boolean = false
   public isFiringLeftCannon: boolean = false
   public health: number
+  public maxHealth: number
 
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
@@ -110,6 +111,7 @@ export class Ship {
 
     this.hullSprite.setData('ref', this)
     this.health = shipConfig.defaultHealth
+    this.maxHealth = shipConfig.defaultHealth
 
     this.scene.input.on(
       'pointerdown',
@@ -148,6 +150,16 @@ export class Ship {
         }
       }
     })
+  }
+
+  takeDamage(damage: number) {
+    this.health -= damage
+    this.health = Math.max(this.health, 0)
+    this.scene.cameras.main.shake(100, 0.005)
+    if (this === this.scene.player.ship) {
+      ShipUIScene.instance.shipHealthBar.setCurrHealth(this.health)
+      ShipUIScene.instance.shipHealthBar.setMaxHealth(this.maxHealth)
+    }
   }
 
   getCannons(direction: 'left' | 'right'): Cannon[] {
@@ -200,11 +212,15 @@ export class Ship {
     config.forEach((c, index) => {
       const xPos = this.hullSprite.x + c.x
       const yPos = this.hullSprite.y + c.y
-      this.cannons[index] = new Cannon(this.scene, {
-        ...c,
-        x: xPos,
-        y: yPos,
-      })
+      this.cannons[index] = new Cannon(
+        this.scene,
+        {
+          ...c,
+          x: xPos,
+          y: yPos,
+        },
+        this
+      )
     })
   }
 
@@ -561,7 +577,7 @@ export class Ship {
 
   takeWheel() {
     ShipUIScene.instance.shipHealthBar.setCurrHealth(this.health)
-    ShipUIScene.instance.shipHealthBar.setMaxHealth(this.health)
+    ShipUIScene.instance.shipHealthBar.setMaxHealth(this.maxHealth)
     this.isAnchored = false
     this.canTakeWheel = false
     this.scene.hoverText.hide()

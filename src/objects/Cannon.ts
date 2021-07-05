@@ -35,13 +35,14 @@ export class Cannon {
   private fireable: boolean = false
   private isFiring: boolean = false
   public direction: Direction
+  public sourceShip?: Ship
 
   private projectileInitPosition?: {
     xOffset: number
     yOffset: number
   }
 
-  constructor(scene: Game, config: CannonConfig) {
+  constructor(scene: Game, config: CannonConfig, ship: Ship) {
     this.scene = scene
     this.direction = config.direction
     if (config.projectileInitPosition) {
@@ -68,6 +69,7 @@ export class Cannon {
         }
       }
     })
+    this.sourceShip = ship
   }
 
   fireCannon() {
@@ -88,6 +90,9 @@ export class Cannon {
         damage: 100,
       }
       const cannonball = new Projectile(this.scene, projectileConfig)
+      if (this.sourceShip) {
+        cannonball.setSourceShip(this.sourceShip)
+      }
       this.scene.addProjectile(cannonball)
       cannonball.fire(this.direction, 300)
       this.scene.time.delayedCall(1500, () => {

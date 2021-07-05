@@ -45,6 +45,16 @@ export class HealthBar {
     return this.currValue === 0
   }
 
+  setMaxHealth(maxHealth: number) {
+    this.maxValue = maxHealth
+    this.draw()
+  }
+
+  setCurrHealth(currHealth: number) {
+    this.currValue = currHealth
+    this.draw()
+  }
+
   draw() {
     this.bar.clear()
 
