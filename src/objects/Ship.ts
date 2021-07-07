@@ -67,6 +67,7 @@ export class Ship {
   public wheelCollider!: Phaser.Physics.Arcade.Collider
   public shipConfig: ShipConfig
   public landDetectorImg!: Phaser.Physics.Arcade.Image
+  public shipDetectorImg!: Phaser.Physics.Arcade.Image
   public disembarkPoint: Phaser.Physics.Arcade.Image | null = null
   public embarkPoint: Phaser.Physics.Arcade.Image | null = null
   public cannons: Cannon[] = []
@@ -81,6 +82,7 @@ export class Ship {
   public isFiringLeftCannon: boolean = false
   public health: number
   public maxHealth: number
+  public isCollidingShip: boolean = false
 
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
@@ -110,6 +112,7 @@ export class Ship {
     this.setupLandDetector(x, y)
 
     this.hullSprite.setData('ref', this)
+    this.hullSprite.setPushable(false)
     this.health = shipConfig.defaultHealth
     this.maxHealth = shipConfig.defaultHealth
 
@@ -235,6 +238,12 @@ export class Ship {
         } else {
           this.embarkPoint = this.landDetectorImg
           this.scene.player.enterableShip = this
+        }
+      })
+      this.scene.physics.add.overlap(this.landDetectorImg, this.scene.ships, (obj1, obj2) => {
+        const ship: Ship = obj2.getData('ref')
+        if (ship !== this) {
+          this.isCollidingShip = true
         }
       })
     }
