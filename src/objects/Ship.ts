@@ -67,7 +67,6 @@ export class Ship {
   public wheelCollider!: Phaser.Physics.Arcade.Collider
   public shipConfig: ShipConfig
   public landDetectorImg!: Phaser.Physics.Arcade.Image
-  public shipDetectorImg!: Phaser.Physics.Arcade.Image
   public disembarkPoint: Phaser.Physics.Arcade.Image | null = null
   public embarkPoint: Phaser.Physics.Arcade.Image | null = null
   public cannons: Cannon[] = []
@@ -83,6 +82,7 @@ export class Ship {
   public health: number
   public maxHealth: number
   public isCollidingShip: boolean = false
+  public shipOverlap!: Phaser.Physics.Arcade.Collider
 
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
@@ -112,7 +112,6 @@ export class Ship {
     this.setupLandDetector(x, y)
 
     this.hullSprite.setData('ref', this)
-    this.hullSprite.setPushable(false)
     this.health = shipConfig.defaultHealth
     this.maxHealth = shipConfig.defaultHealth
 
@@ -240,12 +239,16 @@ export class Ship {
           this.scene.player.enterableShip = this
         }
       })
-      this.scene.physics.add.overlap(this.landDetectorImg, this.scene.ships, (obj1, obj2) => {
-        const ship: Ship = obj2.getData('ref')
-        if (ship !== this) {
-          this.isCollidingShip = true
+      this.shipOverlap = this.scene.physics.add.overlap(
+        this.landDetectorImg,
+        this.scene.ships,
+        (obj1, obj2) => {
+          const ship: Ship = obj2.getData('ref')
+          if (ship !== this) {
+            this.isCollidingShip = true
+          }
         }
-      })
+      )
     }
     this.landDetectorImg.body.setSize(100, 100)
     switch (this.currDirection) {
@@ -293,7 +296,7 @@ export class Ship {
       this.ladderSprite.setX(xPos)
       this.ladderSprite.setY(yPos)
     }
-    this.ladderSprite.body.setSize(this.ladderSprite.width, this.ladderSprite.height * 1.5)
+    this.ladderSprite.body.setSize(this.ladderSprite.width, this.ladderSprite.height)
 
     if (this.currDirection === Direction.RIGHT) {
       this.ladderSprite.scaleX = -1
@@ -428,11 +431,14 @@ export class Ship {
   }
 
   update() {
+    if (!this.scene.physics.overlap(this.hullSprite, this.scene.ships)) {
+      this.isCollidingShip = false
+    }
     if (!this.wheelSprite.body.embedded || this.currDirection !== this.scene.player.direction) {
       this.canTakeWheel = false
     }
 
-    if (!this.landDetectorImg.body.embedded && !this.ladderSprite.body.embedded) {
+    if (!this.scene.physics.overlap(this.scene.player, this.ladderSprite)) {
       this.canExitShip = false
     }
 
@@ -650,7 +656,7 @@ export class Ship {
     }
     this.canAnchor = false
     if (leftDown) {
-      if (this.currDirection === Direction.LEFT && !this.canMove()) {
+      if (this.currDirection === Direction.LEFT && (!this.canMove() || this.isCollidingShip)) {
         this.setAllVelocity(0, 0)
         return
       }
@@ -667,7 +673,7 @@ export class Ship {
       this.setAllVelocity(-speed, 0)
     }
     if (rightDown) {
-      if (this.currDirection === Direction.RIGHT && !this.canMove()) {
+      if (this.currDirection === Direction.RIGHT && (!this.canMove() || this.isCollidingShip)) {
         this.setAllVelocity(0, 0)
         return
       }
@@ -685,7 +691,7 @@ export class Ship {
       this.setAllVelocity(speed, 0)
     }
     if (upDown) {
-      if (this.currDirection === Direction.UP && !this.canMove()) {
+      if (this.currDirection === Direction.UP && (!this.canMove() || this.isCollidingShip)) {
         this.setAllVelocity(0, 0)
         return
       }
@@ -700,7 +706,7 @@ export class Ship {
       this.setAllVelocity(0, -speed)
     }
     if (downDown) {
-      if (this.currDirection === Direction.DOWN && !this.canMove()) {
+      if (this.currDirection === Direction.DOWN && (!this.canMove() || this.isCollidingShip)) {
         this.setAllVelocity(0, 0)
         return
       }

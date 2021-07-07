@@ -189,6 +189,13 @@ export default class Game extends Phaser.Scene {
         projectile.onHitShip(ship)
       }
     })
+
+    this.physics.add.overlap(this.ships, this.ships, (obj1, obj2) => {
+      const ship1: Ship = obj1.getData('ref')
+      const ship2: Ship = obj2.getData('ref')
+      ship1.isCollidingShip = true
+      ship2.isCollidingShip = true
+    })
   }
 
   public enableShipCamera() {
