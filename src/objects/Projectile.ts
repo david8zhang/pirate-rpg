@@ -31,7 +31,9 @@ export class Projectile {
 
   public onHitShip(ship: Ship) {
     this.sprite.destroy()
-    ship.takeDamage(this.damage)
+    if (ship) {
+      ship.takeDamage(this.damage)
+    }
   }
 
   public onHitMob(mob: Mob) {

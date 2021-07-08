@@ -1,6 +1,5 @@
 import { Direction } from '~/characters/Player'
 import { ShipUIScene } from '~/scenes/ShipUIScene'
-import { HoverText } from '~/ui/HoverText'
 import Game from '../scenes/Game'
 import { Cannon } from './Cannon'
 
@@ -128,7 +127,11 @@ export class Ship {
 
     this.scene.input.keyboard.on('keydown', (keycode: any) => {
       if (keycode.code === 'KeyQ') {
-        if (this === this.scene.player.ship && !this.isFiringLeftCannon) {
+        if (
+          this === this.scene.player.ship &&
+          !this.isFiringLeftCannon &&
+          this.scene.player.isSteeringShip
+        ) {
           this.isFiringLeftCannon = true
           const leftCannons = this.getCannons('left')
           leftCannons.forEach((cannon) => {
@@ -140,7 +143,11 @@ export class Ship {
         }
       }
       if (keycode.code === 'KeyR') {
-        if (this === this.scene.player.ship && !this.isFiringRightCannon) {
+        if (
+          this === this.scene.player.ship &&
+          !this.isFiringRightCannon &&
+          this.scene.player.isSteeringShip
+        ) {
           this.isFiringRightCannon = true
           const rightCannons = this.getCannons('right')
           rightCannons.forEach((cannon) => {
@@ -161,6 +168,9 @@ export class Ship {
     if (this === this.scene.player.ship) {
       ShipUIScene.instance.shipHealthBar.setCurrHealth(this.health)
       ShipUIScene.instance.shipHealthBar.setMaxHealth(this.maxHealth)
+    }
+    if (this.health === 0) {
+      this.destroy()
     }
   }
 
@@ -192,6 +202,23 @@ export class Ship {
           })
       }
     }
+  }
+
+  destroy() {
+    this.hullSprite.destroy()
+    this.sailsSprite.destroy()
+    this.wheelSprite.destroy()
+    this.landDetectorImg.destroy()
+    this.wallImages.forEach((wallImg) => {
+      wallImg.destroy()
+    })
+    this.ladderSprite.destroy()
+    this.hitboxImages.forEach((hitboxImg) => {
+      hitboxImg.destroy()
+    })
+    this.cannons.forEach((cannon) => {
+      cannon.destroy()
+    })
   }
 
   canMove() {
