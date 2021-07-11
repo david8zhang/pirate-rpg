@@ -57,7 +57,9 @@ export class Transport {
       weapon.hide()
     }
     this.transportObjGroup.add(this.scene.player)
-    this.scene.playerOceanCollider.active = false
+    if (this.scene.playerOceanCollider) {
+      this.scene.playerOceanCollider.active = false
+    }
     this.scene.hoverText.hide()
     this.scene.enableShipCamera()
   }
@@ -70,9 +72,12 @@ export class Transport {
       this.scene.player.y = this.landDetector.y
       this.scene.player.currTransport = null
       this.transportObjGroup.remove(this.scene.player)
-      this.scene.playerOceanCollider.active = true
+      if (this.scene.playerOceanCollider) {
+        this.scene.playerOceanCollider.active = true
+      }
       this.isExitable = false
       this.scene.hoverText.hide()
+      this.scene.disableShipCamera()
     }
   }
 

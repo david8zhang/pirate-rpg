@@ -2,12 +2,17 @@
 
 A top down pirate themed survival/crafting game build using Phaser 3
 
+## Bugs to fix
+
+- Enable player to board ship from rowboat
+- Ship sails blockmap in some angles
+
 ## Feature Roadmap:
 
-- Pirate ships
-  - Enemy ships
 - Armor (Head, Chest, Feet)
+- Enable player to swim
 - Ranged weapons
+- Enemies which can control ships
 - Procedurally generated content
   - Map generation
   - Random mob placement based on maps

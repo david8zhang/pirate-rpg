@@ -159,6 +159,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           }
 
           if (this.enterableShip) {
+            if (this.currTransport) {
+              this.currTransport.exitTransport()
+            }
             this.ship = this.enterableShip
             this.enterableShip = null
             this.ship.playerEnterShip()
