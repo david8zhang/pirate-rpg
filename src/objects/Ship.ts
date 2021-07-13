@@ -257,15 +257,6 @@ export class Ship {
     if (!this.landDetectorImg) {
       this.landDetectorImg = this.scene.physics.add.image(x, y, '').setVisible(false)
       this.scene.physics.world.enableBody(this.landDetectorImg, Phaser.Physics.Arcade.DYNAMIC_BODY)
-      this.scene.physics.add.overlap(this.landDetectorImg, this.scene.player, () => {
-        if (this.scene.player.ship !== null) {
-          this.disembarkPoint = this.landDetectorImg
-          this.canExitShip = !this.canMove()
-        } else {
-          this.embarkPoint = this.landDetectorImg
-          this.scene.player.enterableShip = this
-        }
-      })
       this.shipOverlap = this.scene.physics.add.overlap(
         this.landDetectorImg,
         this.scene.ships,
@@ -527,7 +518,7 @@ export class Ship {
           this.scene.player.y = this.landDetectorImg.y
           break
       }
-    } else if (this.embarkPoint === this.ladderSprite) {
+    } else {
       switch (this.currDirection) {
         case Direction.UP:
           this.scene.player.y = this.ladderSprite.y

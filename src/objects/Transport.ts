@@ -1,6 +1,7 @@
 import { Direction } from '~/characters/Player'
 import Game from '../scenes/Game'
 import { ItemConfig } from './ItemConfig'
+import { Ship } from './Ship'
 
 export class Transport {
   private scene: Game
@@ -12,6 +13,7 @@ export class Transport {
   public itemRef: ItemConfig
   public currDirection: Direction | null = null
   public isExitable: boolean = false
+  public shipCollider: Phaser.Physics.Arcade.Collider
 
   constructor(scene: Game, itemRef: ItemConfig, x: number, y: number) {
     this.scene = scene
@@ -26,12 +28,14 @@ export class Transport {
     this.scene.physics.world.enableBody(this.triggerImage, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.triggerImage.body.setSize(this.sprite.width * 2, this.sprite.height * 2)
     this.scene.physics.add.overlap(this.triggerImage, this.scene.player, () => {
-      this.scene.player.enterableTransport = this
-      this.scene.hoverText.showText(
-        '(E) Enter ' + this.itemRef.name,
-        this.scene.player.x - this.scene.player.width,
-        this.scene.player.y + this.scene.player.height / 2 + 10
-      )
+      if (!this.scene.player.ship) {
+        this.scene.player.enterableTransport = this
+        this.scene.hoverText.showText(
+          '(E) Enter ' + this.itemRef.name,
+          this.scene.player.x - this.scene.player.width,
+          this.scene.player.y + this.scene.player.height / 2 + 10
+        )
+      }
     })
 
     // Land detection collider to determine when player can disembark
@@ -40,6 +44,15 @@ export class Transport {
       .setVisible(false)
     this.scene.physics.world.enableBody(this.landDetector, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.landDetector.body.setSize(20, 20)
+
+    this.shipCollider = this.scene.physics.add.overlap(
+      this.landDetector,
+      this.scene.ships,
+      (obj1, obj2) => {
+        const ship: Ship = obj2.getData('ref')
+        this.scene.player.enterableShip = ship
+      }
+    )
 
     this.transportObjGroup = this.scene.add.group()
     this.transportObjGroup.add(this.sprite)
@@ -56,6 +69,7 @@ export class Transport {
       weapon.isEquipped = false
       weapon.hide()
     }
+    this.shipCollider.active = true
     this.transportObjGroup.add(this.scene.player)
     if (this.scene.playerOceanCollider) {
       this.scene.playerOceanCollider.active = false
@@ -65,7 +79,7 @@ export class Transport {
   }
 
   exitTransport() {
-    if (this.isExitable) {
+    if (this.isExitable || this.scene.player.enterableShip) {
       this.sprite.setVelocity(0, 0)
       this.triggerImage.setPosition(this.sprite.x, this.sprite.y)
       this.scene.player.x = this.landDetector.x
@@ -75,6 +89,7 @@ export class Transport {
       if (this.scene.playerOceanCollider) {
         this.scene.playerOceanCollider.active = true
       }
+      this.shipCollider.active = false
       this.isExitable = false
       this.scene.hoverText.hide()
       this.scene.disableShipCamera()
@@ -116,6 +131,10 @@ export class Transport {
         isExitable = true
       }
     })
+    if (!this.scene.physics.overlap(this.landDetector, this.scene.ships)) {
+      this.scene.player.enterableShip = null
+      this.scene.hoverText.hide()
+    }
     if (this.isExitable) {
       this.scene.hoverText.showText(
         '(E) Exit ' + this.itemRef.name,
