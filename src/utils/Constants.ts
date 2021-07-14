@@ -1515,8 +1515,9 @@ export const ALL_ITEMS: ItemConfig[] = [
     type: ItemTypes.structure,
     description: "It's not much, but it's an honest home",
     recipe: {
-      Wood: 5,
-      'Palm Frond': 3,
+      Stick: 1,
+      // Wood: 5,
+      // 'Palm Frond': 3,
     },
   },
   {

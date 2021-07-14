@@ -30,7 +30,7 @@ interface CannonConfig {
 
 export class Cannon {
   private scene: Game
-  private sprite: Phaser.Physics.Arcade.Sprite
+  public sprite: Phaser.Physics.Arcade.Sprite
   private playerOverlap: Phaser.Physics.Arcade.Collider
   private fireable: boolean = false
   private isFiring: boolean = false

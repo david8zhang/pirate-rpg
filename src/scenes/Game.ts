@@ -322,6 +322,10 @@ export default class Game extends Phaser.Scene {
     this.grassLayer.setVisible(true)
     this.structures.setVisible(true)
     this.items.setVisible(true)
+    this.ships.children.entries.forEach((c) => {
+      const ship: Ship = c.getData('ref')
+      ship.setVisible(true)
+    })
 
     if (this.transports) {
       this.transports.setVisible(true)
@@ -347,6 +351,10 @@ export default class Game extends Phaser.Scene {
     this.grassLayer.setVisible(false)
     this.structures.setVisible(false)
     this.items.setVisible(false)
+    this.ships.children.entries.forEach((child) => {
+      const ship: Ship = child.getData('ref')
+      ship.setVisible(false)
+    })
     if (this.transports) {
       this.transports.setVisible(false)
     }

@@ -253,6 +253,16 @@ export class Ship {
     })
   }
 
+  setVisible(isVisible: boolean) {
+    this.sailsSprite.setVisible(isVisible)
+    this.hullSprite.setVisible(isVisible)
+    this.cannons.forEach((c) => {
+      c.sprite.setVisible(isVisible)
+    })
+    this.ladderSprite.setVisible(isVisible)
+    this.wheelSprite.setVisible(isVisible)
+  }
+
   setupLandDetector(x: number, y: number) {
     if (!this.landDetectorImg) {
       this.landDetectorImg = this.scene.physics.add.image(x, y, '').setVisible(false)
@@ -390,6 +400,10 @@ export class Ship {
     this.sailsSprite.scaleX = this.currDirection === Direction.RIGHT ? -1 : 1
     this.configureHullBody()
     this.sailsSprite.setSize(1, 1)
+
+    if (direction === Direction.UP) {
+      this.sailsSprite.setAlpha(0.5)
+    }
 
     group.add(this.hullSprite)
     group.add(this.sailsSprite)
@@ -544,7 +558,6 @@ export class Ship {
   }
 
   playerExitShip() {
-    this.sailsSprite.setAlpha(1)
     this.scene.player.ship = null
     if (this.disembarkPoint == this.landDetectorImg) {
       switch (this.currDirection) {
