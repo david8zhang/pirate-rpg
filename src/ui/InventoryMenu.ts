@@ -23,6 +23,7 @@ export class ItemBox {
   // Tooltip position
   public tooltipPosition: TooltipPosition = TooltipPosition.BOTTOM_RIGHT
   public itemClickHandler: Function = () => {}
+  public isEmpty: boolean = true
 
   // Detect double clicked
   public isClicked: boolean = false
@@ -77,8 +78,8 @@ export class ItemBox {
     this.countText.setColor(color)
   }
 
-  handleItemHover(pointer: any, x: number, y: number) {
-    if (this.itemName) {
+  handleItemHover() {
+    if (this.itemName && !this.isEmpty) {
       UIScene.instance.itemTooltip.position = this.tooltipPosition
       UIScene.instance.itemTooltip.itemName = this.itemName
     }
@@ -92,9 +93,9 @@ export class ItemBox {
     this.itemName = itemName
     this.sprite.setTexture(texture)
     if (count > 0) {
+      this.isEmpty = false
       this.sprite.setVisible(true)
     }
-
     if (this.countText) {
       this.countText.setText(count.toString())
       this.countText.setVisible(true)
@@ -108,6 +109,7 @@ export class ItemBox {
   removeItem() {
     this.sprite.setTexture('')
     this.sprite.setVisible(false)
+    this.isEmpty = true
 
     if (this.countText) {
       this.countText.setText('0')
@@ -116,6 +118,9 @@ export class ItemBox {
   }
 
   onItemClick() {
+    if (this.isEmpty) {
+      return
+    }
     if (this.isClicked) {
       this.itemClickHandler(this.itemName, this)
     } else {
