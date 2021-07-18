@@ -234,6 +234,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   resetEnterables() {
     this.structureToEnter = null
     this.enterableTransport = null
+    this.enterableShip = null
   }
 
   update() {

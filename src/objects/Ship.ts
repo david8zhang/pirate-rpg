@@ -60,7 +60,7 @@ export class Ship {
   public ladderSprite!: Phaser.Physics.Arcade.Sprite
   public sailsSprite!: Phaser.Physics.Arcade.Sprite
   public scene: Game
-  public currDirection = Direction.UP
+  public currDirection = Direction.RIGHT
   public wallImages: Phaser.Physics.Arcade.Image[] = []
   public hitboxImages: Phaser.Physics.Arcade.Image[] = []
   public wheelCollider!: Phaser.Physics.Arcade.Collider
@@ -400,10 +400,7 @@ export class Ship {
     this.sailsSprite.scaleX = this.currDirection === Direction.RIGHT ? -1 : 1
     this.configureHullBody()
     this.sailsSprite.setSize(1, 1)
-
-    if (direction === Direction.UP) {
-      this.sailsSprite.setAlpha(0.5)
-    }
+    this.sailsSprite.setAlpha(0.5)
 
     group.add(this.hullSprite)
     group.add(this.sailsSprite)
@@ -513,44 +510,23 @@ export class Ship {
   playerEnterShip() {
     this.sailsSprite.setAlpha(0.5)
     this.setupLandDetector(this.hullSprite.x, this.hullSprite.y)
-    if (this.embarkPoint == this.landDetectorImg) {
-      switch (this.currDirection) {
-        case Direction.UP:
-          this.scene.player.x = this.landDetectorImg.x
-          this.scene.player.y = this.landDetectorImg.y + 80
-          break
-        case Direction.DOWN:
-          this.scene.player.x = this.landDetectorImg.x
-          this.scene.player.y = this.landDetectorImg.y - 80
-          break
-        case Direction.LEFT:
-          this.scene.player.x = this.landDetectorImg.x + 100
-          this.scene.player.y = this.landDetectorImg.y
-          break
-        case Direction.RIGHT:
-          this.scene.player.x = this.landDetectorImg.x - 100
-          this.scene.player.y = this.landDetectorImg.y
-          break
-      }
-    } else {
-      switch (this.currDirection) {
-        case Direction.UP:
-          this.scene.player.y = this.ladderSprite.y
-          this.scene.player.x = this.ladderSprite.x - 20
-          break
-        case Direction.DOWN:
-          this.scene.player.y = this.ladderSprite.y
-          this.scene.player.x = this.ladderSprite.x + 20
-          break
-        case Direction.LEFT:
-          this.scene.player.y = this.ladderSprite.y - 50
-          this.scene.player.x = this.ladderSprite.x
-          break
-        case Direction.RIGHT:
-          this.scene.player.y = this.ladderSprite.y + 50
-          this.scene.player.x = this.ladderSprite.x
-          break
-      }
+    switch (this.currDirection) {
+      case Direction.UP:
+        this.scene.player.y = this.ladderSprite.y
+        this.scene.player.x = this.ladderSprite.x - 20
+        break
+      case Direction.DOWN:
+        this.scene.player.y = this.ladderSprite.y
+        this.scene.player.x = this.ladderSprite.x + 20
+        break
+      case Direction.LEFT:
+        this.scene.player.y = this.ladderSprite.y - 50
+        this.scene.player.x = this.ladderSprite.x
+        break
+      case Direction.RIGHT:
+        this.scene.player.y = this.ladderSprite.y - 50
+        this.scene.player.x = this.ladderSprite.x
+        break
     }
     this.embarkPoint = null
     this.canEnterShip = false
@@ -559,46 +535,23 @@ export class Ship {
 
   playerExitShip() {
     this.scene.player.ship = null
-    if (this.disembarkPoint == this.landDetectorImg) {
-      switch (this.currDirection) {
-        case Direction.UP:
-          this.scene.player.y = this.landDetectorImg.y - 100
-          this.scene.player.x = this.landDetectorImg.x
-          break
-        case Direction.DOWN:
-          this.scene.player.y = this.landDetectorImg.y + 100
-          this.scene.player.x = this.landDetectorImg.x
-          break
-        case Direction.LEFT:
-          this.scene.player.x = this.landDetectorImg.x - 100
-          this.scene.player.y = this.landDetectorImg.y
-          break
-        case Direction.RIGHT:
-          this.scene.player.x = this.landDetectorImg.x + 100
-          this.scene.player.y = this.landDetectorImg.y
-          break
-      }
-      this.landDetectorImg.x = this.scene.player.x
-      this.landDetectorImg.y = this.scene.player.y
-    } else if (this.disembarkPoint === this.ladderSprite) {
-      switch (this.currDirection) {
-        case Direction.UP:
-          this.scene.player.y = this.ladderSprite.y
-          this.scene.player.x = this.ladderSprite.x + 20
-          break
-        case Direction.DOWN:
-          this.scene.player.y = this.ladderSprite.y
-          this.scene.player.x = this.ladderSprite.x - 20
-          break
-        case Direction.LEFT:
-          this.scene.player.y = this.ladderSprite.y + 50
-          this.scene.player.x = this.ladderSprite.x
-          break
-        case Direction.RIGHT:
-          this.scene.player.y = this.ladderSprite.y - 50
-          this.scene.player.x = this.ladderSprite.x
-          break
-      }
+    switch (this.currDirection) {
+      case Direction.UP:
+        this.scene.player.y = this.ladderSprite.y
+        this.scene.player.x = this.ladderSprite.x + 20
+        break
+      case Direction.DOWN:
+        this.scene.player.y = this.ladderSprite.y
+        this.scene.player.x = this.ladderSprite.x - 20
+        break
+      case Direction.LEFT:
+        this.scene.player.y = this.ladderSprite.y + 50
+        this.scene.player.x = this.ladderSprite.x
+        break
+      case Direction.RIGHT:
+        this.scene.player.y = this.ladderSprite.y + 50
+        this.scene.player.x = this.ladderSprite.x
+        break
     }
     this.disembarkPoint = null
     this.canExitShip = false
