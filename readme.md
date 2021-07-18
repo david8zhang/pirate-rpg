@@ -15,7 +15,6 @@ A top down pirate themed survival/crafting game build using Phaser 3
   - Random mob placement based on maps
 - UI menus
 - Saving a game
-- Updated text for all inventory items
 - Ability to drop items from inventory
 
 ## Nice to Have Features (after Alpha release):

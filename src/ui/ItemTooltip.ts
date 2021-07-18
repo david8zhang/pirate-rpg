@@ -1,3 +1,6 @@
+import { ItemFactory } from '~/objects/ItemFactory'
+import { Constants } from '~/utils/Constants'
+
 export enum TooltipPosition {
   TOP_RIGHT = 'topRight',
   TOP_LEFT = 'topLeft',
@@ -57,10 +60,12 @@ export class ItemTooltip {
   }
 
   showItemTooltip(itemName: string, x: number, y: number) {
-    this.setContainerPosition(x, y)
-    this.itemNameText.text = `${itemName}`
-    this.itemDescriptionText.text = 'Lorem ipsum dolor sit amet'
-
+    const itemConfig = ItemFactory.instance.getItemType(itemName)
+    if (itemConfig) {
+      this.setContainerPosition(x, y)
+      this.itemNameText.text = `${itemName}`
+      this.itemDescriptionText.text = itemConfig.description
+    }
     this.rectangle.height = this.itemDescriptionText.height + this.itemNameText.height + 20
 
     this.itemDescriptionText.setStyle({

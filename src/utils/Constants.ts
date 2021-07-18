@@ -22,6 +22,10 @@ export class Constants {
   static getMob(mobName: string) {
     return ALL_MOBS.find((mobConfig) => mobConfig.name === mobName)
   }
+
+  static getItem(itemName: string) {
+    return ALL_ITEMS.find((itemConfig) => itemConfig.name === itemName)
+  }
 }
 
 export enum AnimationType {
