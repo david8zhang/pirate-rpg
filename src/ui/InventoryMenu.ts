@@ -1,6 +1,7 @@
 import { Inventory } from '../characters/Player'
 import UIScene from '../scenes/UIScene'
 import { TooltipPosition } from './ItemTooltip'
+import Game from '../scenes/Game'
 
 export class ItemBox {
   // Dimensions
@@ -117,7 +118,15 @@ export class ItemBox {
     }
   }
 
-  onItemClick() {
+  dropItem() {
+    Game.instance.player.dropItem(this.itemName)
+  }
+
+  onItemClick(pointer: Phaser.Input.Pointer) {
+    if (pointer.rightButtonDown()) {
+      this.dropItem()
+      return
+    }
     if (this.isEmpty) {
       return
     }

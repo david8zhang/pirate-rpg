@@ -23,6 +23,7 @@ export default class Game extends Phaser.Scene {
   public player!: Player
   public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   public map!: Phaser.Tilemaps.Tilemap
+  private static _instance: Game
 
   // Tilemap layers
   public oceanLayer!: Phaser.Tilemaps.TilemapLayer
@@ -80,6 +81,11 @@ export default class Game extends Phaser.Scene {
     super('game')
     this.itemFactory = new ItemFactory(this)
     this.particleSpawner = new ParticleSpawner(this)
+    Game._instance = this
+  }
+
+  public static get instance() {
+    return Game._instance
   }
 
   preload(): void {
@@ -112,7 +118,7 @@ export default class Game extends Phaser.Scene {
 
   initPlayer() {
     // TODO: Fix this
-    this.player = this.add.player(1000, 1300, 'player')
+    this.player = this.add.player(200, 200, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()
@@ -288,6 +294,11 @@ export default class Game extends Phaser.Scene {
       const item = obj2.getData('ref') as Item
       item.onPlayerHoverItem()
     })
+  }
+
+  addItem(item) {
+    this.itemsOnGround.push(item)
+    this.items.add(item.sprite)
   }
 
   getAllTileLayers(): Phaser.Tilemaps.TilemapLayer[] {

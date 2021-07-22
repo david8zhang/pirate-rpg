@@ -261,6 +261,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  dropItem(itemName: string) {
+    this.removeItem(itemName, 1)
+    const item = ItemFactory.instance.createItem(itemName, this.x, this.y)
+    if (item) {
+      item.dropLength = 50
+      item.drop()
+      ;(this.scene as Game).addItem(item)
+    }
+  }
+
   handleItemClick(itemName: string) {
     const item = ItemFactory.instance.getItemType(itemName)
     if (item) {
