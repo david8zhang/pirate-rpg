@@ -15,6 +15,7 @@ A top down pirate themed survival/crafting game build using Phaser 3
   - Randomly placed throughout the game
 - UI menus
 - Saving a game
+- Handle player death
 
 ## Nice to Have Features (after Alpha release):
 
