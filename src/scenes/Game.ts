@@ -18,6 +18,7 @@ import { ALL_MOBS } from '../utils/Constants'
 import { Ship } from '~/objects/Ship'
 import { Projectile } from '~/objects/Projectile'
 import { ShipUIScene } from './ShipUIScene'
+import { MobSpawner } from '~/mobs/MobSpawner'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -255,19 +256,23 @@ export default class Game extends Phaser.Scene {
         this.mobs.add(crab.sprite)
       }
     })
-
-    const monkeyConfig = Constants.getMob('Monkey')
-    if (monkeyConfig) {
-      const monkey = new Mob(this, 300, 300, monkeyConfig)
-      this.mobsList.push(monkey)
-      this.mobs.add(monkey.sprite)
-    }
+    const monkeySpawner = new MobSpawner(this, {
+      position: { x: 300, y: 300 },
+      spawnDelay: 2000,
+      mobLimit: 4,
+      mobConfig: Constants.getMob('Monkey'),
+    })
     this.playerMobsCollider = this.physics.add.collider(this.mobs, this.player, (obj1, obj2) => {
       const mobRef: Mob = obj2.getData('ref')
       if (this.player.getCurrState() === 'attack') {
         mobRef.onHit(Player.UNARMED_DAMAGE)
       }
     })
+  }
+
+  public addMob(mob: Mob) {
+    this.mobsList.push(mob)
+    this.mobs.add(mob.sprite)
   }
 
   initItems() {

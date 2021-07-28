@@ -10,12 +10,11 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 - Enable player to swim
 - Enemies which can control ships
-- Procedurally generated content
-  - Map generation
-  - Random mob placement based on maps
+- Fixed map
+- Mob spawners
+  - Randomly placed throughout the game
 - UI menus
 - Saving a game
-- Ability to drop items from inventory
 
 ## Nice to Have Features (after Alpha release):
 
@@ -23,6 +22,7 @@ A top down pirate themed survival/crafting game build using Phaser 3
 - Ranged weapons
 - Make rowboats + tents have health
 - Make structures removable
+- Procedural Map generation
 - Sails
   - Sails unfurling animations
 
