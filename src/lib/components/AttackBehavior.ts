@@ -36,4 +36,5 @@ export class AttackBehavior implements Behavior {
   stop(): void {}
   start(): void {}
   destroy(): void {}
+  disable(): void {}
 }

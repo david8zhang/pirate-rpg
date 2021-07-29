@@ -1396,6 +1396,11 @@ export const ALL_MOBS = [
     aggroBehavior: 'Melee',
     drops: [],
     collidableLayers: ['Sand', 'Ocean'],
+    attackConfig: {
+      attackDamage: 100,
+      attackRange: 20,
+      chaseSpeed: 50,
+    },
   },
   {
     name: 'Crab',

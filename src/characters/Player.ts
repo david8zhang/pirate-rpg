@@ -208,6 +208,21 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  respawn(x: number, y: number) {
+    this.currHealth = this.maxHealth
+    UIScene.instance.playerHealth.setCurrHealth(this.currHealth)
+
+    this.setPosition(x, y)
+    this.setActive(true)
+    this.setVisible(true)
+    this.body.enable = true
+    UIScene.instance.hideGameOver()
+  }
+
+  public get isDead() {
+    return this.currHealth <= 0
+  }
+
   placeStructure() {
     if (this.structureToBePlaced) {
       const didPlaceStructure = this.structureToBePlaced.placeItem(PlaceableType.structure)
@@ -237,7 +252,18 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.enterableShip = null
   }
 
+  die() {
+    UIScene.instance.showGameOver()
+    this.setActive(false)
+    this.setVisible(false)
+    this.body.enable = false
+  }
+
   update() {
+    if (this.currHealth <= 0 && this.active) {
+      this.die()
+      return
+    }
     if (this.currTransport) {
       this.currTransport.update()
     } else {

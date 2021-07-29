@@ -30,6 +30,13 @@ export class MeleeAttackBehavior extends AttackBehavior {
     this.hitboxImage.setDebugBodyColor(0xffff00)
     this.hitboxImage.body.offset.y = this.mob.sprite.body.offset.y
 
+    const { attackConfig } = this.mob.mobConfig
+    if (attackConfig) {
+      this.chaseSpeed = attackConfig.chaseSpeed
+      this.attackRange = attackConfig.attackRange
+      this.attackDamage = attackConfig.attackDamage
+    }
+
     const gameScene = this.mob.scene as Game
     this.hitboxCollider = this.mob.scene.physics.add.overlap(
       this.hitboxImage,
@@ -44,6 +51,7 @@ export class MeleeAttackBehavior extends AttackBehavior {
   attackPlayer() {
     const gameScene = this.mob.scene as Game
     if (
+      !gameScene.player.isDead &&
       !gameScene.player.isHit &&
       gameScene.player.getCurrState() !== 'attack' &&
       !this.mob.isHit
@@ -57,6 +65,10 @@ export class MeleeAttackBehavior extends AttackBehavior {
     }
   }
 
+  disable() {
+    this.hitboxCollider.active = false
+  }
+
   update() {
     // If the attack behavior is active, have the enemy follow the player
     if (this.isActive) {
@@ -65,7 +77,7 @@ export class MeleeAttackBehavior extends AttackBehavior {
       this.direction = direction
 
       // If the direction is null, then do an attack
-      if (this.isPlayerInAttackRange()) {
+      if (this.isPlayerInAttackRange() && Game.instance.player.active) {
         this.mob.sprite.setVelocity(0)
         if (this.state !== AttackState.ATTACK) {
           this.state = AttackState.ATTACK

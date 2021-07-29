@@ -198,6 +198,10 @@ export class Mob {
   }
 
   update() {
+    if (!this.sprite.active) {
+      return
+    }
+
     if (this.sprite.active && this.mobConfig.moveOffsets) {
       if (this.sprite.body.velocity.x < 0) {
         this.sprite.scaleX = 1
@@ -206,6 +210,18 @@ export class Mob {
         this.sprite.body.offset.x = this.mobConfig.moveOffsets.right
         this.sprite.scaleX = -1
       }
+    }
+
+    if (Game.instance.player.isDead && this.isAggro) {
+      this.isAggro = false
+      this.activeBehavior.disable()
+      this.activeBehavior = new RandomMovementBehavior(
+        this.sprite,
+        this.scene,
+        this.animations,
+        () => {}
+      )
+      this.healthBar.setVisible(false)
     }
 
     this.healthBar.x = this.sprite.x - this.healthBar.width / 2

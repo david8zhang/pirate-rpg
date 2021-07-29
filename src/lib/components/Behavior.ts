@@ -12,4 +12,5 @@ export interface Behavior {
   stop(): void
   start(): void
   destroy(): void
+  disable(): void
 }

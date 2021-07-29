@@ -42,6 +42,7 @@ export default class Game extends Phaser.Scene {
   // Mobs
   public mobsList: Mob[] = []
   public mobs!: Phaser.GameObjects.Group
+  public spawners: MobSpawner[] = []
 
   // Harvestables (Trees, bushes, etc.)
   public harvestableList: Harvestable[] = []
@@ -89,6 +90,10 @@ export default class Game extends Phaser.Scene {
     return Game._instance
   }
 
+  restart() {
+    this.player.respawn(200, 200)
+  }
+
   preload(): void {
     this.hoverText = new HoverText(this, 0, 0)
     this.cursors = this.input.keyboard.createCursorKeys()
@@ -104,6 +109,7 @@ export default class Game extends Phaser.Scene {
     this.initItems()
     this.initProjectiles()
     this.initShips()
+    this.initSpawners()
   }
 
   initTilemap() {
@@ -239,28 +245,26 @@ export default class Game extends Phaser.Scene {
     )
   }
 
+  initSpawners() {
+    const spawnerLayer = this.map.getObjectLayer('Spawners')
+    spawnerLayer.objects.forEach((spawnerObj) => {
+      const xPos = spawnerObj.x! + spawnerObj.width! * 0.5
+      const yPos = spawnerObj.y! - spawnerObj.height! * 0.5
+      const config = Constants.getMob(spawnerObj.type)
+      this.spawners.push(
+        new MobSpawner(this, {
+          position: { x: xPos, y: yPos },
+          spawnDelay: 2000,
+          mobConfig: config,
+          mobLimit: Math.floor(Math.random() * 3 + 2),
+        })
+      )
+    })
+  }
+
   initMobs() {
-    const mobsLayer = this.map.getObjectLayer('Mobs')
     this.mobs = this.physics.add.group({
       classType: Mob,
-    })
-
-    // TODO: Use procedural generation technique for spawning in mobs
-    mobsLayer.objects.forEach((mobObj) => {
-      const xPos = mobObj.x! + mobObj.width! * 0.5
-      const yPos = mobObj.y! - mobObj.height! * 0.5
-      const crabConfig = Constants.getMob('Crab')
-      if (crabConfig) {
-        const crab = new Mob(this, xPos, yPos, crabConfig)
-        this.mobsList.push(crab)
-        this.mobs.add(crab.sprite)
-      }
-    })
-    const monkeySpawner = new MobSpawner(this, {
-      position: { x: 300, y: 300 },
-      spawnDelay: 2000,
-      mobLimit: 4,
-      mobConfig: Constants.getMob('Monkey'),
     })
     this.playerMobsCollider = this.physics.add.collider(this.mobs, this.player, (obj1, obj2) => {
       const mobRef: Mob = obj2.getData('ref')

@@ -18,10 +18,10 @@ export class PlayerHealthBar {
   }
 
   setMaxHealth(health: number) {
-    this.healthBar.maxValue = health
+    this.healthBar.setMaxHealth(health)
   }
 
   setCurrHealth(health: number) {
-    this.healthBar.currValue = health
+    this.healthBar.setCurrHealth(health)
   }
 }

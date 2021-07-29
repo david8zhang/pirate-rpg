@@ -36,16 +36,19 @@ export class RandomMovementBehavior extends MovementBehavior {
     this.animations = animations
     this.sprite = sprite
     this.scene = scene
-    this.sprite.anims.play(animations[AnimationType.IDLE_FRONT])
-    this.moveEvent = this.scene.time.addEvent({
-      delay: 2000,
-      callback: () => {
-        this.randomMoveOrStop()
-      },
-      loop: true,
-    })
-    if (onMoveFn) {
-      this.onMove = onMoveFn
+
+    if (this.sprite && this.sprite.anims) {
+      this.sprite.anims.play(animations[AnimationType.IDLE_FRONT])
+      this.moveEvent = this.scene.time.addEvent({
+        delay: 2000,
+        callback: () => {
+          this.randomMoveOrStop()
+        },
+        loop: true,
+      })
+      if (onMoveFn) {
+        this.onMove = onMoveFn
+      }
     }
   }
 
@@ -114,6 +117,8 @@ export class RandomMovementBehavior extends MovementBehavior {
     this.isStopped = true
   }
 
+  disable() {}
+
   update() {
     // If the mob is currently stopped, don't add velocity
     if (this.isStopped) {
@@ -124,7 +129,7 @@ export class RandomMovementBehavior extends MovementBehavior {
     }
 
     // Play the move animation if the mob was moving
-    if (this.sprite.anims.getName() !== this._getAnimBasedOnDirection()) {
+    if (this.sprite.anims && this.sprite.anims.getName() !== this._getAnimBasedOnDirection()) {
       this.playAnimsBasedOnDirection()
     }
 

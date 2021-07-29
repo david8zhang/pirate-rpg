@@ -474,9 +474,42 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":10,
+         "name":"Spawners",
+         "objects":[
+                {
+                 "height":0,
+                 "id":49,
+                 "name":"",
+                 "rotation":0,
+                 "type":"Monkey",
+                 "visible":true,
+                 "width":0,
+                 "x":419.987737584304,
+                 "y":266.707541385653
+                }, 
+                {
+                 "height":0,
+                 "id":52,
+                 "name":"",
+                 "rotation":0,
+                 "type":"Crab",
+                 "visible":true,
+                 "width":0,
+                 "x":660.637645616186,
+                 "y":421.520539546291
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":10,
- "nextobjectid":49,
+ "nextlayerid":11,
+ "nextobjectid":53,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
@@ -1067,7 +1100,7 @@
          "margin":0,
          "name":"elevated-tiles",
          "spacing":0,
-         "tilecount":40,
+         "tilecount":32,
          "tileheight":16,
          "tiles":[
                 {
