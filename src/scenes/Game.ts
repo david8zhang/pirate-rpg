@@ -450,6 +450,13 @@ export default class Game extends Phaser.Scene {
       const ship = child.getData('ref')
       ship.update()
     })
+    this.removeAllDeadMobs()
+  }
+
+  removeAllDeadMobs() {
+    this.mobsList = this.mobsList.filter((mob) => {
+      return mob.health > 0
+    })
   }
 
   updateSortingLayers() {

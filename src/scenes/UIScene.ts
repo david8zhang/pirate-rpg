@@ -5,6 +5,7 @@ import { CraftingMenu } from '~/ui/CraftingMenu'
 import { EquipmentMenu } from '~/ui/EquipmentMenu'
 import { button } from '../ui/components/Button'
 import Game from './Game'
+import { text } from '~/ui/components/Text'
 
 export default class UIScene extends Phaser.Scene {
   private static _instance: UIScene
@@ -13,7 +14,7 @@ export default class UIScene extends Phaser.Scene {
   public itemTooltip!: ItemTooltip
   public craftingMenu!: CraftingMenu
   public equipMenu!: EquipmentMenu
-  public gameOverButton: HTMLElement | null = null
+  public continueButton: HTMLElement | null = null
   public domElementsContainer!: Phaser.GameObjects.Container
 
   constructor() {
@@ -29,21 +30,32 @@ export default class UIScene extends Phaser.Scene {
     this.equipMenu = new EquipmentMenu(this)
     this.domElementsContainer = this.add.container(0, 0)
 
-    this.gameOverButton = button('Game Over', {
+    this.continueButton = button('Continue', {
       fontFamily: 'GraphicPixel',
-      fontSize: '15px',
+      fontSize: '12px',
       width: 100,
       height: 20,
     }) as HTMLElement
-    const gameOverButtonDom = this.add
-      .dom(this.scale.width / 2 - 50, this.scale.height / 2 - 10, this.gameOverButton)
+
+    const gameOverText = text('Game Over', {
+      fontFamily: 'GraphicPixel',
+      fontSize: '20px',
+    }) as HTMLElement
+
+    const continueButtonDom = this.add
+      .dom(this.scale.width / 2 - 50, this.scale.height / 2 - 10, this.continueButton)
       .setOrigin(0, 0)
       .addListener('click')
       .on('click', () => {
         this.resetGame()
       })
 
-    this.domElementsContainer.add(gameOverButtonDom)
+    const gameOverTextDom = this.add
+      .dom(this.scale.width / 2 - 50, this.scale.height / 2 - 60, gameOverText)
+      .setOrigin(0, 0)
+
+    this.domElementsContainer.add(continueButtonDom)
+    this.domElementsContainer.add(gameOverTextDom)
     this.domElementsContainer.setVisible(false)
   }
 

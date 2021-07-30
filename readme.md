@@ -4,6 +4,7 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Bugs to fix
 
+- Free memory for unused mobs after they are destroyed
 - Ship sprite sometimes incorrectly depth sorted
 
 ## Must haves for Alpha release:
@@ -11,11 +12,8 @@ A top down pirate themed survival/crafting game build using Phaser 3
 - Enable player to swim
 - Enemies which can control ships
 - Fixed map
-- Mob spawners
-  - Randomly placed throughout the game
 - UI menus
 - Saving a game
-- Handle player death
 
 ## Nice to Have Features (after Alpha release):
 

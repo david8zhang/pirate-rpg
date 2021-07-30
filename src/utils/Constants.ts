@@ -1397,7 +1397,7 @@ export const ALL_MOBS = [
     drops: [],
     collidableLayers: ['Sand', 'Ocean'],
     attackConfig: {
-      attackDamage: 100,
+      attackDamage: 5,
       attackRange: 20,
       chaseSpeed: 50,
     },
