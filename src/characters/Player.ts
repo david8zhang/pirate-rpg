@@ -53,6 +53,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public isHit: boolean = false
   public itemOnHover: Item | null = null
   public onEquipWeaponHandler: Function = () => {}
+  public isSubmerged: boolean = false
 
   // Structures
   public structureToBePlaced: Placeable | null = null
@@ -155,6 +156,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
               this.isSteeringShip = false
             } else if (this.ship.canExitShip) {
               this.ship.playerExitShip()
+              if (this.getIsSubmerged()) {
+                this.anims.play(`player-swim-${this.getAnimDirection(this.direction)}`)
+              }
             }
           }
 
@@ -165,6 +169,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.ship = this.enterableShip
             this.enterableShip = null
             this.ship.playerEnterShip()
+            this.anims.play(`player-idle-${this.getAnimDirection(this.direction)}`)
           }
         }
 
@@ -259,11 +264,25 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.body.enable = false
   }
 
+  public getIsSubmerged() {
+    let isOceanTile = false
+    const gameScene = this.scene as Game
+    gameScene.getAllTileLayers().forEach((tileMap) => {
+      const check = tileMap.getTileAtWorldXY(this.x, this.y)
+      if (check && check.layer.name === 'Ocean') {
+        isOceanTile = true
+      }
+    })
+    return isOceanTile && !this.ship && !this.currTransport
+  }
+
   update() {
     if (this.currHealth <= 0 && this.active) {
       this.die()
       return
     }
+    this.isSubmerged = this.getIsSubmerged()
+
     if (this.currTransport) {
       this.currTransport.update()
     } else {

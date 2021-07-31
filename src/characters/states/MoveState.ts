@@ -42,7 +42,12 @@ export class MoveState extends State {
         player.direction = Direction.DOWN
         player.setVelocity(0, speed)
       }
-      player.anims.play(`player-walk-${player.getAnimDirection(player.direction)}`, true)
+
+      if (player.isSubmerged) {
+        player.anims.play(`player-swim-${player.getAnimDirection(player.direction)}`, true)
+      } else {
+        player.anims.play(`player-walk-${player.getAnimDirection(player.direction)}`, true)
+      }
     }
   }
 }

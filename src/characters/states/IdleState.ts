@@ -4,7 +4,12 @@ import { State } from '../../lib/StateMachine'
 export class IdleState extends State {
   enter(cursors: Phaser.Types.Input.Keyboard.CursorKeys, player: Player) {
     player.setVelocity(0)
-    player.anims.play(`player-idle-${player.getAnimDirection(player.direction)}`)
+    const direction = player.getAnimDirection(player.direction)
+    if (player.isSubmerged) {
+      player.anims.play(`player-swim-${direction}`)
+    } else {
+      player.anims.play(`player-idle-${direction}`)
+    }
   }
 
   execute(cursors: Phaser.Types.Input.Keyboard.CursorKeys, player: Player) {

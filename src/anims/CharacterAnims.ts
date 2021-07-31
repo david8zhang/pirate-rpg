@@ -135,4 +135,37 @@ export const createCharacterAnims = (anims: Phaser.Animations.AnimationManager) 
     repeat: 0,
     frameRate: 8,
   })
+
+  anims.create({
+    key: 'player-swim-down',
+    frames: anims.generateFrameNames('player', {
+      start: 40,
+      end: 42,
+      suffix: '.png',
+    }),
+    repeat: -1,
+    frameRate: 8,
+  })
+
+  anims.create({
+    key: 'player-swim-side',
+    frames: anims.generateFrameNames('player', {
+      start: 43,
+      end: 45,
+      suffix: '.png',
+    }),
+    repeat: -1,
+    frameRate: 8,
+  })
+
+  anims.create({
+    key: 'player-swim-up',
+    frames: anims.generateFrameNames('player', {
+      start: 46,
+      end: 48,
+      suffix: '.png',
+    }),
+    repeat: -1,
+    frameRate: 8,
+  })
 }
