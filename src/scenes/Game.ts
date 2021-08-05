@@ -260,6 +260,12 @@ export default class Game extends Phaser.Scene {
         })
       )
     })
+    const spawner = new MobSpawner(this, {
+      position: { x: 900, y: 350 },
+      spawnDelay: 2000,
+      mobConfig: Constants.getMob('Monkey'),
+      mobLimit: 1,
+    })
   }
 
   initMobs() {

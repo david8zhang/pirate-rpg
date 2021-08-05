@@ -19,5 +19,6 @@ export class MovementBehavior implements Behavior {
   start() {}
   stop() {}
   destroy() {}
+  disable() {}
   handleTileCollision(obj1: any, obj2: any, animations: any) {}
 }

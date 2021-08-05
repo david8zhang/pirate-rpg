@@ -7,6 +7,7 @@ import { ItemFactory } from '~/objects/ItemFactory'
 import { AnimationType, Constants } from '~/utils/Constants'
 import { MeleeAttackBehavior } from '~/lib/components/MeleeAttackBehavior'
 import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
+import { Ship } from '~/objects/Ship'
 
 export interface MobAnimation {
   key: string
@@ -30,6 +31,7 @@ export class Mob {
   drops: string[] = []
   mobConfig: any
   isHit: boolean = false
+  ship: Ship | null = null
 
   // Components
   activeBehavior: Behavior
@@ -214,6 +216,7 @@ export class Mob {
 
     if (Game.instance.player.isDead && this.isAggro) {
       this.isAggro = false
+      // Disable whatever current behavior is running and start the random movement behavior
       this.activeBehavior.disable()
       this.activeBehavior = new RandomMovementBehavior(
         this.sprite,
@@ -224,6 +227,7 @@ export class Mob {
       this.healthBar.setVisible(false)
     }
 
+    // If this mob is currently colliding with a ship wheel, start the sailing behavior (if sailing behavior is enabled on this mob)
     this.healthBar.x = this.sprite.x - this.healthBar.width / 2
     this.healthBar.y = this.sprite.y - this.sprite.height / 2
     this.healthBar.draw()

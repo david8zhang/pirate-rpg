@@ -1,4 +1,5 @@
 import { Direction } from '~/characters/Player'
+import { Mob } from '~/mobs/Mob'
 import { ShipUIScene } from '~/scenes/ShipUIScene'
 import Game from '../scenes/Game'
 import { Cannon } from './Cannon'
@@ -82,6 +83,11 @@ export class Ship {
   public maxHealth: number
   public isCollidingShip: boolean = false
   public shipOverlap!: Phaser.Physics.Arcade.Collider
+
+  // handle if the ship is being controlled by a mob
+  public overlappingMob: Mob | null = null
+  public mobInControl: Mob | null = null
+  public mobCollider!: Phaser.Physics.Arcade.Collider
 
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
@@ -342,6 +348,16 @@ export class Ship {
         }
       )
     }
+
+    if (!this.mobCollider) {
+      this.mobCollider = this.scene.physics.add.overlap(
+        this.scene.mobs,
+        this.wheelSprite,
+        (obj1, obj2) => {
+          console.log(obj1, obj2)
+        }
+      )
+    }
   }
 
   setupWheel(wheelConfig) {
@@ -455,15 +471,18 @@ export class Ship {
     const image = this.scene.physics.add.image(x, y, '').setVisible(false).setImmovable(true)
     this.scene.physics.world.enableBody(image, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.scene.physics.add.collider(this.scene.player, image)
+    this.scene.physics.add.collider(this.scene.mobs, image)
     image.body.setSize(width, height)
     return image
   }
 
   update() {
+    // If this ship is being controlled by a mob
     if (!this.scene.physics.overlap(this.hullSprite, this.scene.ships)) {
       this.isCollidingShip = false
     }
     if (!this.wheelSprite.body.embedded || this.currDirection !== this.scene.player.direction) {
+      this.overlappingMob = null
       this.canTakeWheel = false
     }
 
@@ -478,7 +497,7 @@ export class Ship {
 
     // If the player is steering the ship, handle movement
     if (this.scene.player.isSteeringShip) {
-      this.handleMovement(this.scene.cursors)
+      this.handlePlayerMovement(this.scene.cursors)
     }
 
     // Show text to anchor if the ship is not moving
@@ -619,96 +638,118 @@ export class Ship {
     }
   }
 
-  handleMovement(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
-    const leftDown = cursors.left?.isDown
-    const rightDown = cursors.right?.isDown
-    const upDown = cursors.up?.isDown
-    const downDown = cursors.down?.isDown
-    const player = this.scene.player
-    const speed = 200
+  public stop() {
+    this.setAllVelocity(0, 0)
+  }
 
+  public moveShip(direction: Direction) {
     const { hullImages, sailsImages, wheelConfig, ladderConfig, cannonConfig } = this.shipConfig
-
-    if (this !== this.scene.player.ship) {
-      return
-    }
-
-    if (!(leftDown || rightDown || upDown || downDown)) {
-      this.setAllVelocity(0, 0)
-      this.canAnchor = true
-      return
-    }
-    this.canAnchor = false
-    if (leftDown) {
-      if (this.currDirection === Direction.LEFT && (!this.canMove() || this.isCollidingShip)) {
-        this.setAllVelocity(0, 0)
-        return
-      }
-      this.sailsSprite.setAlpha(1)
-      player.scaleX = -1
-      player.body.offset.x = 27
-      player.direction = Direction.LEFT
-      this.currDirection = Direction.LEFT
-      this.hullSprite.setTexture(hullImages.side)
-      this.sailsSprite.setTexture(sailsImages.side)
-      this.hullSprite.scaleX = 1
-      this.sailsSprite.scaleX = 1
-      this.configureHullBody()
-      this.setAllVelocity(-speed, 0)
-    }
-    if (rightDown) {
-      if (this.currDirection === Direction.RIGHT && (!this.canMove() || this.isCollidingShip)) {
-        this.setAllVelocity(0, 0)
-        return
-      }
-      this.sailsSprite.setAlpha(1)
-      player.scaleX = 1
-      player.body.offset.x = 12
-      player.direction = Direction.RIGHT
-      this.currDirection = Direction.RIGHT
-      this.hullSprite.setTexture(hullImages.side)
-      this.sailsSprite.setTexture(sailsImages.side)
-      this.sailsSprite.scaleX = -1
-      this.hullSprite.scaleX = -1
-      this.wheelSprite.body.offset.x = this.wheelSprite.width
-      this.configureHullBody()
-      this.setAllVelocity(speed, 0)
-    }
-    if (upDown) {
-      if (this.currDirection === Direction.UP && (!this.canMove() || this.isCollidingShip)) {
-        this.setAllVelocity(0, 0)
-        return
-      }
-      this.sailsSprite.setAlpha(1)
-      player.direction = Direction.UP
-      this.currDirection = Direction.UP
-      this.hullSprite.scaleX = 1
-      this.sailsSprite.scaleX = 1
-      this.hullSprite.setTexture(hullImages.up)
-      this.sailsSprite.setTexture(sailsImages.up)
-      this.configureHullBody()
-      this.setAllVelocity(0, -speed)
-    }
-    if (downDown) {
-      if (this.currDirection === Direction.DOWN && (!this.canMove() || this.isCollidingShip)) {
-        this.setAllVelocity(0, 0)
-        return
-      }
-      this.sailsSprite.setAlpha(0.5)
-      player.direction = Direction.DOWN
-      this.currDirection = Direction.DOWN
-      this.hullSprite.scaleX = 1
-      this.sailsSprite.scaleX = 1
-      this.hullSprite.setTexture(hullImages.down)
-      this.sailsSprite.setTexture(sailsImages.down)
-      this.configureHullBody()
-      this.setAllVelocity(0, speed)
+    const speed = 200
+    switch (direction) {
+      case Direction.UP:
+        if (this.currDirection === Direction.UP && (!this.canMove() || this.isCollidingShip)) {
+          this.setAllVelocity(0, 0)
+          return
+        }
+        this.sailsSprite.setAlpha(1)
+        this.currDirection = Direction.UP
+        this.hullSprite.scaleX = 1
+        this.sailsSprite.scaleX = 1
+        this.hullSprite.setTexture(hullImages.up)
+        this.sailsSprite.setTexture(sailsImages.up)
+        this.configureHullBody()
+        this.setAllVelocity(0, -speed)
+        break
+      case Direction.LEFT:
+        if (this.currDirection === Direction.LEFT && (!this.canMove() || this.isCollidingShip)) {
+          this.setAllVelocity(0, 0)
+          return
+        }
+        this.sailsSprite.setAlpha(1)
+        this.currDirection = Direction.LEFT
+        this.hullSprite.setTexture(hullImages.side)
+        this.sailsSprite.setTexture(sailsImages.side)
+        this.hullSprite.scaleX = 1
+        this.sailsSprite.scaleX = 1
+        this.configureHullBody()
+        this.setAllVelocity(-speed, 0)
+        break
+      case Direction.RIGHT:
+        if (this.currDirection === Direction.RIGHT && (!this.canMove() || this.isCollidingShip)) {
+          this.setAllVelocity(0, 0)
+          return
+        }
+        this.sailsSprite.setAlpha(1)
+        this.currDirection = Direction.RIGHT
+        this.hullSprite.setTexture(hullImages.side)
+        this.sailsSprite.setTexture(sailsImages.side)
+        this.sailsSprite.scaleX = -1
+        this.hullSprite.scaleX = -1
+        this.wheelSprite.body.offset.x = this.wheelSprite.width
+        this.configureHullBody()
+        this.setAllVelocity(speed, 0)
+        break
+      case Direction.DOWN:
+        if (this.currDirection === Direction.DOWN && (!this.canMove() || this.isCollidingShip)) {
+          this.setAllVelocity(0, 0)
+          return
+        }
+        this.sailsSprite.setAlpha(0.5)
+        this.currDirection = Direction.DOWN
+        this.hullSprite.scaleX = 1
+        this.sailsSprite.scaleX = 1
+        this.hullSprite.setTexture(hullImages.down)
+        this.sailsSprite.setTexture(sailsImages.down)
+        this.configureHullBody()
+        this.setAllVelocity(0, speed)
+        break
     }
     this.setupWheel(wheelConfig)
     this.setupLadder(ladderConfig)
     this.setupCannon(cannonConfig)
     this.setPlayerAtWheelPosition()
     this.setupLandDetector(this.hullSprite.x, this.hullSprite.y)
+  }
+
+  handlePlayerMovement(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
+    const leftDown = cursors.left?.isDown
+    const rightDown = cursors.right?.isDown
+    const upDown = cursors.up?.isDown
+    const downDown = cursors.down?.isDown
+    const player = this.scene.player
+
+    if (this !== this.scene.player.ship) {
+      return
+    }
+
+    if (!(leftDown || rightDown || upDown || downDown)) {
+      this.canAnchor = true
+      this.stop()
+      return
+    }
+    this.canAnchor = false
+    let moveDirection: Direction = Direction.LEFT
+    if (leftDown) {
+      moveDirection = Direction.LEFT
+      player.scaleX = -1
+      player.body.offset.x = 27
+      player.direction = moveDirection
+    }
+    if (rightDown) {
+      moveDirection = Direction.RIGHT
+      player.scaleX = 1
+      player.body.offset.x = 12
+      player.direction = moveDirection
+    }
+    if (upDown) {
+      moveDirection = Direction.UP
+      player.direction = moveDirection
+    }
+    if (downDown) {
+      moveDirection = Direction.DOWN
+      player.direction = moveDirection
+    }
+    this.moveShip(moveDirection)
     player.anims.play(`player-idle-${player.getAnimDirection(player.direction)}`, true)
   }
 
