@@ -354,7 +354,8 @@ export class Ship {
         this.scene.mobs,
         this.wheelSprite,
         (obj1, obj2) => {
-          console.log(obj1, obj2)
+          const mob = obj2.getData('ref') as Mob
+          mob.ship = this
         }
       )
     }
@@ -643,7 +644,9 @@ export class Ship {
   }
 
   public moveShip(direction: Direction) {
-    const { hullImages, sailsImages, wheelConfig, ladderConfig, cannonConfig } = this.shipConfig
+    const { hullImages, sailsImages, wheelConfig, ladderConfig, cannonConfig, colliderConfig } =
+      this.shipConfig
+    this.setupWalls(colliderConfig)
     const speed = 200
     switch (direction) {
       case Direction.UP:
@@ -707,7 +710,6 @@ export class Ship {
     this.setupWheel(wheelConfig)
     this.setupLadder(ladderConfig)
     this.setupCannon(cannonConfig)
-    this.setPlayerAtWheelPosition()
     this.setupLandDetector(this.hullSprite.x, this.hullSprite.y)
   }
 
@@ -750,6 +752,7 @@ export class Ship {
       player.direction = moveDirection
     }
     this.moveShip(moveDirection)
+    this.setPlayerAtWheelPosition()
     player.anims.play(`player-idle-${player.getAnimDirection(player.direction)}`, true)
   }
 

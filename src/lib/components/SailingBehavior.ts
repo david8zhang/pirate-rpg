@@ -8,6 +8,7 @@ export class SailingBehavior implements Behavior {
   private mob: Mob
   private ship: Ship
   private moveShipEvent!: Phaser.Time.TimerEvent
+  private currDirection: Direction | null = null
 
   constructor(mob: Mob, ship: Ship) {
     this.mob = mob
@@ -27,9 +28,9 @@ export class SailingBehavior implements Behavior {
     const directions = [Direction.UP, Direction.LEFT, Direction.DOWN, Direction.RIGHT, 'stop']
     const randDirection = directions[Math.floor(Math.random() * directions.length)]
     if (randDirection !== 'stop') {
-      this.ship.moveShip(randDirection as Direction)
+      this.currDirection = randDirection as Direction
     } else {
-      this.ship.stop()
+      this.currDirection = null
     }
   }
 
@@ -37,5 +38,11 @@ export class SailingBehavior implements Behavior {
   disable() {}
   destroy() {}
   handleTileCollision(obj1: any, obj2: any, animations: any): void {}
-  update() {}
+  update() {
+    if (this.currDirection) {
+      this.ship.moveShip(this.currDirection)
+    } else {
+      this.ship.stop()
+    }
+  }
 }

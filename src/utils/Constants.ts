@@ -1394,6 +1394,7 @@ export const ALL_MOBS = [
       right: 25,
     },
     aggroBehavior: 'Melee',
+    canSail: true,
     drops: [],
     collidableLayers: ['Sand', 'Ocean'],
     attackConfig: {

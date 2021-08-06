@@ -8,6 +8,7 @@ import { AnimationType, Constants } from '~/utils/Constants'
 import { MeleeAttackBehavior } from '~/lib/components/MeleeAttackBehavior'
 import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
 import { Ship } from '~/objects/Ship'
+import { SailingBehavior } from '~/lib/components/SailingBehavior'
 
 export interface MobAnimation {
   key: string
@@ -28,6 +29,7 @@ export class Mob {
   health: number
   sprite: Phaser.Physics.Arcade.Sprite
   isAggro: boolean = false
+  isSailing: boolean = false
   drops: string[] = []
   mobConfig: any
   isHit: boolean = false
@@ -97,6 +99,7 @@ export class Mob {
       this.animations,
       () => {}
     )
+    this.sprite.setData('ref', this)
   }
 
   setActiveBehavior(behavior: Behavior) {
@@ -212,6 +215,13 @@ export class Mob {
         this.sprite.body.offset.x = this.mobConfig.moveOffsets.right
         this.sprite.scaleX = -1
       }
+    }
+
+    if (this.ship && this.mobConfig.canSail && !this.isSailing) {
+      this.activeBehavior.stop()
+      this.activeBehavior = new SailingBehavior(this, this.ship)
+      this.activeBehavior.start()
+      this.isSailing = true
     }
 
     if (Game.instance.player.isDead && this.isAggro) {
