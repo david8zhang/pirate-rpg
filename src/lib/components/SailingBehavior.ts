@@ -15,6 +15,7 @@ export class SailingBehavior implements Behavior {
     this.ship = ship
   }
   start() {
+    this.ship.mobInControl = this.mob
     this.moveShipEvent = this.mob.scene.time.addEvent({
       delay: 2000,
       callback: () => {
@@ -34,12 +35,15 @@ export class SailingBehavior implements Behavior {
     }
   }
 
-  stop() {}
+  stop() {
+    this.moveShipEvent.destroy()
+  }
   disable() {}
   destroy() {}
   handleTileCollision(obj1: any, obj2: any, animations: any): void {}
   update() {
     if (this.currDirection) {
+      this.ship.destroyAllColliders()
       this.ship.moveShip(this.currDirection)
     } else {
       this.ship.stop()

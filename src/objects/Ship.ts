@@ -176,7 +176,12 @@ export class Ship {
       ShipUIScene.instance.shipHealthBar.setMaxHealth(this.maxHealth)
     }
     if (this.health === 0) {
-      this.destroy()
+      if (this.mobInControl) {
+        this.stop()
+        this.mobInControl.activeBehavior.stop()
+      } else {
+        this.destroy()
+      }
     }
   }
 
@@ -317,6 +322,9 @@ export class Ship {
       this.ladderSprite = this.scene.physics.add.sprite(xPos, yPos, directionConfig.image)
       this.scene.physics.world.enableBody(this.ladderSprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
       this.scene.physics.add.overlap(this.ladderSprite, this.scene.player, () => {
+        if (this.mobInControl) {
+          return
+        }
         if (this.scene.player.ship !== null) {
           this.disembarkPoint = this.ladderSprite
           this.canExitShip = true
@@ -356,6 +364,7 @@ export class Ship {
         (obj1, obj2) => {
           const mob = obj2.getData('ref') as Mob
           mob.ship = this
+          this.overlappingMob = mob
         }
       )
     }
@@ -383,7 +392,11 @@ export class Ship {
   }
 
   onWheelOverlap() {
-    if (this.scene.player.direction === this.currDirection && this.isAnchored) {
+    if (
+      this.scene.player.direction === this.currDirection &&
+      this.isAnchored &&
+      !this.mobInControl
+    ) {
       this.canTakeWheel = true
       this.scene.hoverText.showText(
         '(E) Take the wheel',
@@ -439,9 +452,6 @@ export class Ship {
   }
 
   setupWalls(colliderConfig: any) {
-    if (this.wallImages.length > 0) {
-      this.wallImages.forEach((img) => img.destroy())
-    }
     const configs = colliderConfig[this.currDirection]
     configs.forEach((wall) => {
       const wallImg = this.addWall(
@@ -640,18 +650,26 @@ export class Ship {
   }
 
   public stop() {
+    const { colliderConfig, hitboxConfig } = this.shipConfig
     this.setAllVelocity(0, 0)
+
+    if (this.wallImages.length === 0) {
+      this.setupWalls(colliderConfig)
+    }
+    if (this.hitboxImages.length === 0) {
+      this.setupHitbox(hitboxConfig)
+    }
   }
 
   public moveShip(direction: Direction) {
-    const { hullImages, sailsImages, wheelConfig, ladderConfig, cannonConfig, colliderConfig } =
+    const { hullImages, sailsImages, wheelConfig, ladderConfig, cannonConfig, hitboxConfig } =
       this.shipConfig
-    this.setupWalls(colliderConfig)
     const speed = 200
+    this.setupHitbox(hitboxConfig)
     switch (direction) {
       case Direction.UP:
-        if (this.currDirection === Direction.UP && (!this.canMove() || this.isCollidingShip)) {
-          this.setAllVelocity(0, 0)
+        if (this.currDirection === Direction.UP && !this.canMove()) {
+          this.stop()
           return
         }
         this.sailsSprite.setAlpha(1)
@@ -664,8 +682,8 @@ export class Ship {
         this.setAllVelocity(0, -speed)
         break
       case Direction.LEFT:
-        if (this.currDirection === Direction.LEFT && (!this.canMove() || this.isCollidingShip)) {
-          this.setAllVelocity(0, 0)
+        if (this.currDirection === Direction.LEFT && !this.canMove()) {
+          this.stop()
           return
         }
         this.sailsSprite.setAlpha(1)
@@ -678,8 +696,8 @@ export class Ship {
         this.setAllVelocity(-speed, 0)
         break
       case Direction.RIGHT:
-        if (this.currDirection === Direction.RIGHT && (!this.canMove() || this.isCollidingShip)) {
-          this.setAllVelocity(0, 0)
+        if (this.currDirection === Direction.RIGHT && !this.canMove()) {
+          this.stop()
           return
         }
         this.sailsSprite.setAlpha(1)
@@ -693,8 +711,8 @@ export class Ship {
         this.setAllVelocity(speed, 0)
         break
       case Direction.DOWN:
-        if (this.currDirection === Direction.DOWN && (!this.canMove() || this.isCollidingShip)) {
-          this.setAllVelocity(0, 0)
+        if (this.currDirection === Direction.DOWN && !this.canMove()) {
+          this.stop()
           return
         }
         this.sailsSprite.setAlpha(0.5)
@@ -766,16 +784,12 @@ export class Ship {
     this.hullSprite.body.offset.x = this.hullSprite.width * config.xOffset
   }
 
-  destroyAllColliders() {
+  public destroyAllColliders() {
     if (this.wallImages.length > 0) {
       this.wallImages.forEach((wall) => {
         wall.destroy()
       })
-    }
-    if (this.hitboxImages.length > 0) {
-      this.hitboxImages.forEach((img) => {
-        img.destroy()
-      })
+      this.wallImages = []
     }
   }
 
