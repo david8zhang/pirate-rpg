@@ -312,15 +312,9 @@ export class Ship {
     if (!this.ladderSprite) {
       this.ladderSprite = this.scene.physics.add.sprite(xPos, yPos, directionConfig.image)
       this.scene.physics.world.enableBody(this.ladderSprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
-      this.scene.physics.add.overlap(this.ladderSprite, this.scene.player, () => {
-        if (this.scene.player.ship !== null) {
-          this.disembarkPoint = this.ladderSprite
-          this.canExitShip = true
-        } else {
-          this.embarkPoint = this.ladderSprite
-          this.scene.player.enterableShip = this
-        }
-      })
+      this.scene.physics.add.overlap(this.ladderSprite, this.scene.player, () =>
+        this.onPlayerLadderCollide()
+      )
     } else {
       this.ladderSprite.setTexture(directionConfig.image)
       this.ladderSprite.setX(xPos)
@@ -343,6 +337,16 @@ export class Ship {
           this.onWheelOverlap()
         }
       )
+    }
+  }
+
+  onPlayerLadderCollide() {
+    if (this.scene.player.ship !== null) {
+      this.disembarkPoint = this.ladderSprite
+      this.canExitShip = true
+    } else {
+      this.embarkPoint = this.ladderSprite
+      this.scene.player.enterableShip = this
     }
   }
 
@@ -433,6 +437,23 @@ export class Ship {
         wall.height
       )
       this.wallImages.push(wallImg)
+    })
+  }
+
+  adjustWallsBasedOnDirection(direction: Direction, colliderConfig: any) {
+    const configs = colliderConfig[direction]
+    this.wallImages.forEach((wallImage, index) => {
+      const config = configs[index]
+      if (!config) {
+        wallImage.setActive(false)
+        wallImage.debugShowBody = false
+      } else {
+        wallImage.setActive(true)
+        wallImage.debugShowBody = true
+        wallImage.body.setSize(config.width, config.height)
+        wallImage.body.offset.x = config.xOffset
+        wallImage.body.offset.y = config.yOffset
+      }
     })
   }
 
@@ -567,14 +588,11 @@ export class Ship {
     this.canAnchor = false
     this.scene.hoverText.hide()
     this.sailsSprite.setAlpha(0.5)
-
-    const { colliderConfig, hitboxConfig } = this.shipConfig
-    this.setupHitbox(hitboxConfig)
-    this.setupWalls(colliderConfig)
-
     this.scene.disableShipCamera()
     this.scene.cameras.main.stopFollow()
     this.scene.cameras.main.startFollow(this.scene.player, true)
+
+    this.setupWalls(this.shipConfig.colliderConfig)
   }
 
   takeWheel() {
@@ -623,15 +641,7 @@ export class Ship {
   }
 
   public stop() {
-    const { colliderConfig, hitboxConfig } = this.shipConfig
     this.setAllVelocity(0, 0)
-
-    if (this.wallImages.length === 0) {
-      this.setupWalls(colliderConfig)
-    }
-    if (this.hitboxImages.length === 0) {
-      this.setupHitbox(hitboxConfig)
-    }
   }
 
   public moveShip(direction: Direction) {
@@ -776,5 +786,10 @@ export class Ship {
     this.hullSprite.setVelocity(xVelocity, yVelocity)
     this.sailsSprite.setVelocity(xVelocity, yVelocity)
     this.wheelSprite.setVelocity(xVelocity, yVelocity)
+    this.hitboxImages.forEach((hitboxImage) => {
+      if (hitboxImage && hitboxImage.active) {
+        hitboxImage.setVelocity(xVelocity, yVelocity)
+      }
+    })
   }
 }

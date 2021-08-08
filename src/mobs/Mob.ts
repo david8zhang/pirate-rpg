@@ -7,7 +7,8 @@ import { ItemFactory } from '~/objects/ItemFactory'
 import { AnimationType, Constants } from '~/utils/Constants'
 import { MeleeAttackBehavior } from '~/lib/components/MeleeAttackBehavior'
 import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
-import { Ship } from '~/objects/Ship'
+import { SailingBehavior } from '~/lib/components/SailingBehavior'
+import { EnemyShip } from '~/objects/EnemyShip'
 
 export interface MobAnimation {
   key: string
@@ -32,7 +33,6 @@ export class Mob {
   drops: string[] = []
   mobConfig: any
   isHit: boolean = false
-  ship: Ship | null = null
 
   // Components
   activeBehavior: Behavior
@@ -159,6 +159,12 @@ export class Mob {
       default:
         sprite.anims.play(animations.hurtFront)
         break
+    }
+  }
+
+  sail(ship: EnemyShip) {
+    if (this.mobConfig.canSail) {
+      this.setActiveBehavior(new SailingBehavior(this, ship))
     }
   }
 

@@ -68,7 +68,7 @@ export const ALL_SHIP_TYPES = [
         height: 0.4,
       },
       right: {
-        xOffset: 0.2,
+        xOffset: 1.0,
         yOffset: 0.6,
         width: 0.8,
         height: 0.4,
@@ -1396,6 +1396,7 @@ export const ALL_MOBS = [
     aggroBehavior: 'Melee',
     drops: [],
     collidableLayers: ['Sand', 'Ocean'],
+    canSail: true,
     attackConfig: {
       attackDamage: 5,
       attackRange: 20,

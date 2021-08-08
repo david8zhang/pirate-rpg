@@ -20,6 +20,7 @@ import { Projectile } from '~/objects/Projectile'
 import { ShipUIScene } from './ShipUIScene'
 import { MobSpawner } from '~/mobs/MobSpawner'
 import { EnemyShip } from '~/objects/EnemyShip'
+import { SailingBehavior } from '~/lib/components/SailingBehavior'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -194,6 +195,7 @@ export default class Game extends Phaser.Scene {
   initShips() {
     this.ships = this.physics.add.group({ classType: Ship })
     const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1000, y: 1000 })
+
     this.ships.add(ship1.hullSprite)
 
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
@@ -213,9 +215,13 @@ export default class Game extends Phaser.Scene {
   }
 
   initEnemyShips() {
-    this.enemyShips = this.physics.add.group({ classType: EnemyShip })
+    const monkey = new Mob(this, 1200, 200, Constants.getMob('Monkey'))
     const enemyShip = new EnemyShip(this, ALL_SHIP_TYPES[0], { x: 1200, y: 200 })
-    this.enemyShips.add(enemyShip.hullSprite)
+
+    // Force monkey to adopt sailing behavior
+    monkey.sail(enemyShip)
+    this.addMob(monkey)
+    this.ships.add(enemyShip.hullSprite)
   }
 
   public enableShipCamera() {
