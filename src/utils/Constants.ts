@@ -62,16 +62,16 @@ export const ALL_SHIP_TYPES = [
     },
     hullBodyConfig: {
       left: {
-        xOffset: 0,
-        yOffset: 0.5,
-        width: 1,
-        height: 0.5,
+        xOffset: 0.2,
+        yOffset: 0.6,
+        width: 0.8,
+        height: 0.4,
       },
       right: {
-        xOffset: 1,
-        yOffset: 0.5,
-        width: 1,
-        height: 0.5,
+        xOffset: 0.2,
+        yOffset: 0.6,
+        width: 0.8,
+        height: 0.4,
       },
       up: {
         xOffset: 0.35,
@@ -1394,7 +1394,6 @@ export const ALL_MOBS = [
       right: 25,
     },
     aggroBehavior: 'Melee',
-    canSail: true,
     drops: [],
     collidableLayers: ['Sand', 'Ocean'],
     attackConfig: {

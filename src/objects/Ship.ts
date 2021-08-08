@@ -71,6 +71,7 @@ export class Ship {
   public embarkPoint: Phaser.Physics.Arcade.Image | null = null
   public cannons: Cannon[] = []
   public hullBodyConfig: any
+  public wallColliders: Phaser.Physics.Arcade.Collider[] = []
 
   public isAnchored: boolean = true
   public canTakeWheel: boolean = false
@@ -83,11 +84,6 @@ export class Ship {
   public maxHealth: number
   public isCollidingShip: boolean = false
   public shipOverlap!: Phaser.Physics.Arcade.Collider
-
-  // handle if the ship is being controlled by a mob
-  public overlappingMob: Mob | null = null
-  public mobInControl: Mob | null = null
-  public mobCollider!: Phaser.Physics.Arcade.Collider
 
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     this.scene = scene
@@ -176,12 +172,7 @@ export class Ship {
       ShipUIScene.instance.shipHealthBar.setMaxHealth(this.maxHealth)
     }
     if (this.health === 0) {
-      if (this.mobInControl) {
-        this.stop()
-        this.mobInControl.activeBehavior.stop()
-      } else {
-        this.destroy()
-      }
+      this.destroy()
     }
   }
 
@@ -322,9 +313,6 @@ export class Ship {
       this.ladderSprite = this.scene.physics.add.sprite(xPos, yPos, directionConfig.image)
       this.scene.physics.world.enableBody(this.ladderSprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
       this.scene.physics.add.overlap(this.ladderSprite, this.scene.player, () => {
-        if (this.mobInControl) {
-          return
-        }
         if (this.scene.player.ship !== null) {
           this.disembarkPoint = this.ladderSprite
           this.canExitShip = true
@@ -356,18 +344,6 @@ export class Ship {
         }
       )
     }
-
-    if (!this.mobCollider) {
-      this.mobCollider = this.scene.physics.add.overlap(
-        this.scene.mobs,
-        this.wheelSprite,
-        (obj1, obj2) => {
-          const mob = obj2.getData('ref') as Mob
-          mob.ship = this
-          this.overlappingMob = mob
-        }
-      )
-    }
   }
 
   setupWheel(wheelConfig) {
@@ -392,11 +368,7 @@ export class Ship {
   }
 
   onWheelOverlap() {
-    if (
-      this.scene.player.direction === this.currDirection &&
-      this.isAnchored &&
-      !this.mobInControl
-    ) {
+    if (this.scene.player.direction === this.currDirection && this.isAnchored) {
       this.canTakeWheel = true
       this.scene.hoverText.showText(
         '(E) Take the wheel',
@@ -481,8 +453,10 @@ export class Ship {
   addWall(x: number, y: number, width: number, height: number): Phaser.Physics.Arcade.Image {
     const image = this.scene.physics.add.image(x, y, '').setVisible(false).setImmovable(true)
     this.scene.physics.world.enableBody(image, Phaser.Physics.Arcade.DYNAMIC_BODY)
-    this.scene.physics.add.collider(this.scene.player, image)
-    this.scene.physics.add.collider(this.scene.mobs, image)
+    const playerWallCollider = this.scene.physics.add.collider(this.scene.player, image)
+    const mobWallCollider = this.scene.physics.add.collider(this.scene.mobs, image)
+    this.wallColliders.push(playerWallCollider)
+    this.wallColliders.push(mobWallCollider)
     image.body.setSize(width, height)
     return image
   }
@@ -493,7 +467,6 @@ export class Ship {
       this.isCollidingShip = false
     }
     if (!this.wheelSprite.body.embedded || this.currDirection !== this.scene.player.direction) {
-      this.overlappingMob = null
       this.canTakeWheel = false
     }
 
@@ -790,6 +763,12 @@ export class Ship {
         wall.destroy()
       })
       this.wallImages = []
+    }
+    if (this.wallColliders.length > 0) {
+      this.wallColliders.forEach((collider) => {
+        collider.destroy()
+      })
+      this.wallColliders = []
     }
   }
 

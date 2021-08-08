@@ -19,6 +19,7 @@ import { Ship } from '~/objects/Ship'
 import { Projectile } from '~/objects/Projectile'
 import { ShipUIScene } from './ShipUIScene'
 import { MobSpawner } from '~/mobs/MobSpawner'
+import { EnemyShip } from '~/objects/EnemyShip'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -57,6 +58,7 @@ export default class Game extends Phaser.Scene {
 
   // Ships
   public ships!: Phaser.GameObjects.Group
+  public enemyShips!: Phaser.GameObjects.Group
 
   // Structures
   public structures!: Phaser.GameObjects.Group
@@ -109,6 +111,7 @@ export default class Game extends Phaser.Scene {
     this.initItems()
     this.initProjectiles()
     this.initShips()
+    this.initEnemyShips()
     this.initSpawners()
   }
 
@@ -125,7 +128,7 @@ export default class Game extends Phaser.Scene {
 
   initPlayer() {
     // TODO: Fix this
-    this.player = this.add.player(800, 1200, 'player')
+    this.player = this.add.player(1000, 200, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()
@@ -191,9 +194,7 @@ export default class Game extends Phaser.Scene {
   initShips() {
     this.ships = this.physics.add.group({ classType: Ship })
     const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1000, y: 1000 })
-    const ship2 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1150, y: 200 })
     this.ships.add(ship1.hullSprite)
-    this.ships.add(ship2.hullSprite)
 
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
       const ship: Ship = obj1.getData('ref')
@@ -209,6 +210,12 @@ export default class Game extends Phaser.Scene {
       ship1.isCollidingShip = true
       ship2.isCollidingShip = true
     })
+  }
+
+  initEnemyShips() {
+    this.enemyShips = this.physics.add.group({ classType: EnemyShip })
+    const enemyShip = new EnemyShip(this, ALL_SHIP_TYPES[0], { x: 1200, y: 200 })
+    this.enemyShips.add(enemyShip.hullSprite)
   }
 
   public enableShipCamera() {
@@ -259,12 +266,6 @@ export default class Game extends Phaser.Scene {
           mobLimit: Math.floor(Math.random() * 3 + 2),
         })
       )
-    })
-    const spawner = new MobSpawner(this, {
-      position: { x: 900, y: 350 },
-      spawnDelay: 2000,
-      mobConfig: Constants.getMob('Monkey'),
-      mobLimit: 1,
     })
   }
 
