@@ -55,7 +55,6 @@ export interface ShipConfig {
 }
 
 export class Ship {
-  public group: Phaser.GameObjects.Group
   public hullSprite!: Phaser.Physics.Arcade.Sprite
   public wheelSprite!: Phaser.Physics.Arcade.Sprite
   public ladderSprite!: Phaser.Physics.Arcade.Sprite
@@ -98,11 +97,10 @@ export class Ship {
       cannonConfig,
       hullBodyConfig,
     } = shipConfig
-    this.group = this.scene.add.group()
     this.hullBodyConfig = hullBodyConfig
 
     // Setup the sprites and hitboxes
-    this.setupSprites(x, y, hullImages, sailsImages, this.group)
+    this.setupSprites(x, y, hullImages, sailsImages)
     this.setupHitbox(hitboxConfig)
     this.setupWalls(colliderConfig)
     this.setupWheel(wheelConfig)
@@ -384,13 +382,7 @@ export class Ship {
     }
   }
 
-  setupSprites(
-    x: number,
-    y: number,
-    hullImages: any,
-    sailsImages: any,
-    group: Phaser.GameObjects.Group
-  ) {
+  setupSprites(x: number, y: number, hullImages: any, sailsImages: any) {
     const direction =
       this.currDirection === Direction.LEFT || this.currDirection === Direction.RIGHT
         ? 'side'
@@ -407,9 +399,6 @@ export class Ship {
     this.configureHullBody()
     this.sailsSprite.setSize(1, 1)
     this.sailsSprite.setAlpha(0.5)
-
-    group.add(this.hullSprite)
-    group.add(this.sailsSprite)
   }
 
   setupHitbox(hitboxConfig: any) {

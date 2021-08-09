@@ -129,7 +129,7 @@ export default class Game extends Phaser.Scene {
 
   initPlayer() {
     // TODO: Fix this
-    this.player = this.add.player(1000, 200, 'player')
+    this.player = this.add.player(1000, 1200, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()
@@ -205,13 +205,6 @@ export default class Game extends Phaser.Scene {
         projectile.onHitShip(ship)
       }
     })
-
-    this.physics.add.overlap(this.ships, this.ships, (obj1, obj2) => {
-      const ship1: Ship = obj1.getData('ref')
-      const ship2: Ship = obj2.getData('ref')
-      ship1.isCollidingShip = true
-      ship2.isCollidingShip = true
-    })
   }
 
   initEnemyShips() {
@@ -219,7 +212,9 @@ export default class Game extends Phaser.Scene {
     const enemyShip = new EnemyShip(this, ALL_SHIP_TYPES[0], { x: 1200, y: 200 })
 
     // Force monkey to adopt sailing behavior
-    monkey.sail(enemyShip)
+    this.time.delayedCall(5000, () => {
+      monkey.sail(enemyShip)
+    })
     this.addMob(monkey)
     this.ships.add(enemyShip.hullSprite)
   }

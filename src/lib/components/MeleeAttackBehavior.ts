@@ -1,5 +1,4 @@
 import { Mob } from '~/mobs/Mob'
-import { DamageNumber } from '~/ui/DamageNumber'
 import Game from '../../scenes/Game'
 import { AttackBehavior } from './AttackBehavior'
 import { Direction } from './Behavior'

@@ -1,4 +1,5 @@
 import { Direction } from '~/characters/Player'
+import { SailingBehavior } from '~/lib/components/SailingBehavior'
 import { Mob } from '~/mobs/Mob'
 import { AnimationType } from '~/utils/Constants'
 import Game from '../scenes/Game'
@@ -10,10 +11,101 @@ export class EnemyShip extends Ship {
     super(scene, shipConfig, position)
   }
 
+  setupLadder() {
+    return
+  }
+
+  canMoveInDirection(direction: Direction) {
+    if (this.currDirection == direction && !this.canMove()) {
+      return false
+    }
+    return true
+  }
+
   setMobInControl(mobInControl: Mob) {
     this.mobInControl = mobInControl
     this.mobInControl.sprite.body.enable = false
     this.mobInControl.sprite.body.debugShowBody = false
+    this.positionMobAtWheel()
+  }
+
+  takeDamage(damage: number) {
+    this.health -= damage
+    this.health = Math.max(this.health, 0)
+    this.scene.cameras.main.shake(100, 0.005)
+    if (this.mobInControl) {
+      const behavior: SailingBehavior = this.mobInControl?.activeBehavior as SailingBehavior
+      behavior.takeDamage()
+    }
+
+    if (this.health <= 0) {
+      this.stop()
+      if (this.mobInControl) {
+        this.mobInControl.activeBehavior.stop()
+      }
+    }
+  }
+
+  turn(direction: Direction) {
+    const { hullImages, sailsImages, wheelConfig, ladderConfig, cannonConfig, hitboxConfig } =
+      this.shipConfig
+    switch (direction) {
+      case Direction.UP:
+        if (this.currDirection === Direction.UP && !this.canMove()) {
+          this.stop()
+          return
+        }
+        this.sailsSprite.setAlpha(1)
+        this.currDirection = Direction.UP
+        this.hullSprite.scaleX = 1
+        this.sailsSprite.scaleX = 1
+        this.hullSprite.setTexture(hullImages.up)
+        this.sailsSprite.setTexture(sailsImages.up)
+        this.configureHullBody()
+        break
+      case Direction.LEFT:
+        if (this.currDirection === Direction.LEFT && !this.canMove()) {
+          this.stop()
+          return
+        }
+        this.sailsSprite.setAlpha(1)
+        this.currDirection = Direction.LEFT
+        this.hullSprite.setTexture(hullImages.side)
+        this.sailsSprite.setTexture(sailsImages.side)
+        this.hullSprite.scaleX = 1
+        this.sailsSprite.scaleX = 1
+        this.configureHullBody()
+        break
+      case Direction.RIGHT:
+        if (this.currDirection === Direction.RIGHT && !this.canMove()) {
+          this.stop()
+          return
+        }
+        this.sailsSprite.setAlpha(1)
+        this.currDirection = Direction.RIGHT
+        this.hullSprite.setTexture(hullImages.side)
+        this.sailsSprite.setTexture(sailsImages.side)
+        this.sailsSprite.scaleX = -1
+        this.hullSprite.scaleX = -1
+        this.wheelSprite.body.offset.x = this.wheelSprite.width
+        this.configureHullBody()
+        break
+      case Direction.DOWN:
+        if (this.currDirection === Direction.DOWN && !this.canMove()) {
+          this.stop()
+          return
+        }
+        this.sailsSprite.setAlpha(0.5)
+        this.currDirection = Direction.DOWN
+        this.hullSprite.scaleX = 1
+        this.sailsSprite.scaleX = 1
+        this.hullSprite.setTexture(hullImages.down)
+        this.sailsSprite.setTexture(sailsImages.down)
+        this.configureHullBody()
+        break
+    }
+    this.setupWheel(wheelConfig)
+    this.setupCannon(cannonConfig)
     this.positionMobAtWheel()
   }
 
