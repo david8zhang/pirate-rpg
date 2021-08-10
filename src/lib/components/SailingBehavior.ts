@@ -12,6 +12,8 @@ export class SailingBehavior implements Behavior {
   private moveShipEvent!: Phaser.Time.TimerEvent
   private currDirection: Direction | null = null
   public followingPlayer: boolean = false
+  public fireDelay: number = 5000
+  public firedCannon: boolean = false
 
   constructor(mob: Mob, ship: EnemyShip) {
     this.mob = mob
@@ -44,8 +46,65 @@ export class SailingBehavior implements Behavior {
 
   getDirectionToMove(): any {
     const gameScene = this.mob.scene as Game
-    const target = gameScene.player.ship ? gameScene.player.ship.hullSprite : gameScene.player
-    return undefined
+    const source = this.ship.getCenterPoint()
+    const target = gameScene.player.ship?.getCenterPoint()
+    const dx = Math.floor(source.x - target?.x)
+    const dy = Math.floor(source.y - target?.y)
+
+    const playerShip = gameScene.player.ship
+    if (playerShip) {
+      if (
+        (playerShip.currDirection === Direction.DOWN ||
+          playerShip.currDirection === Direction.UP) &&
+        Math.abs(dx) >= 200
+      ) {
+        this.fireCannon()
+        if (Math.abs(dy) >= 20) {
+          return dy > 0 ? Direction.UP : Direction.DOWN
+        } else {
+          return undefined
+        }
+      }
+      if (
+        (playerShip.currDirection === Direction.LEFT ||
+          playerShip.currDirection === Direction.RIGHT) &&
+        Math.abs(dy) <= 450
+      ) {
+        this.fireCannon()
+        if (Math.abs(dx) >= 20) {
+          return dx > 0 ? Direction.LEFT : Direction.RIGHT
+        } else {
+          return undefined
+        }
+      }
+
+      // If the dx is less than dy, move along the y axis
+      if (Math.abs(dx) < Math.abs(dy) || dx === 0) {
+        // If dy > 0, then the current mob is below the player
+        if (dy > 0) {
+          return Direction.UP
+        } else {
+          return Direction.DOWN
+        }
+      } else if (Math.abs(dy) < Math.abs(dx) || dy === 0) {
+        // If dx > 0, then the current mob is to the right of the player
+        if (dx > 0) {
+          return Direction.LEFT
+        } else {
+          return Direction.RIGHT
+        }
+      }
+    }
+  }
+
+  fireCannon() {
+    if (!this.firedCannon) {
+      this.ship.fireAllCannons()
+      this.firedCannon = true
+      this.mob.scene.time.delayedCall(this.fireDelay, () => {
+        this.firedCannon = false
+      })
+    }
   }
 
   getDirectionOfPlayerShip() {
@@ -60,6 +119,14 @@ export class SailingBehavior implements Behavior {
     this.moveShipEvent.destroy()
     this.followingPlayer = true
   }
+
+  // fireCannon() {
+  //   const gameScene = this.mob.scene as Game
+  //   const source = this.ship.getCenterPoint()
+  //   const target = gameScene.player.ship?.getCenterPoint()
+  //   const dx = Math.floor(source.x - target?.x)
+  //   const dy = Math.floor(source.y - target?.y)
+  // }
 
   stop() {
     this.moveShipEvent.destroy()

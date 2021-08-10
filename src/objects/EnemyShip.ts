@@ -7,6 +7,8 @@ import { Ship, ShipConfig } from './Ship'
 
 export class EnemyShip extends Ship {
   public mobInControl: Mob | null = null
+  public moveSpeed: number = 150
+
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     super(scene, shipConfig, position)
   }

@@ -1154,6 +1154,24 @@ export const ALL_SHIP_TYPES = [
         },
       ],
     },
+    centerOffset: {
+      right: {
+        x: -57,
+        y: 153,
+      },
+      up: {
+        x: 2,
+        y: 149,
+      },
+      down: {
+        x: -13,
+        y: 30,
+      },
+      left: {
+        x: 75,
+        y: 150,
+      },
+    },
   },
 ]
 

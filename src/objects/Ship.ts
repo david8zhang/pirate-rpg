@@ -52,6 +52,12 @@ export interface ShipConfig {
     up: any[]
     down: any[]
   }
+  centerOffset: {
+    left: any
+    right: any
+    up: any
+    down: any
+  }
 }
 
 export class Ship {
@@ -83,8 +89,14 @@ export class Ship {
   public maxHealth: number
   public isCollidingShip: boolean = false
   public shipOverlap!: Phaser.Physics.Arcade.Collider
+  public moveSpeed: number = 200
 
-  constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
+  constructor(
+    scene: Game,
+    shipConfig: ShipConfig,
+    position: { x: number; y: number },
+    currDirection: Direction = Direction.RIGHT
+  ) {
     this.scene = scene
     const { x, y } = position
     const {
@@ -98,6 +110,7 @@ export class Ship {
       hullBodyConfig,
     } = shipConfig
     this.hullBodyConfig = hullBodyConfig
+    this.currDirection = currDirection
 
     // Setup the sprites and hitboxes
     this.setupSprites(x, y, hullImages, sailsImages)
@@ -159,6 +172,30 @@ export class Ship {
         }
       }
     })
+  }
+
+  fireAllCannons() {
+    const allCannons = this.getCannons('right').concat(this.getCannons('left'))
+    allCannons.forEach((cannon) => cannon.fireCannon())
+  }
+
+  fireCannon(direction: Direction) {
+    if (direction === Direction.RIGHT) {
+      const rightCannons = this.getCannons('right')
+      rightCannons.forEach((cannon) => cannon.fireCannon())
+    } else if (direction === Direction.LEFT) {
+      const leftCannons = this.getCannons('left')
+      leftCannons.forEach((cannon) => cannon.fireCannon())
+    }
+  }
+
+  getCenterPoint() {
+    const { centerOffset } = this.shipConfig
+    const centerOffsetConfig = centerOffset[this.currDirection]
+    return {
+      x: this.hullSprite.x + centerOffsetConfig.x,
+      y: this.hullSprite.y + centerOffsetConfig.y,
+    }
   }
 
   takeDamage(damage: number) {
@@ -636,7 +673,7 @@ export class Ship {
   public moveShip(direction: Direction) {
     const { hullImages, sailsImages, wheelConfig, ladderConfig, cannonConfig, hitboxConfig } =
       this.shipConfig
-    const speed = 200
+    const speed = this.moveSpeed
     this.setupHitbox(hitboxConfig)
     switch (direction) {
       case Direction.UP:

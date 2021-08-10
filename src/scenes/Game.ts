@@ -194,7 +194,8 @@ export default class Game extends Phaser.Scene {
 
   initShips() {
     this.ships = this.physics.add.group({ classType: Ship })
-    const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1000, y: 1000 })
+    const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1000, y: 1000 }, Direction.LEFT)
+    // const ship2 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1000, y: 1000 }, Direction.UP)
 
     this.ships.add(ship1.hullSprite)
 
@@ -210,8 +211,6 @@ export default class Game extends Phaser.Scene {
   initEnemyShips() {
     const monkey = new Mob(this, 1200, 200, Constants.getMob('Monkey'))
     const enemyShip = new EnemyShip(this, ALL_SHIP_TYPES[0], { x: 1200, y: 200 })
-
-    // Force monkey to adopt sailing behavior
     this.time.delayedCall(5000, () => {
       monkey.sail(enemyShip)
     })
