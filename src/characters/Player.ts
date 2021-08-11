@@ -155,7 +155,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
               this.ship.anchor()
               this.isSteeringShip = false
             } else if (this.ship.canExitShip) {
+              this.setName('')
               this.ship.playerExitShip()
+              this.ship = null
               if (this.getIsSubmerged()) {
                 this.anims.play(`player-swim-${this.getAnimDirection(this.direction)}`)
               }
@@ -169,6 +171,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.ship = this.enterableShip
             this.enterableShip = null
             this.ship.playerEnterShip()
+            this.setName('Transport')
             this.anims.play(`player-idle-${this.getAnimDirection(this.direction)}`)
           }
         }
@@ -277,6 +280,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   update() {
+    if (this.ship) {
+      this.setDepth(this.ship.hullSprite.depth + 5)
+    }
     if (this.currHealth <= 0 && this.active) {
       this.die()
       return

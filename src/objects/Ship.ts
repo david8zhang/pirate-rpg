@@ -241,6 +241,15 @@ export class Ship {
     }
   }
 
+  getLowestDepth() {
+    const lastShip = this.scene.ships[this.scene.ships.getChildren().length - 1]
+    if (lastShip) {
+      return lastShip.hullSprite.depth
+    } else {
+      return this.scene.player.depth
+    }
+  }
+
   destroy() {
     this.hullSprite.destroy()
     this.sailsSprite.destroy()
@@ -249,7 +258,9 @@ export class Ship {
     this.wallImages.forEach((wallImg) => {
       wallImg.destroy()
     })
-    this.ladderSprite.destroy()
+    if (this.ladderSprite) {
+      this.ladderSprite.destroy()
+    }
     this.hitboxImages.forEach((hitboxImg) => {
       hitboxImg.destroy()
     })
@@ -346,6 +357,7 @@ export class Ship {
     const yPos = this.hullSprite.y + directionConfig.yOffset
     if (!this.ladderSprite) {
       this.ladderSprite = this.scene.physics.add.sprite(xPos, yPos, directionConfig.image)
+      this.ladderSprite.setName('Transport')
       this.scene.physics.world.enableBody(this.ladderSprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
       this.scene.physics.add.overlap(this.ladderSprite, this.scene.player, () =>
         this.onPlayerLadderCollide()
@@ -391,6 +403,7 @@ export class Ship {
     const yPos = this.hullSprite.y + directionConfig.yOffset
     if (!this.wheelSprite) {
       this.wheelSprite = this.scene.physics.add.sprite(xPos, yPos, directionConfig.image)
+      this.wheelSprite.setName('Transport')
     } else {
       this.wheelSprite.setTexture(directionConfig.image)
       this.wheelSprite.setX(xPos)
@@ -428,13 +441,11 @@ export class Ship {
     const sailsImage = sailsImages[direction]
     this.hullSprite = this.scene.physics.add.sprite(x, y, hullImage)
     this.sailsSprite = this.scene.physics.add.sprite(x, y, sailsImage)
-    this.hullSprite.setName('Transport')
-    this.hullSprite.setDepth(this.scene.player.depth - 1)
-
     this.hullSprite.scaleX = this.currDirection === Direction.RIGHT ? -1 : 1
     this.sailsSprite.scaleX = this.currDirection === Direction.RIGHT ? -1 : 1
     this.configureHullBody()
     this.sailsSprite.setSize(1, 1)
+    this.sailsSprite.setName('Transport')
     this.sailsSprite.setAlpha(0.5)
   }
 
@@ -555,6 +566,16 @@ export class Ship {
         this.scene.player.y + this.scene.player.height / 2
       )
     }
+    this.updateSpriteDepths()
+  }
+
+  updateSpriteDepths() {
+    if (this.ladderSprite) this.ladderSprite.setDepth(this.hullSprite.depth + 1)
+    this.wheelSprite.setDepth(this.hullSprite.depth + 1)
+    this.cannons.forEach((cannon) => {
+      cannon.sprite.setDepth(this.hullSprite.depth + 1)
+    })
+    this.sailsSprite.setDepth(this.cannons[0].sprite.depth + 1)
   }
 
   playerEnterShip() {
@@ -584,7 +605,6 @@ export class Ship {
   }
 
   playerExitShip() {
-    this.scene.player.ship = null
     switch (this.currDirection) {
       case Direction.UP:
         this.scene.player.y = this.ladderSprite.y

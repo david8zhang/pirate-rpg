@@ -14,6 +14,7 @@ export class SailingBehavior implements Behavior {
   public followingPlayer: boolean = false
   public fireDelay: number = 5000
   public firedCannon: boolean = false
+  public isStopped: boolean = false
 
   constructor(mob: Mob, ship: EnemyShip) {
     this.mob = mob
@@ -28,6 +29,7 @@ export class SailingBehavior implements Behavior {
       },
       loop: true,
     })
+    this.isStopped = false
   }
 
   moveShipRandomly() {
@@ -98,7 +100,7 @@ export class SailingBehavior implements Behavior {
   }
 
   fireCannon() {
-    if (!this.firedCannon) {
+    if (!this.firedCannon && !this.isStopped) {
       this.ship.fireAllCannons()
       this.firedCannon = true
       this.mob.scene.time.delayedCall(this.fireDelay, () => {
@@ -130,11 +132,16 @@ export class SailingBehavior implements Behavior {
 
   stop() {
     this.moveShipEvent.destroy()
+    this.isStopped = true
   }
+
   disable() {}
   destroy() {}
   handleTileCollision(obj1: any, obj2: any, animations: any): void {}
   update() {
+    if (this.isStopped) {
+      return
+    }
     if (this.followingPlayer) {
       const direction = this.getDirectionToMove()
       if (direction !== undefined) {

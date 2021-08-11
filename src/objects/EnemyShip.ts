@@ -29,6 +29,8 @@ export class EnemyShip extends Ship {
     this.mobInControl.sprite.body.enable = false
     this.mobInControl.sprite.body.debugShowBody = false
     this.positionMobAtWheel()
+    this.mobInControl.sprite.setName('Transport')
+    this.mobInControl.sprite.setDepth(this.hullSprite.depth + 1)
   }
 
   takeDamage(damage: number) {
@@ -43,9 +45,26 @@ export class EnemyShip extends Ship {
     if (this.health <= 0) {
       this.stop()
       if (this.mobInControl) {
-        this.mobInControl.activeBehavior.stop()
+        this.mobInControl.stopSailing()
       }
+      this.convertToRegularShip()
     }
+  }
+
+  convertToRegularShip() {
+    const ship = new Ship(
+      this.scene,
+      this.shipConfig,
+      { x: this.hullSprite.x, y: this.hullSprite.y },
+      this.currDirection
+    )
+    this.scene.addShip(ship)
+    this.destroy()
+  }
+
+  update() {
+    this.mobInControl?.sprite.setDepth(this.hullSprite.depth + 1)
+    super.update()
   }
 
   turn(direction: Direction) {

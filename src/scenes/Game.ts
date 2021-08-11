@@ -73,7 +73,7 @@ export default class Game extends Phaser.Scene {
   public ship!: Ship
 
   // sprite names to ignore during depth-sorting
-  public ignoreNames = ['InAir', 'UI', 'Weapon', 'Structure', 'Transport']
+  public ignoreNames = ['InAir', 'UI', 'Weapon', 'Structure', 'Transport', 'Ship']
 
   // UI text
   public hoverText!: HoverText
@@ -195,8 +195,6 @@ export default class Game extends Phaser.Scene {
   initShips() {
     this.ships = this.physics.add.group({ classType: Ship })
     const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1000, y: 1000 }, Direction.LEFT)
-    // const ship2 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1000, y: 1000 }, Direction.UP)
-
     this.ships.add(ship1.hullSprite)
 
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
@@ -206,13 +204,18 @@ export default class Game extends Phaser.Scene {
         projectile.onHitShip(ship)
       }
     })
+
+    this.time.delayedCall(5000, () => {
+      const ship2 = new Ship(this, ALL_SHIP_TYPES[0], { x: 600, y: 1000 }, Direction.RIGHT)
+      this.ships.add(ship2.hullSprite)
+    })
   }
 
   initEnemyShips() {
     const monkey = new Mob(this, 1200, 200, Constants.getMob('Monkey'))
     const enemyShip = new EnemyShip(this, ALL_SHIP_TYPES[0], { x: 1200, y: 200 })
     this.time.delayedCall(5000, () => {
-      monkey.sail(enemyShip)
+      monkey.startSailing(enemyShip)
     })
     this.addMob(monkey)
     this.ships.add(enemyShip.hullSprite)
@@ -331,6 +334,10 @@ export default class Game extends Phaser.Scene {
     }
     const transport = new Transport(this, itemRef, x, y)
     this.transports.add(transport.sprite)
+  }
+
+  addShip(ship: Ship) {
+    this.ships.add(ship.hullSprite)
   }
 
   addStructure(texture: string, x: number, y: number) {
@@ -471,8 +478,12 @@ export default class Game extends Phaser.Scene {
     const sortedByY = this.sys.displayList
       .getChildren()
       .filter((child: any) => {
+        let y = child.y
+        if (child instanceof Ship) {
+          y = child.getCenterPoint().y
+        }
         return (
-          child.y &&
+          y &&
           this.cameras.main.worldView.contains(child.x, child.y) &&
           !this.ignoreNames.includes(child.name)
         )

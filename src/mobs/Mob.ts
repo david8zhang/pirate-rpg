@@ -162,10 +162,16 @@ export class Mob {
     }
   }
 
-  sail(ship: EnemyShip) {
+  startSailing(ship: EnemyShip) {
     if (this.mobConfig.canSail) {
       this.setActiveBehavior(new SailingBehavior(this, ship))
     }
+  }
+
+  stopSailing() {
+    this.setActiveBehavior(
+      new RandomMovementBehavior(this.sprite, this.scene, this.animations, () => {})
+    )
   }
 
   onHit(damage: number) {
