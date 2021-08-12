@@ -204,16 +204,12 @@ export default class Game extends Phaser.Scene {
         projectile.onHitShip(ship)
       }
     })
-
-    this.time.delayedCall(5000, () => {
-      const ship2 = new Ship(this, ALL_SHIP_TYPES[0], { x: 600, y: 1000 }, Direction.RIGHT)
-      this.ships.add(ship2.hullSprite)
-    })
   }
 
   initEnemyShips() {
-    const monkey = new Mob(this, 1200, 200, Constants.getMob('Monkey'))
+    const monkey = new Mob(this, 1100, 400, Constants.getMob('Monkey'))
     const enemyShip = new EnemyShip(this, ALL_SHIP_TYPES[0], { x: 1200, y: 200 })
+    // enemyShip.addPassenger(monkey)
     this.time.delayedCall(5000, () => {
       monkey.startSailing(enemyShip)
     })

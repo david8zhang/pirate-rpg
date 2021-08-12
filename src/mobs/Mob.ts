@@ -138,6 +138,12 @@ export class Mob {
     this.healthBar.destroy()
   }
 
+  destroy() {
+    this.activeBehavior.stop()
+    this.healthBar.destroy()
+    this.sprite.destroy()
+  }
+
   playHurtAnimBasedOnDirection() {
     const { sprite, animations, activeBehavior } = this
     if (!animations.hurtBack || !animations.hurtFront || !animations.hurtSide) {

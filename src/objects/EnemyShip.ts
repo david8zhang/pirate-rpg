@@ -47,7 +47,19 @@ export class EnemyShip extends Ship {
       if (this.mobInControl) {
         this.mobInControl.stopSailing()
       }
-      this.convertToRegularShip()
+      const ship = this.convertToRegularShip()
+      if (this.mobInControl) {
+        const newMob = new Mob(
+          this.scene,
+          this.mobInControl?.sprite.x,
+          this.mobInControl?.sprite.y,
+          this.mobInControl.mobConfig
+        )
+        ship.addPassenger(newMob)
+        this.scene.addMob(newMob)
+      }
+      ;(this.mobInControl as Mob).destroy()
+      this.mobInControl = null
     }
   }
 
@@ -60,10 +72,13 @@ export class EnemyShip extends Ship {
     )
     this.scene.addShip(ship)
     this.destroy()
+    return ship
   }
 
   update() {
-    this.mobInControl?.sprite.setDepth(this.hullSprite.depth + 1)
+    if (this.mobInControl) {
+      this.mobInControl.sprite.setDepth(this.hullSprite.depth + 1)
+    }
     super.update()
   }
 

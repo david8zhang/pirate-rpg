@@ -90,6 +90,7 @@ export class Ship {
   public isCollidingShip: boolean = false
   public shipOverlap!: Phaser.Physics.Arcade.Collider
   public moveSpeed: number = 200
+  public passengers: any[] = []
 
   constructor(
     scene: Game,
@@ -179,6 +180,11 @@ export class Ship {
     allCannons.forEach((cannon) => cannon.fireCannon())
   }
 
+  addPassenger(mob: Mob) {
+    this.passengers.push(mob)
+    mob.sprite.setName('Transport')
+  }
+
   fireCannon(direction: Direction) {
     if (direction === Direction.RIGHT) {
       const rightCannons = this.getCannons('right')
@@ -241,13 +247,20 @@ export class Ship {
     }
   }
 
-  getLowestDepth() {
-    const lastShip = this.scene.ships[this.scene.ships.getChildren().length - 1]
-    if (lastShip) {
-      return lastShip.hullSprite.depth
-    } else {
-      return this.scene.player.depth
+  getSpriteDepth() {
+    const sortedByYDesc = this.scene.ships.getChildren().sort((a, b) => {
+      const ship1 = a.getData('ref') as Ship
+      const ship2 = b.getData('ref') as Ship
+      return ship2.getCenterPoint().y - ship1.getCenterPoint().y
+    })
+    for (let i = 0; i < sortedByYDesc.length; i++) {
+      const ship = sortedByYDesc[i].getData('ref') as Ship
+      if (this.hullSprite.y >= ship.hullSprite.depth) {
+        return ship.hullSprite.depth
+      }
     }
+    const highestShip = sortedByYDesc[sortedByYDesc.length - 1].getData('ref') as Ship
+    return highestShip.hullSprite.depth - 1
   }
 
   destroy() {
@@ -420,7 +433,11 @@ export class Ship {
   }
 
   onWheelOverlap() {
-    if (this.scene.player.direction === this.currDirection && this.isAnchored) {
+    if (
+      this.scene.player.direction === this.currDirection &&
+      this.isAnchored &&
+      this.passengers.length === 0
+    ) {
       this.canTakeWheel = true
       this.scene.hoverText.showText(
         '(E) Take the wheel',
@@ -520,6 +537,7 @@ export class Ship {
   }
 
   update() {
+    this.passengers = this.passengers.filter((p) => p.health > 0)
     // If this ship is being controlled by a mob
     if (!this.scene.physics.overlap(this.hullSprite, this.scene.ships)) {
       this.isCollidingShip = false
@@ -570,6 +588,11 @@ export class Ship {
   }
 
   updateSpriteDepths() {
+    this.passengers.forEach((p) => {
+      const depth =
+        this.scene.player.ship === this ? this.scene.player.depth : this.hullSprite.depth + 1
+      p.sprite.setDepth(depth)
+    })
     if (this.ladderSprite) this.ladderSprite.setDepth(this.hullSprite.depth + 1)
     this.wheelSprite.setDepth(this.hullSprite.depth + 1)
     this.cannons.forEach((cannon) => {
