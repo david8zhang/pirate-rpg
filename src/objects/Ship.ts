@@ -3,6 +3,7 @@ import { Mob } from '~/mobs/Mob'
 import { ShipUIScene } from '~/scenes/ShipUIScene'
 import Game from '../scenes/Game'
 import { Cannon } from './Cannon'
+import { EnemyShip } from './EnemyShip'
 
 export interface ShipConfig {
   defaultHealth: number
@@ -72,6 +73,7 @@ export class Ship {
   public wheelCollider!: Phaser.Physics.Arcade.Collider
   public shipConfig: ShipConfig
   public landDetectorImg!: Phaser.Physics.Arcade.Image
+  public boardableShipDetectorImg?: Phaser.Physics.Arcade.Image
   public disembarkPoint: Phaser.Physics.Arcade.Image | null = null
   public embarkPoint: Phaser.Physics.Arcade.Image | null = null
   public cannons: Cannon[] = []
@@ -87,10 +89,10 @@ export class Ship {
   public isFiringLeftCannon: boolean = false
   public health: number
   public maxHealth: number
-  public isCollidingShip: boolean = false
-  public shipOverlap!: Phaser.Physics.Arcade.Collider
   public moveSpeed: number = 200
   public passengers: any[] = []
+  public boardableShip: Ship | null = null
+  public boardableShipOverlap?: Phaser.Physics.Arcade.Collider
 
   constructor(
     scene: Game,
@@ -271,6 +273,10 @@ export class Ship {
     this.wallImages.forEach((wallImg) => {
       wallImg.destroy()
     })
+    if (this.boardableShipDetectorImg) {
+      this.boardableShipDetectorImg.destroy()
+      this.boardableShipOverlap?.destroy()
+    }
     if (this.ladderSprite) {
       this.ladderSprite.destroy()
     }
@@ -279,6 +285,9 @@ export class Ship {
     })
     this.cannons.forEach((cannon) => {
       cannon.destroy()
+    })
+    this.passengers.forEach((p) => {
+      p.die()
     })
   }
 
@@ -324,20 +333,42 @@ export class Ship {
     this.wheelSprite.setVisible(isVisible)
   }
 
+  setupBoardableShipDetector(x: number, y: number) {
+    if (!this.boardableShipDetectorImg) {
+      this.boardableShipDetectorImg = this.scene.physics.add.image(x, y, '').setVisible(false)
+      this.scene.physics.world.enableBody(
+        this.boardableShipDetectorImg,
+        Phaser.Physics.Arcade.DYNAMIC_BODY
+      )
+      this.boardableShipOverlap = this.scene.physics.add.overlap(
+        this.boardableShipDetectorImg,
+        this.scene.ships,
+        (obj1, obj2) => {
+          const ship: Ship = obj2.getData('ref')
+          const enemyShip = ship as EnemyShip
+          if (ship !== this && !enemyShip.mobInControl && this.scene.player.ship === this) {
+            this.boardableShip = ship
+          }
+        }
+      )
+    }
+    const centerPoint = this.getCenterPoint()
+    this.boardableShipDetectorImg.body.setSize(500, 500)
+    this.boardableShipDetectorImg.x = centerPoint.x
+    this.boardableShipDetectorImg.y = centerPoint.y
+  }
+
+  destroyBoardableShipDetector() {
+    this.boardableShipDetectorImg?.destroy()
+    this.boardableShipOverlap?.destroy()
+    this.boardableShipDetectorImg = undefined
+    this.boardableShipOverlap = undefined
+  }
+
   setupLandDetector(x: number, y: number) {
     if (!this.landDetectorImg) {
       this.landDetectorImg = this.scene.physics.add.image(x, y, '').setVisible(false)
       this.scene.physics.world.enableBody(this.landDetectorImg, Phaser.Physics.Arcade.DYNAMIC_BODY)
-      this.shipOverlap = this.scene.physics.add.overlap(
-        this.landDetectorImg,
-        this.scene.ships,
-        (obj1, obj2) => {
-          const ship: Ship = obj2.getData('ref')
-          if (ship !== this) {
-            this.isCollidingShip = true
-          }
-        }
-      )
     }
     this.landDetectorImg.body.setSize(100, 100)
     switch (this.currDirection) {
@@ -538,12 +569,15 @@ export class Ship {
 
   update() {
     this.passengers = this.passengers.filter((p) => p.health > 0)
-    // If this ship is being controlled by a mob
-    if (!this.scene.physics.overlap(this.hullSprite, this.scene.ships)) {
-      this.isCollidingShip = false
-    }
     if (!this.wheelSprite.body.embedded || this.currDirection !== this.scene.player.direction) {
       this.canTakeWheel = false
+    }
+
+    if (
+      this.boardableShip &&
+      !this.scene.physics.overlap(this.boardableShip.hullSprite, this.boardableShipDetectorImg)
+    ) {
+      this.boardableShip = null
     }
 
     if (!this.scene.physics.overlap(this.scene.player, this.ladderSprite)) {
@@ -561,9 +595,17 @@ export class Ship {
     }
 
     // Show text to anchor if the ship is not moving
-    if (this.canAnchor) {
+    if (this.canAnchor && !this.boardableShip) {
       this.scene.hoverText.showText(
         '(E) Anchor',
+        this.scene.player.x - this.scene.player.width / 2,
+        this.scene.player.y + this.scene.player.height / 2
+      )
+    }
+
+    if (this.boardableShip) {
+      this.scene.hoverText.showText(
+        '(E) Board ship',
         this.scene.player.x - this.scene.player.width / 2,
         this.scene.player.y + this.scene.player.height / 2
       )
@@ -781,6 +823,7 @@ export class Ship {
     this.setupLadder(ladderConfig)
     this.setupCannon(cannonConfig)
     this.setupLandDetector(this.hullSprite.x, this.hullSprite.y)
+    this.setupBoardableShipDetector(this.hullSprite.x, this.hullSprite.y)
   }
 
   handlePlayerMovement(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {

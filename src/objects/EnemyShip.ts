@@ -63,6 +63,10 @@ export class EnemyShip extends Ship {
     }
   }
 
+  setupBoardableShipDetector() {
+    return
+  }
+
   convertToRegularShip() {
     const ship = new Ship(
       this.scene,
