@@ -122,17 +122,24 @@ export class SailingBehavior implements Behavior {
     this.followingPlayer = true
   }
 
-  // fireCannon() {
-  //   const gameScene = this.mob.scene as Game
-  //   const source = this.ship.getCenterPoint()
-  //   const target = gameScene.player.ship?.getCenterPoint()
-  //   const dx = Math.floor(source.x - target?.x)
-  //   const dy = Math.floor(source.y - target?.y)
-  // }
-
   stop() {
     this.moveShipEvent.destroy()
     this.isStopped = true
+  }
+
+  checkPlayerDead() {
+    const gameScene = this.mob.scene as Game
+    if (gameScene.player.isDead) {
+      this.followingPlayer = false
+      this.isStopped = false
+      this.moveShipEvent = this.mob.scene.time.addEvent({
+        delay: 2000,
+        callback: () => {
+          this.moveShipRandomly()
+        },
+        loop: true,
+      })
+    }
   }
 
   disable() {}
@@ -143,6 +150,7 @@ export class SailingBehavior implements Behavior {
       return
     }
     if (this.followingPlayer) {
+      this.checkPlayerDead()
       const direction = this.getDirectionToMove()
       if (direction !== undefined) {
         this.ship.moveShip(direction)

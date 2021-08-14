@@ -216,6 +216,14 @@ export class Ship {
     }
     if (this.health === 0) {
       this.destroy()
+      if (this.scene.player.ship && this.scene.player.ship === this) {
+        if (!this.isAnchored) {
+          this.anchor()
+        }
+        this.playerExitShip()
+        this.scene.player.ship = null
+        this.scene.player.takeDamage(this.scene.player.currHealth)
+      }
     }
   }
 

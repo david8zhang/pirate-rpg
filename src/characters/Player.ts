@@ -231,6 +231,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.setPosition(x, y)
     this.setActive(true)
     this.setVisible(true)
+    this.anims.play(`player-idle-${this.getAnimDirection(this.direction)}`)
     this.body.enable = true
     UIScene.instance.hideGameOver()
   }
@@ -273,6 +274,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.setActive(false)
     this.setVisible(false)
     this.body.enable = false
+    this.setName('')
   }
 
   public getIsSubmerged() {
