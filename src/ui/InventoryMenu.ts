@@ -1,5 +1,5 @@
 import { Inventory } from '../characters/Player'
-import UIScene from '../scenes/UIScene'
+import UIScene from '../scenes/GameUIScene'
 import { TooltipPosition } from './ItemTooltip'
 import Game from '../scenes/Game'
 

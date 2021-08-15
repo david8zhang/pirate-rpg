@@ -1518,6 +1518,47 @@ export const ALL_MOBS = [
     drops: ['Crab claw'],
     collidableLayers: ['Grass', 'Ocean'],
   },
+  {
+    name: 'Skeleton',
+    animFrameName: 'skeleton',
+    animMapping: {
+      walkFront: 'monkey-walk-front',
+      walkSide: 'monkey-walk-side',
+      walkBack: 'monkey-walk-back',
+      idleFront: 'monkey-idle-front',
+      idleSide: 'monkey-idle-side',
+      idleBack: 'monkey-idle-back',
+      dieFront: 'monkey-die-front',
+      dieSide: 'monkey-die-side',
+      dieBack: 'monkey-die-back',
+      hurtFront: 'monkey-hurt-front',
+      hurtSide: 'monkey-hurt-side',
+      hurtBack: 'monkey-hurt-back',
+      attackFront: 'monkey-attack-front',
+      attackSide: 'monkey-attack-side',
+      attackBack: 'monkey-attack-back',
+    },
+    animations: [],
+    health: 100,
+    body: {
+      width: 0.6,
+      height: 0.5,
+      offsetY: 15,
+    },
+    moveOffsets: {
+      left: 8,
+      right: 25,
+    },
+    aggroBehavior: 'Melee',
+    drops: [],
+    collidableLayers: ['Sand'],
+    canSail: true,
+    attackConfig: {
+      attackDamage: 15,
+      attackRange: 30,
+      chaseSpeed: 65,
+    },
+  },
 ]
 
 export const ALL_ITEMS: ItemConfig[] = [

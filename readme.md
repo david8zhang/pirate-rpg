@@ -8,7 +8,6 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Must haves for Alpha release:
 
-- Enemies which can control ships
 - Fixed map
 - UI menus
 - Saving a game

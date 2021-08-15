@@ -8,7 +8,7 @@ import { Item } from '~/objects/Item'
 import { HoverText } from '~/ui/HoverText'
 import { ItemFactory } from '~/objects/ItemFactory'
 import { Harvestable } from '~/objects/Harvestable'
-import UIScene from './UIScene'
+import UIScene from './GameUIScene'
 import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
 import { Structure } from '~/objects/Structure'
 import { Transport } from '~/objects/Transport'
@@ -129,7 +129,7 @@ export default class Game extends Phaser.Scene {
 
   initPlayer() {
     // TODO: Fix this
-    this.player = this.add.player(1000, 1200, 'player')
+    this.player = this.add.player(100, 100, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()

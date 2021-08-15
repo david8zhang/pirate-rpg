@@ -86,10 +86,11 @@ export default class Preloader extends Phaser.Scene {
     // Structures
     this.load.image('tent', 'structures/tent.png')
     this.load.image('tent-inventory', 'structures/tent-inventory.png')
+
+    // Splash-art for main menu
+    this.load.image('splash', 'splash/splash-art.png')
   }
   create() {
-    this.scene.start('game')
-    this.scene.start('ui')
-    this.scene.start('ship-ui')
+    this.scene.start('menu-ui')
   }
 }
