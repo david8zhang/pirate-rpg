@@ -52,6 +52,7 @@ export class Mob {
     this.health = mobConfig.health
     this.sprite = scene.physics.add.sprite(x, y, animFrameName)
     this.sprite.setData('ref', this)
+    this.sprite.setOrigin(0)
     this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.sprite.setPushable(false)
     this.animations = animMapping

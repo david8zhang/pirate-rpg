@@ -278,6 +278,10 @@ export default class Game extends Phaser.Scene {
         mobRef.onHit(Player.UNARMED_DAMAGE)
       }
     })
+
+    const skeletonConfig = Constants.getMob('Skeleton')
+    const mob = new Mob(this, 100, 150, skeletonConfig)
+    this.addMob(mob)
   }
 
   public addMob(mob: Mob) {
