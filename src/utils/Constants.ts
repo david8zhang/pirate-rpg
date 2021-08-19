@@ -1377,7 +1377,7 @@ export const ALL_MOBS = [
           suffix: '.png',
         },
         repeat: -1,
-        frameRate: 5,
+        frameRate: 6,
       },
 
       {
@@ -1388,7 +1388,7 @@ export const ALL_MOBS = [
           suffix: '.png',
         },
         repeat: -1,
-        frameRate: 5,
+        frameRate: 6,
       },
       {
         key: 'monkey-attack-back',
@@ -1398,7 +1398,7 @@ export const ALL_MOBS = [
           suffix: '.png',
         },
         repeat: -1,
-        frameRate: 5,
+        frameRate: 6,
       },
     ],
     health: 50,
@@ -1673,13 +1673,13 @@ export const ALL_MOBS = [
     health: 150,
     body: {
       width: 0.25,
-      height: 0.6,
+      height: 0.75,
       offsetY: 10,
-      offsetX: 10,
+      offsetX: 25,
     },
     moveOffsets: {
-      left: 8,
-      right: 25,
+      left: 25,
+      right: 40,
     },
     aggroBehavior: 'Melee',
     drops: [],

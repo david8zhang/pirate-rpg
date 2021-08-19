@@ -49,7 +49,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public direction: Direction = Direction.DOWN
   public maxHealth: number = 100
   public currHealth: number = 100
-  public iFrameDuration: number = 650
+  public iFrameDuration: number = 500
   public isHit: boolean = false
   public itemOnHover: Item | null = null
   public onEquipWeaponHandler: Function = () => {}

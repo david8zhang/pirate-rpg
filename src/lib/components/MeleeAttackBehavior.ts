@@ -77,16 +77,7 @@ export class MeleeAttackBehavior extends AttackBehavior {
 
       // If the direction is null, then do an attack
       if (this.isPlayerInAttackRange() && Game.instance.player.active) {
-        this.mob.sprite.setVelocity(0)
-        if (this.state !== AttackState.ATTACK) {
-          this.state = AttackState.ATTACK
-          this.activateHitbox(direction)
-        }
-        const attackAnim = this.getAnimBasedOnDirection(direction, animations, true)
-        if (this.mob.sprite.anims.getName() !== attackAnim) {
-          this.mob.sprite.anims.play(attackAnim)
-        }
-
+        this.startAttackAnimation()
         // Else, have the mob move towards the player by moving in the direction
       } else {
         const moveAnim = this.getAnimBasedOnDirection(direction, animations)
@@ -94,8 +85,57 @@ export class MeleeAttackBehavior extends AttackBehavior {
         this.hitboxCollider.active = false
         if (this.mob.sprite.anims.getName() !== moveAnim) {
           this.mob.sprite.anims.play(moveAnim)
+          this.resetHurtboxes()
         }
         this.moveInDirection(direction)
+      }
+    }
+  }
+
+  startAttackAnimation() {
+    const { animations } = this.mob
+    const direction: Direction = this.getDirectionToMove()
+    this.mob.sprite.setVelocity(0)
+    if (this.state !== AttackState.ATTACK) {
+      this.state = AttackState.ATTACK
+      this.activateHitbox(direction)
+    }
+    const attackAnim = this.getAnimBasedOnDirection(direction, animations, true)
+    if (this.mob.sprite.anims.getName() !== attackAnim) {
+      this.mob.sprite.anims.play(attackAnim)
+    }
+    this.setupAttackHurtboxes()
+  }
+
+  resetHurtboxes() {
+    const { body } = this.mob.mobConfig
+    if (body) {
+      this.mob.sprite.body.setSize(
+        this.mob.sprite.width * body.width,
+        this.mob.sprite.height * body.height
+      )
+      if (body.offsetY) {
+        this.mob.sprite.body.offset.y = body.offsetY
+      }
+      if (body.offsetX) {
+        this.mob.sprite.body.offset.x = body.offsetX
+      }
+    }
+  }
+
+  setupAttackHurtboxes() {
+    const { body } = this.mob.mobConfig
+    if (body && body.attackConfig) {
+      const { attackConfig } = body
+      this.mob.sprite.body.setSize(
+        this.mob.sprite.width * attackConfig.width,
+        this.mob.sprite.height * attackConfig.height
+      )
+      if (attackConfig.offsetX) {
+        this.mob.sprite.body.offset.x = attackConfig.offsetX
+      }
+      if (attackConfig.offsetY) {
+        this.mob.sprite.body.offset.y = attackConfig.offsetY
       }
     }
   }
