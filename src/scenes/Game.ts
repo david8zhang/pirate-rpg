@@ -87,6 +87,12 @@ export default class Game extends Phaser.Scene {
     this.itemFactory = new ItemFactory(this)
     this.particleSpawner = new ParticleSpawner(this)
     Game._instance = this
+    this.loadSaveFile()
+  }
+
+  loadSaveFile() {
+    const saveFile = localStorage.getItem('saveFile')
+    console.log('save File', saveFile)
   }
 
   public static get instance() {
@@ -292,6 +298,9 @@ export default class Game extends Phaser.Scene {
   initItems() {
     const objectLayer = this.map.getObjectLayer('Objects')
     if (!this.items) {
+      this.items = this.physics.add.group({ classType: Item })
+    } else {
+      this.items.destroy()
       this.items = this.physics.add.group({ classType: Item })
     }
     objectLayer.objects.forEach((obj) => {

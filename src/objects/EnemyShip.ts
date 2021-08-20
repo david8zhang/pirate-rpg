@@ -161,7 +161,6 @@ export class EnemyShip extends Ship {
   }
 
   moveShip(direction: Direction) {
-    console.log('Went Here')
     this.destroyAllColliders()
     super.moveShip(direction)
     this.positionMobAtWheel()

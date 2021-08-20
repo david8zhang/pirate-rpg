@@ -6,6 +6,8 @@ import { EquipmentMenu } from '~/ui/EquipmentMenu'
 import { button } from '../ui/components/Button'
 import Game from './Game'
 import { text } from '~/ui/components/Text'
+import { ShipUIScene } from './ShipUIScene'
+import { MainMenuScene } from './MainMenuScene'
 
 export default class UIScene extends Phaser.Scene {
   private static _instance: UIScene
@@ -15,7 +17,9 @@ export default class UIScene extends Phaser.Scene {
   public craftingMenu!: CraftingMenu
   public equipMenu!: EquipmentMenu
   public continueButton: HTMLElement | null = null
-  public domElementsContainer!: Phaser.GameObjects.Container
+  public gameOverDomContainer!: Phaser.GameObjects.Container
+  public pauseMenuDomContainer!: Phaser.GameObjects.Container
+  public isShowingPauseMenu: boolean = false
 
   constructor() {
     super('ui')
@@ -28,9 +32,14 @@ export default class UIScene extends Phaser.Scene {
     this.playerHealth = new PlayerHealthBar(this)
     this.itemTooltip = new ItemTooltip(this, 0, 0)
     this.equipMenu = new EquipmentMenu(this)
-    this.domElementsContainer = this.add.container(0, 0)
+    this.initGameOverElements()
+    this.initPauseMenuElements()
+    this.configureKeyPresses()
+  }
 
-    this.continueButton = button('Continue', {
+  initGameOverElements() {
+    this.gameOverDomContainer = this.add.container(0, 0)
+    const continueButton = button('Continue', {
       fontFamily: 'GraphicPixel',
       fontSize: '12px',
       width: 100,
@@ -43,7 +52,7 @@ export default class UIScene extends Phaser.Scene {
     }) as HTMLElement
 
     const continueButtonDom = this.add
-      .dom(this.scale.width / 2 - 50, this.scale.height / 2 - 10, this.continueButton)
+      .dom(this.scale.width / 2 - 50, this.scale.height / 2 - 10, continueButton)
       .setOrigin(0, 0)
       .addListener('click')
       .on('click', () => {
@@ -54,9 +63,58 @@ export default class UIScene extends Phaser.Scene {
       .dom(this.scale.width / 2 - 50, this.scale.height / 2 - 60, gameOverText)
       .setOrigin(0, 0)
 
-    this.domElementsContainer.add(continueButtonDom)
-    this.domElementsContainer.add(gameOverTextDom)
-    this.domElementsContainer.setVisible(false)
+    this.gameOverDomContainer.add(continueButtonDom)
+    this.gameOverDomContainer.add(gameOverTextDom)
+    this.gameOverDomContainer.setVisible(false)
+  }
+
+  initPauseMenuElements() {
+    this.pauseMenuDomContainer = this.add.container(0, 0)
+
+    const pausedText = text('Paused', {
+      fontFamily: 'GraphicPixel',
+      fontSize: '20px',
+    }) as HTMLElement
+    const resumeButton = button('Resume', {
+      fontFamily: 'GraphicPixel',
+      fontSize: '12px',
+      width: 100,
+      height: 20,
+    }) as HTMLElement
+    const saveAndQuitButton = button('Save and Quit', {
+      fontFamily: 'GraphicPixel',
+      fontSize: '12px',
+      width: 100,
+      height: 20,
+    }) as HTMLElement
+
+    const pauseTextDom = this.add
+      .dom(this.scale.width / 2 - 33, this.scale.height / 2 - 60, pausedText)
+      .setOrigin(0, 0)
+
+    const continueButtonDom = this.add
+      .dom(this.scale.width / 2 - 50, this.scale.height / 2 - 10, resumeButton)
+      .setOrigin(0, 0)
+      .addListener('click')
+      .on('click', () => {
+        this.hidePauseMenu()
+      })
+
+    const saveAndQuitDom = this.add
+      .dom(this.scale.width / 2 - 50, this.scale.height / 2 + 20, saveAndQuitButton)
+      .setOrigin(0, 0)
+      .addListener('click')
+      .on('click', () => {
+        this.scene.stop()
+        ShipUIScene.instance.scene.stop()
+        Game.instance.scene.stop()
+        MainMenuScene.instance.scene.start()
+      })
+
+    this.pauseMenuDomContainer.add(pauseTextDom)
+    this.pauseMenuDomContainer.add(continueButtonDom)
+    this.pauseMenuDomContainer.add(saveAndQuitDom)
+    this.pauseMenuDomContainer.setVisible(false)
   }
 
   resetGame() {
@@ -71,12 +129,24 @@ export default class UIScene extends Phaser.Scene {
     this.itemTooltip.update()
   }
 
+  showPauseMenu() {
+    this.pauseMenuDomContainer.setVisible(true)
+    this.isShowingPauseMenu = true
+    Game.instance.scene.pause()
+  }
+
+  hidePauseMenu() {
+    this.pauseMenuDomContainer.setVisible(false)
+    this.isShowingPauseMenu = false
+    Game.instance.scene.resume()
+  }
+
   showGameOver() {
-    this.domElementsContainer.setVisible(true)
+    this.gameOverDomContainer.setVisible(true)
   }
 
   hideGameOver() {
-    this.domElementsContainer.setVisible(false)
+    this.gameOverDomContainer.setVisible(false)
   }
 
   hide() {
@@ -87,7 +157,29 @@ export default class UIScene extends Phaser.Scene {
     this.scene.setVisible(true)
   }
 
+  togglePauseMenu() {
+    this.pauseMenuDomContainer.setVisible(!this.isShowingPauseMenu)
+    this.isShowingPauseMenu = !this.isShowingPauseMenu
+    if (this.isShowingPauseMenu) {
+      Game.instance.scene.pause()
+    } else {
+      Game.instance.scene.resume()
+    }
+  }
+
   public static get instance() {
     return UIScene._instance
+  }
+
+  configureKeyPresses() {
+    this.input.keyboard.on(
+      'keydown',
+      (keycode: any) => {
+        if (keycode.code === 'Escape') {
+          this.togglePauseMenu()
+        }
+      },
+      this
+    )
   }
 }

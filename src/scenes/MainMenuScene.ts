@@ -1,12 +1,18 @@
 import { text } from '~/ui/components/Text'
 import { button } from '../ui/components/Button'
 
-export class MenuUIScene extends Phaser.Scene {
+export class MainMenuScene extends Phaser.Scene {
+  private static _instance: MainMenuScene
   public continueButton: HTMLElement | null = null
   public domElementsContainer!: Phaser.GameObjects.Container
 
   constructor() {
     super('menu-ui')
+    MainMenuScene._instance = this
+  }
+
+  public static get instance() {
+    return this._instance
   }
 
   preload() {

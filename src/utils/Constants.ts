@@ -1617,7 +1617,7 @@ export const ALL_MOBS = [
           suffix: '.png',
         },
         repeat: 0,
-        frameRate: 8,
+        frameRate: 4,
       },
       {
         key: 'skeleton-idle-side',

@@ -203,6 +203,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           UIScene.instance.craftingMenu.toggleVisible()
         }
 
+        // Show currently equipped weapons
         if (keycode.code === 'KeyC') {
           UIScene.instance.equipMenu.toggleVisible()
         }
