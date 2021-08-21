@@ -414,6 +414,41 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.onEquipWeaponHandler = cb
   }
 
+  setEquipment(equipment: { weapon?: string }) {
+    if (equipment.weapon) {
+      const item = ItemFactory.instance.getItemType(equipment.weapon)
+      console.log(item)
+      if (item) {
+        const weapon = new Weapon(this.scene, this, {
+          texture: item.inWorldImage as string,
+          damage: item.stats.damage as number,
+          attackRange: item.stats['attack range'] as number,
+          name: item.name,
+        })
+        const interval = setInterval(() => {
+          if (UIScene.instance.equipMenu) {
+            this.equipWeapon(weapon)
+            clearInterval(interval)
+          }
+        }, 100)
+      }
+    }
+  }
+
+  setInventory(inventory: Inventory) {
+    this.inventory = inventory
+    const interval = setInterval(() => {
+      if (UIScene.instance.inventoryMenu) {
+        UIScene.instance.inventoryMenu.updateInventoryMenu(
+          this.inventory,
+          (itemName: string, itemBox) => this.handleItemClick(itemName)
+        )
+        UIScene.instance.craftingMenu.updateCraftableItems(this.inventory)
+        clearInterval(interval)
+      }
+    }, 100)
+  }
+
   addItem(item: Item) {
     if (!this.inventory[item.itemName]) {
       this.inventory[item.itemName] = {

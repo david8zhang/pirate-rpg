@@ -24,7 +24,9 @@ export class MainMenuScene extends Phaser.Scene {
       color: 'black',
     }) as HTMLElement
 
-    this.continueButton = button('Play', {
+    const hasSaveFile = localStorage.getItem('saveFile') != undefined
+
+    this.continueButton = button(hasSaveFile ? 'Continue' : 'Play', {
       fontFamily: 'GraphicPixel',
       fontSize: '12px',
       width: 100,

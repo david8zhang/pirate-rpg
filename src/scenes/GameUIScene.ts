@@ -106,6 +106,7 @@ export default class UIScene extends Phaser.Scene {
       .addListener('click')
       .on('click', () => {
         this.scene.stop()
+        Game.instance.saveAndQuit()
         ShipUIScene.instance.scene.stop()
         Game.instance.scene.stop()
         MainMenuScene.instance.scene.start()

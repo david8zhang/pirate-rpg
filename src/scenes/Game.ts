@@ -1,7 +1,7 @@
 import Phaser, { Physics } from 'phaser'
 import { ALL_HARVESTABLES, ALL_SHIP_TYPES, Constants } from '../utils/Constants'
 import '../characters/Player'
-import Player, { Direction } from '../characters/Player'
+import Player, { Direction, Inventory } from '../characters/Player'
 import { createCharacterAnims } from '../anims/CharacterAnims'
 import { Mob } from '../mobs/Mob'
 import { Item } from '~/objects/Item'
@@ -20,7 +20,6 @@ import { Projectile } from '~/objects/Projectile'
 import { ShipUIScene } from './ShipUIScene'
 import { MobSpawner } from '~/mobs/MobSpawner'
 import { EnemyShip } from '~/objects/EnemyShip'
-import { SailingBehavior } from '~/lib/components/SailingBehavior'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -87,12 +86,20 @@ export default class Game extends Phaser.Scene {
     this.itemFactory = new ItemFactory(this)
     this.particleSpawner = new ParticleSpawner(this)
     Game._instance = this
-    this.loadSaveFile()
   }
 
   loadSaveFile() {
-    const saveFile = localStorage.getItem('saveFile')
-    console.log('save File', saveFile)
+    const rawSaveData = localStorage.getItem('saveFile')
+    if (rawSaveData) {
+      const saveFile = JSON.parse(rawSaveData)
+
+      // Configure player
+      const { player } = saveFile
+      this.player.setX(player.x)
+      this.player.setY(player.y)
+      this.player.setInventory(player.inventory)
+      this.player.setEquipment(player.equipment)
+    }
   }
 
   public static get instance() {
@@ -120,6 +127,7 @@ export default class Game extends Phaser.Scene {
     this.initShips()
     this.initEnemyShips()
     this.initSpawners()
+    this.loadSaveFile()
   }
 
   initTilemap() {
@@ -293,6 +301,20 @@ export default class Game extends Phaser.Scene {
   public addMob(mob: Mob) {
     this.mobsList.push(mob)
     this.mobs.add(mob.sprite)
+  }
+
+  public saveAndQuit() {
+    const saveObject = {
+      player: {
+        x: this.player.x,
+        y: this.player.y,
+        inventory: this.player.inventory,
+        equipment: {
+          weapon: this.player.equipment.weapon ? this.player.equipment.weapon.name : '',
+        },
+      },
+    }
+    localStorage.setItem('saveFile', JSON.stringify(saveObject))
   }
 
   initItems() {
