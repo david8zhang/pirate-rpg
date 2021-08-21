@@ -20,6 +20,7 @@ export default class UIScene extends Phaser.Scene {
   public gameOverDomContainer!: Phaser.GameObjects.Container
   public pauseMenuDomContainer!: Phaser.GameObjects.Container
   public isShowingPauseMenu: boolean = false
+  public pauseDisabled: boolean = false
 
   constructor() {
     super('ui')
@@ -151,10 +152,12 @@ export default class UIScene extends Phaser.Scene {
   }
 
   hide() {
+    this.pauseDisabled = true
     this.scene.setVisible(false)
   }
 
   show() {
+    this.pauseDisabled = false
     this.scene.setVisible(true)
   }
 
@@ -177,7 +180,9 @@ export default class UIScene extends Phaser.Scene {
       'keydown',
       (keycode: any) => {
         if (keycode.code === 'Escape') {
-          this.togglePauseMenu()
+          if (!this.pauseDisabled) {
+            this.togglePauseMenu()
+          }
         }
       },
       this

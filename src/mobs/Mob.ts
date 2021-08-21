@@ -70,15 +70,17 @@ export class Mob {
     }
 
     const healthBarWidth = this.sprite.width * 1.5
-    this.healthBar = new HealthBar(
-      scene,
-      this.sprite.x - healthBarWidth / 2,
-      this.sprite.y - this.sprite.height,
-      healthBarWidth,
-      3,
-      this.maxHealth,
-      0x00ff00
-    )
+    const healthBarConfig = {
+      x: this.sprite.x - healthBarWidth / 2,
+      y: this.sprite.y - this.sprite.height,
+      width: healthBarWidth,
+      height: 3,
+      maxValue: this.maxHealth,
+      fillColor: 0x00ff00,
+      showBorder: false,
+      borderWidth: 0,
+    }
+    this.healthBar = new HealthBar(scene, healthBarConfig)
     this.healthBar.setVisible(false)
     collidableLayers?.forEach((layerName: string) => {
       const layer = (this.scene as Game).getAllTileLayers().find((l) => l.name === layerName)

@@ -1,3 +1,14 @@
+interface HealthBarConfig {
+  x: number
+  y: number
+  maxValue: number
+  height: number
+  width: number
+  borderWidth: number
+  fillColor?: number
+  showBorder?: boolean
+}
+
 export class HealthBar {
   bar: Phaser.GameObjects.Graphics
   x: number
@@ -9,24 +20,18 @@ export class HealthBar {
   width: number
   fillColor: number
   showBorder: boolean
+  borderWidth: number
 
-  constructor(
-    scene: Phaser.Scene,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    maxValue: number,
-    fillColor?: number,
-    showBorder?: boolean
-  ) {
+  constructor(scene: Phaser.Scene, healthBarConfig: HealthBarConfig) {
     this.bar = new Phaser.GameObjects.Graphics(scene)
+    const { x, y, maxValue, width, height, fillColor, showBorder, borderWidth } = healthBarConfig
     this.x = x
     this.y = y
     this.maxValue = maxValue
     this.currValue = maxValue
     this.width = width
     this.height = height
+    this.borderWidth = borderWidth
 
     this.fillColor = fillColor || 0x2ecc71
     this.showBorder = showBorder || false
@@ -59,7 +64,7 @@ export class HealthBar {
     this.bar.clear()
 
     // Border
-    const borderWidth = this.showBorder ? 4 : 0
+    const borderWidth = this.showBorder ? this.borderWidth : 0
     this.bar.fillStyle(0x000000)
     this.bar.fillRect(
       this.x - borderWidth / 2,
