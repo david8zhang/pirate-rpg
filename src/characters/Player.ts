@@ -420,10 +420,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.onEquipWeaponHandler = cb
   }
 
-  setEquipment(equipment: { weapon?: string }) {
+  setEquipment(equipment: {
+    weapon: {
+      name: string
+      isEquipped: boolean
+    }
+  }) {
     if (equipment.weapon) {
-      const item = ItemFactory.instance.getItemType(equipment.weapon)
-      console.log(item)
+      const { name, isEquipped } = equipment.weapon
+      const item = ItemFactory.instance.getItemType(name)
       if (item) {
         const weapon = new Weapon(this.scene, this, {
           texture: item.inWorldImage as string,
@@ -434,6 +439,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         const interval = setInterval(() => {
           if (UIScene.instance.equipMenu) {
             this.equipWeapon(weapon)
+            if (!isEquipped) {
+              this.getWeapon()?.toggleEquip()
+            }
             clearInterval(interval)
           }
         }, 100)

@@ -261,22 +261,6 @@ export class Ship {
     }
   }
 
-  getSpriteDepth() {
-    const sortedByYDesc = this.scene.ships.getChildren().sort((a, b) => {
-      const ship1 = a.getData('ref') as Ship
-      const ship2 = b.getData('ref') as Ship
-      return ship2.getCenterPoint().y - ship1.getCenterPoint().y
-    })
-    for (let i = 0; i < sortedByYDesc.length; i++) {
-      const ship = sortedByYDesc[i].getData('ref') as Ship
-      if (this.hullSprite.y >= ship.hullSprite.depth) {
-        return ship.hullSprite.depth
-      }
-    }
-    const highestShip = sortedByYDesc[sortedByYDesc.length - 1].getData('ref') as Ship
-    return highestShip.hullSprite.depth - 1
-  }
-
   destroy() {
     this.hullSprite.destroy()
     this.sailsSprite.destroy()

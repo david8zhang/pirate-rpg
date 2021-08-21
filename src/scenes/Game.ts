@@ -105,7 +105,7 @@ export default class Game extends Phaser.Scene {
             { x: player.ship.x, y: player.ship.y },
             player.ship.currDirection
           )
-          this.ships.add(playerShip.hullSprite)
+          this.addShip(playerShip)
           this.player.ship = playerShip
           this.player.enterShip(this.player.ship)
           if (player.ship.isSteering) {
@@ -243,10 +243,10 @@ export default class Game extends Phaser.Scene {
   }
 
   initEnemyShips() {
-    const monkey = new Mob(this, 1100, 400, Constants.getMob('Monkey'))
+    // const monkey = new Mob(this, 1100, 400, Constants.getMob('Monkey'))
     const enemyShip = new EnemyShip(this, ALL_SHIP_TYPES[0], { x: 1200, y: 200 })
-    monkey.startSailing(enemyShip)
-    this.addMob(monkey)
+    // monkey.startSailing(enemyShip)
+    // this.addMob(monkey)
     this.ships.add(enemyShip.hullSprite)
   }
 
@@ -329,7 +329,12 @@ export default class Game extends Phaser.Scene {
         y: this.player.y,
         inventory: this.player.inventory,
         equipment: {
-          weapon: this.player.equipment.weapon ? this.player.equipment.weapon.name : '',
+          weapon: {
+            name: this.player.equipment.weapon ? this.player.equipment.weapon.name : '',
+            isEquipped: this.player.equipment.weapon
+              ? this.player.equipment.weapon.isEquipped
+              : false,
+          },
         },
         ship: {},
       },
@@ -534,23 +539,33 @@ export default class Game extends Phaser.Scene {
   }
 
   updateSortingLayers() {
+    const getY = (data) => {
+      const ref = data.getData('ref')
+      if (ref instanceof Ship) {
+        return ref.getCenterPoint().y
+      } else {
+        return data.y + data.height / 2
+      }
+    }
+
     let lowestLayer = 1
     const sortedByY = this.sys.displayList
       .getChildren()
       .filter((child: any) => {
         let y = child.y
-        if (child instanceof Ship) {
-          y = child.getCenterPoint().y
+        const ref = child.getData ? child.getData('ref') : null
+        if (ref instanceof Ship) {
+          y = ref.getCenterPoint().y
         }
         return (
           y &&
-          this.cameras.main.worldView.contains(child.x, child.y) &&
+          this.cameras.main.worldView.contains(child.x, y) &&
           !this.ignoreNames.includes(child.name)
         )
       })
       .sort((a: any, b: any) => {
-        const aY = a.y + a.height / 2
-        const bY = b.y + b.height / 2
+        const aY = getY(a)
+        const bY = getY(b)
         return aY - bY
       })
 

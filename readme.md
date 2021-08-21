@@ -4,8 +4,6 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Bugs to fix
 
-- Fix ship depth sorting
-
 ## Must haves for Alpha release:
 
 - Fixed map
