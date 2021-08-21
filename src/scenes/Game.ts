@@ -95,6 +95,31 @@ export default class Game extends Phaser.Scene {
 
       // Configure player
       const { player } = saveFile
+
+      if (player.ship) {
+        const shipConfig = Constants.getShip(player.ship.type)
+        if (shipConfig) {
+          const playerShip = new Ship(
+            this,
+            shipConfig,
+            { x: player.ship.x, y: player.ship.y },
+            player.ship.currDirection
+          )
+          this.ships.add(playerShip.hullSprite)
+          this.player.ship = playerShip
+          this.player.enterShip(this.player.ship)
+          if (player.ship.isSteering) {
+            this.player.isSteeringShip = true
+            const interval = setInterval(() => {
+              if (ShipUIScene.instance) {
+                this.player.ship!.takeWheel()
+                clearInterval(interval)
+              }
+            }, 100)
+          }
+        }
+      }
+
       this.player.setX(player.x)
       this.player.setY(player.y)
       this.player.setInventory(player.inventory)
@@ -208,9 +233,6 @@ export default class Game extends Phaser.Scene {
 
   initShips() {
     this.ships = this.physics.add.group({ classType: Ship })
-    const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1000, y: 1000 }, Direction.LEFT)
-    this.ships.add(ship1.hullSprite)
-
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
       const ship: Ship = obj1.getData('ref')
       const projectile: Projectile = obj2.getData('ref')
@@ -223,10 +245,7 @@ export default class Game extends Phaser.Scene {
   initEnemyShips() {
     const monkey = new Mob(this, 1100, 400, Constants.getMob('Monkey'))
     const enemyShip = new EnemyShip(this, ALL_SHIP_TYPES[0], { x: 1200, y: 200 })
-    // enemyShip.addPassenger(monkey)
-    this.time.delayedCall(5000, () => {
-      monkey.startSailing(enemyShip)
-    })
+    monkey.startSailing(enemyShip)
     this.addMob(monkey)
     this.ships.add(enemyShip.hullSprite)
   }
@@ -312,7 +331,17 @@ export default class Game extends Phaser.Scene {
         equipment: {
           weapon: this.player.equipment.weapon ? this.player.equipment.weapon.name : '',
         },
+        ship: {},
       },
+    }
+    if (this.player.ship) {
+      saveObject.player.ship = {
+        x: this.player.ship.hullSprite.x,
+        y: this.player.ship.hullSprite.y,
+        type: this.player.ship.shipType,
+        isSteering: this.player.isSteeringShip,
+        currDirection: this.player.ship.currDirection,
+      }
     }
     localStorage.setItem('saveFile', JSON.stringify(saveObject))
   }

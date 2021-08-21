@@ -7,6 +7,7 @@ import { EnemyShip } from './EnemyShip'
 
 export interface ShipConfig {
   defaultHealth: number
+  name: string
   hullImages: {
     up: string
     down: string
@@ -93,6 +94,7 @@ export class Ship {
   public passengers: any[] = []
   public boardableShip: Ship | null = null
   public boardableShipOverlap?: Phaser.Physics.Arcade.Collider
+  public shipType: string
 
   constructor(
     scene: Game,
@@ -111,7 +113,9 @@ export class Ship {
       ladderConfig,
       cannonConfig,
       hullBodyConfig,
+      name,
     } = shipConfig
+    this.shipType = name
     this.hullBodyConfig = hullBodyConfig
     this.currDirection = currDirection
 

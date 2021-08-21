@@ -26,6 +26,10 @@ export class Constants {
   static getItem(itemName: string) {
     return ALL_ITEMS.find((itemConfig) => itemConfig.name === itemName)
   }
+
+  static getShip(shipName: string) {
+    return ALL_SHIP_TYPES.find((shipConfig) => shipConfig.name === shipName)
+  }
 }
 
 export enum AnimationType {

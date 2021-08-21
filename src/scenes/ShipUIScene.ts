@@ -2,6 +2,7 @@ import { button } from '~/ui/components/Button'
 import { text } from '~/ui/components/Text'
 import { ShipHealthBar } from '../ui/ShipHealthBar'
 import Game from './Game'
+import UIScene from './GameUIScene'
 import { MainMenuScene } from './MainMenuScene'
 
 export class ShipUIScene extends Phaser.Scene {
@@ -60,7 +61,9 @@ export class ShipUIScene extends Phaser.Scene {
       .addListener('click')
       .on('click', () => {
         this.scene.stop()
+        Game.instance.disableShipCamera()
         Game.instance.saveAndQuit()
+        UIScene.instance.scene.stop()
         ShipUIScene.instance.scene.stop()
         Game.instance.scene.stop()
         MainMenuScene.instance.scene.start()

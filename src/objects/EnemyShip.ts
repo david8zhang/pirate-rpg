@@ -58,8 +58,10 @@ export class EnemyShip extends Ship {
         ship.addPassenger(newMob)
         this.scene.addMob(newMob)
       }
-      ;(this.mobInControl as Mob).destroy()
-      this.mobInControl = null
+      if (this.mobInControl) {
+        ;(this.mobInControl as Mob).destroy()
+        this.mobInControl = null
+      }
     }
   }
 

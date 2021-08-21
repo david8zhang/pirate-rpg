@@ -178,9 +178,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             }
             this.ship = this.enterableShip
             this.enterableShip = null
-            this.ship.playerEnterShip()
-            this.setName('Transport')
-            this.anims.play(`player-idle-${this.getAnimDirection(this.direction)}`)
+            this.enterShip(this.ship)
           }
         }
 
@@ -210,6 +208,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       },
       this
     )
+  }
+
+  enterShip(ship: Ship) {
+    if (ship) {
+      ship.playerEnterShip()
+      this.setName('Transport')
+      this.anims.play(`player-idle-${this.getAnimDirection(this.direction)}`)
+    }
   }
 
   getCurrState(): string {
