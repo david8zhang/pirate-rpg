@@ -875,6 +875,11 @@ export class Ship {
     this.hullSprite.body.offset.x = this.hullSprite.width * config.xOffset
   }
 
+  setCurrHealth(health: number) {
+    this.health = health
+    ShipUIScene.instance.shipHealthBar.setCurrHealth(this.health)
+  }
+
   public destroyAllColliders() {
     if (this.wallImages.length > 0) {
       this.wallImages.forEach((wall) => {

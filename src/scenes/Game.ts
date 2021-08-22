@@ -113,6 +113,7 @@ export default class Game extends Phaser.Scene {
             const interval = setInterval(() => {
               if (ShipUIScene.instance) {
                 this.player.ship!.takeWheel()
+                this.player.ship?.setCurrHealth(player.ship.health)
                 clearInterval(interval)
               }
             }, 100)
@@ -124,6 +125,7 @@ export default class Game extends Phaser.Scene {
       this.player.setY(player.y)
       this.player.setInventory(player.inventory)
       this.player.setEquipment(player.equipment)
+      this.player.setCurrHealth(player.health)
     }
   }
 
@@ -233,6 +235,11 @@ export default class Game extends Phaser.Scene {
 
   initShips() {
     this.ships = this.physics.add.group({ classType: Ship })
+    const shipConfig = Constants.getShip('Sloop')
+    if (shipConfig) {
+      const ship1 = new Ship(this, shipConfig, { x: 1000, y: 1000 })
+      this.ships.add(ship1.hullSprite)
+    }
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
       const ship: Ship = obj1.getData('ref')
       const projectile: Projectile = obj2.getData('ref')
@@ -325,6 +332,7 @@ export default class Game extends Phaser.Scene {
   public saveAndQuit() {
     const saveObject = {
       player: {
+        health: this.player.currHealth,
         x: this.player.x,
         y: this.player.y,
         inventory: this.player.inventory,
@@ -346,6 +354,7 @@ export default class Game extends Phaser.Scene {
         type: this.player.ship.shipType,
         isSteering: this.player.isSteeringShip,
         currDirection: this.player.ship.currDirection,
+        health: this.player.ship.health,
       }
     }
     localStorage.setItem('saveFile', JSON.stringify(saveObject))

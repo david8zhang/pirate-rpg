@@ -8,7 +8,6 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 - Fixed map
 - Saved games
-  - Saved ship
   - Saved transport
   - Saved structures
 

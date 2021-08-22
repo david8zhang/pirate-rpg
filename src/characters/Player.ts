@@ -231,6 +231,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  setCurrHealth(health: number) {
+    this.currHealth = health
+    const interval = setInterval(() => {
+      if (UIScene.instance) {
+        UIScene.instance.playerHealth.setCurrHealth(this.currHealth)
+        clearInterval(interval)
+      }
+    }, 100)
+  }
+
   respawn(x: number, y: number) {
     this.currHealth = this.maxHealth
     UIScene.instance.playerHealth.setCurrHealth(this.currHealth)
