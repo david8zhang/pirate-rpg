@@ -1,7 +1,7 @@
 import Phaser, { Physics } from 'phaser'
 import { ALL_HARVESTABLES, ALL_SHIP_TYPES, Constants } from '../utils/Constants'
 import '../characters/Player'
-import Player, { Direction, Inventory } from '../characters/Player'
+import Player from '../characters/Player'
 import { createCharacterAnims } from '../anims/CharacterAnims'
 import { Mob } from '../mobs/Mob'
 import { Item } from '~/objects/Item'
@@ -61,14 +61,14 @@ export default class Game extends Phaser.Scene {
   public enemyShips!: Phaser.GameObjects.Group
 
   // Structures
-  public structures!: Phaser.GameObjects.Group
+  public structures!: Phaser.GameObjects.Group | null
   public structureLayer!: Phaser.Tilemaps.TilemapLayer
   public isInsideStructure: boolean = false
   public structureInteriorCollider!: Phaser.Physics.Arcade.Collider
   public structureEntranceCollider!: Phaser.Physics.Arcade.Collider
 
   // Transports
-  public transports!: Phaser.GameObjects.Group
+  public transports!: Phaser.GameObjects.Group | null
   public ship!: Ship
 
   // sprite names to ignore during depth-sorting
@@ -118,6 +118,18 @@ export default class Game extends Phaser.Scene {
               }
             }, 100)
           }
+        }
+      }
+      if (player.transport) {
+        const transportConfig = Constants.getItem(player.transport.name)
+        if (transportConfig) {
+          this.player.enterableTransport = new Transport(
+            this,
+            transportConfig,
+            player.transport.x,
+            player.transport.y
+          )
+          this.player.enterableTransport.enterTransport()
         }
       }
 
@@ -235,11 +247,8 @@ export default class Game extends Phaser.Scene {
 
   initShips() {
     this.ships = this.physics.add.group({ classType: Ship })
-    const shipConfig = Constants.getShip('Sloop')
-    if (shipConfig) {
-      const ship1 = new Ship(this, shipConfig, { x: 1000, y: 1000 })
-      this.ships.add(ship1.hullSprite)
-    }
+    const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1000, y: 1000 })
+    this.ships.add(ship1.hullSprite)
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
       const ship: Ship = obj1.getData('ref')
       const projectile: Projectile = obj2.getData('ref')
@@ -345,7 +354,16 @@ export default class Game extends Phaser.Scene {
           },
         },
         ship: {},
+        transport: {},
       },
+    }
+    if (this.player.currTransport) {
+      saveObject.player.transport = {
+        x: this.player.currTransport.sprite.x,
+        y: this.player.currTransport.sprite.y,
+        currDirection: this.player.currTransport.currDirection,
+        name: this.player.currTransport.itemRef.name,
+      }
     }
     if (this.player.ship) {
       saveObject.player.ship = {
@@ -358,6 +376,14 @@ export default class Game extends Phaser.Scene {
       }
     }
     localStorage.setItem('saveFile', JSON.stringify(saveObject))
+    if (this.transports) {
+      this.transports.destroy()
+      this.transports = null
+    }
+    if (this.structures) {
+      this.structures.destroy()
+      this.structures = null
+    }
   }
 
   initItems() {
@@ -399,7 +425,26 @@ export default class Game extends Phaser.Scene {
   }
 
   getAllObjectGroups(): Phaser.GameObjects.Group[] {
-    return [this.mobs, this.items, this.harvestables, this.structures]
+    const allGroups: Phaser.GameObjects.Group[] = []
+    if (this.mobs) {
+      allGroups.push(this.mobs)
+    }
+    if (this.items) {
+      allGroups.push(this.items)
+    }
+    if (this.harvestables) {
+      allGroups.push(this.harvestables)
+    }
+    if (this.ships) {
+      allGroups.push(this.ships)
+    }
+    if (this.structures) {
+      allGroups.push(this.structures)
+    }
+    if (this.transports) {
+      allGroups.push(this.transports)
+    }
+    return allGroups
   }
 
   addTransport(itemRef: ItemConfig, x: number, y: number) {
@@ -428,7 +473,9 @@ export default class Game extends Phaser.Scene {
     this.oceanLayer.setVisible(true)
     this.sandLayer.setVisible(true)
     this.grassLayer.setVisible(true)
-    this.structures.setVisible(true)
+    if (this.structures) {
+      this.structures.setVisible(true)
+    }
     this.items.setVisible(true)
     this.ships.children.entries.forEach((c) => {
       const ship: Ship = c.getData('ref')
@@ -457,7 +504,9 @@ export default class Game extends Phaser.Scene {
     this.oceanLayer.setVisible(false)
     this.sandLayer.setVisible(false)
     this.grassLayer.setVisible(false)
-    this.structures.setVisible(false)
+    if (this.structures) {
+      this.structures.setVisible(false)
+    }
     this.items.setVisible(false)
     this.ships.children.entries.forEach((child) => {
       const ship: Ship = child.getData('ref')

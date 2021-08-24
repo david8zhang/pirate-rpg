@@ -1,5 +1,6 @@
 import { Direction } from '~/characters/Player'
 import Game from '../scenes/Game'
+import { EnemyShip } from './EnemyShip'
 import { ItemConfig } from './ItemConfig'
 import { Ship } from './Ship'
 
@@ -50,7 +51,10 @@ export class Transport {
       this.scene.ships,
       (obj1, obj2) => {
         const ship: Ship = obj2.getData('ref')
-        this.scene.player.enterableShip = ship
+        const isEnemyShip = ship instanceof EnemyShip
+        if (!isEnemyShip) {
+          this.scene.player.enterableShip = ship
+        }
       }
     )
 
@@ -75,7 +79,6 @@ export class Transport {
       this.scene.playerOceanCollider.active = false
     }
     this.scene.hoverText.hide()
-    this.scene.enableShipCamera()
   }
 
   exitTransport() {
