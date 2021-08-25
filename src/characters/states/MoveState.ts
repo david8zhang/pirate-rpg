@@ -1,5 +1,6 @@
 import Player, { Direction } from '../Player'
 import { State } from '../../lib/StateMachine'
+import Game from '../../scenes/Game'
 
 export class MoveState extends State {
   execute(cursors: Phaser.Types.Input.Keyboard.CursorKeys, player: Player) {
@@ -43,7 +44,7 @@ export class MoveState extends State {
         player.setVelocity(0, speed)
       }
 
-      if (player.isSubmerged) {
+      if (player.getIsSubmerged()) {
         player.anims.play(`player-swim-${player.getAnimDirection(player.direction)}`, true)
       } else {
         player.anims.play(`player-walk-${player.getAnimDirection(player.direction)}`, true)

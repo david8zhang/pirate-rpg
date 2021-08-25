@@ -325,7 +325,9 @@ export class Ship {
     this.cannons.forEach((c) => {
       c.sprite.setVisible(isVisible)
     })
-    this.ladderSprite.setVisible(isVisible)
+    if (this.ladderSprite) {
+      this.ladderSprite.setVisible(isVisible)
+    }
     this.wheelSprite.setVisible(isVisible)
   }
 

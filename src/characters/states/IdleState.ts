@@ -5,7 +5,7 @@ export class IdleState extends State {
   enter(cursors: Phaser.Types.Input.Keyboard.CursorKeys, player: Player) {
     player.setVelocity(0)
     const direction = player.getAnimDirection(player.direction)
-    if (player.isSubmerged) {
+    if (player.getIsSubmerged()) {
       player.anims.play(`player-swim-${direction}`)
     } else {
       player.anims.play(`player-idle-${direction}`)

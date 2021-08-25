@@ -303,7 +303,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         isOceanTile = true
       }
     })
-    return isOceanTile && !this.ship && !this.currTransport
+    return isOceanTile && !this.ship && !this.currTransport && !gameScene.isInsideStructure
   }
 
   update() {

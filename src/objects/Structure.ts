@@ -4,9 +4,11 @@ export class Structure {
   public sprite: Phaser.Physics.Arcade.Image
   private scene: Game
   public boundsImage: Phaser.Physics.Arcade.Image
+  public texture: string
 
   constructor(scene: Game, texture: string, x: number, y: number) {
     this.scene = scene
+    this.texture = texture
     this.sprite = this.scene.physics.add.image(x, y, texture)
     this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.sprite.body.setSize(this.sprite.width * 0.5, this.sprite.height * 0.5)
@@ -34,10 +36,12 @@ export class Structure {
 
   exitStructure() {
     this.boundsImage.body.enable = true
+    this.sprite.setVisible(false)
   }
 
   enterStructure() {
     this.scene.hoverText.hide()
+    this.sprite.setVisible(false)
     this.scene.initEnteredStructure(this)
     this.boundsImage.body.enable = false
   }

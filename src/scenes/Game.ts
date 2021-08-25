@@ -61,6 +61,7 @@ export default class Game extends Phaser.Scene {
   public enemyShips!: Phaser.GameObjects.Group
 
   // Structures
+  public enteredStructure: Structure | null = null
   public structures!: Phaser.GameObjects.Group | null
   public structureLayer!: Phaser.Tilemaps.TilemapLayer
   public isInsideStructure: boolean = false
@@ -94,7 +95,7 @@ export default class Game extends Phaser.Scene {
       const saveFile = JSON.parse(rawSaveData)
 
       // Configure player
-      const { player } = saveFile
+      const { player, enteredStructure } = saveFile
 
       if (player.ship) {
         const shipConfig = Constants.getShip(player.ship.type)
@@ -131,6 +132,14 @@ export default class Game extends Phaser.Scene {
           )
           this.player.enterableTransport.enterTransport()
         }
+      }
+      if (enteredStructure.texture) {
+        const structure = this.addStructure(
+          enteredStructure.texture,
+          enteredStructure.x,
+          enteredStructure.y
+        )
+        this.initEnteredStructure(structure)
       }
 
       this.player.setX(player.x)
@@ -356,6 +365,14 @@ export default class Game extends Phaser.Scene {
         ship: {},
         transport: {},
       },
+      enteredStructure: {},
+    }
+    if (this.enteredStructure) {
+      saveObject.enteredStructure = {
+        texture: this.enteredStructure.texture,
+        x: this.enteredStructure.sprite.x,
+        y: this.enteredStructure.sprite.y,
+      }
     }
     if (this.player.currTransport) {
       saveObject.player.transport = {
@@ -459,15 +476,17 @@ export default class Game extends Phaser.Scene {
     this.ships.add(ship.hullSprite)
   }
 
-  addStructure(texture: string, x: number, y: number) {
+  addStructure(texture: string, x: number, y: number): Structure {
     if (!this.structures) {
       this.structures = this.physics.add.group({ classType: Structure })
     }
     const structure = new Structure(this, texture, x, y)
     this.structures.add(structure.sprite)
+    return structure
   }
 
   exitStructure(structure: Structure) {
+    this.enteredStructure = null
     this.mobs.setVisible(true)
     this.harvestables.setVisible(true)
     this.oceanLayer.setVisible(true)
@@ -499,6 +518,7 @@ export default class Game extends Phaser.Scene {
   }
 
   initEnteredStructure(structure: Structure) {
+    this.enteredStructure = structure
     this.mobs.setVisible(false)
     this.harvestables.setVisible(false)
     this.oceanLayer.setVisible(false)
