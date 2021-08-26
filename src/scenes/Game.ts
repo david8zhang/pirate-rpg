@@ -142,6 +142,12 @@ export default class Game extends Phaser.Scene {
         this.initEnteredStructure(structure)
       }
 
+      if (saveFile.structures) {
+        saveFile.structures.forEach((s) => {
+          this.addStructure(s.texture, s.x, s.y)
+        })
+      }
+
       this.player.setX(player.x)
       this.player.setY(player.y)
       this.player.setInventory(player.inventory)
@@ -348,7 +354,7 @@ export default class Game extends Phaser.Scene {
   }
 
   public saveAndQuit() {
-    const saveObject = {
+    const saveObject: any = {
       player: {
         health: this.player.currHealth,
         x: this.player.x,
@@ -373,6 +379,20 @@ export default class Game extends Phaser.Scene {
         x: this.enteredStructure.sprite.x,
         y: this.enteredStructure.sprite.y,
       }
+    }
+    if (this.structures) {
+      const structuresToSave: any[] = []
+      this.structures.getChildren().forEach((structure) => {
+        const s = structure.getData('ref')
+        if (s !== this.enteredStructure) {
+          structuresToSave.push({
+            texture: s.texture,
+            x: s.sprite.x,
+            y: s.sprite.y,
+          })
+        }
+      })
+      saveObject.structures = structuresToSave
     }
     if (this.player.currTransport) {
       saveObject.player.transport = {

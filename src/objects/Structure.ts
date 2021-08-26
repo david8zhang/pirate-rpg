@@ -23,6 +23,7 @@ export class Structure {
         )
       }
     })
+    this.sprite.setData('ref', this)
 
     // Create a boundary so player/mobs can't walk into the tent
     this.boundsImage = this.scene.physics.add.image(x, y, '').setVisible(false)
