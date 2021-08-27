@@ -148,6 +148,16 @@ export default class Game extends Phaser.Scene {
         })
       }
 
+      if (saveFile.ships) {
+        saveFile.ships.forEach((s) => {
+          const shipConfig = Constants.getShip(s.type)
+          if (shipConfig) {
+            const ship = new Ship(this, shipConfig, { x: s.x, y: s.y }, s.currDirection)
+            this.addShip(ship)
+          }
+        })
+      }
+
       this.player.setX(player.x)
       this.player.setY(player.y)
       this.player.setInventory(player.inventory)
@@ -262,8 +272,6 @@ export default class Game extends Phaser.Scene {
 
   initShips() {
     this.ships = this.physics.add.group({ classType: Ship })
-    const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1000, y: 1000 })
-    this.ships.add(ship1.hullSprite)
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
       const ship: Ship = obj1.getData('ref')
       const projectile: Projectile = obj2.getData('ref')
@@ -273,13 +281,7 @@ export default class Game extends Phaser.Scene {
     })
   }
 
-  initEnemyShips() {
-    // const monkey = new Mob(this, 1100, 400, Constants.getMob('Monkey'))
-    const enemyShip = new EnemyShip(this, ALL_SHIP_TYPES[0], { x: 1200, y: 200 })
-    // monkey.startSailing(enemyShip)
-    // this.addMob(monkey)
-    this.ships.add(enemyShip.hullSprite)
-  }
+  initEnemyShips() {}
 
   public enableShipCamera() {
     UIScene.instance.hide()
@@ -411,6 +413,23 @@ export default class Game extends Phaser.Scene {
         currDirection: this.player.ship.currDirection,
         health: this.player.ship.health,
       }
+    }
+    if (this.ships) {
+      const savedShips: any[] = []
+      this.ships.getChildren().forEach((s) => {
+        const ship = s.getData('ref')
+        const isEnemyShip = ship instanceof EnemyShip
+        if (this.player.ship !== ship && !isEnemyShip) {
+          savedShips.push({
+            x: ship.hullSprite.x,
+            y: ship.hullSprite.y,
+            type: ship.shipType,
+            currDirection: ship.currDirection,
+            health: ship.health,
+          })
+        }
+      })
+      saveObject.ships = savedShips
     }
     localStorage.setItem('saveFile', JSON.stringify(saveObject))
     if (this.transports) {
