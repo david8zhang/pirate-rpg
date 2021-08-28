@@ -7,9 +7,7 @@ A top down pirate themed survival/crafting game build using Phaser 3
 ## Must haves for Alpha release:
 
 - Fixed map
-- Saved games
-  - Saved transport
-  - Saved structures
+- Effects (cannon fire, ship damage)
 
 ## Nice to Have Features (after Alpha release):
 

@@ -1,5 +1,5 @@
 import Phaser, { Physics } from 'phaser'
-import { ALL_HARVESTABLES, ALL_SHIP_TYPES, Constants } from '../utils/Constants'
+import { ALL_EFFECTS, ALL_HARVESTABLES, ALL_SHIP_TYPES, Constants } from '../utils/Constants'
 import '../characters/Player'
 import Player from '../characters/Player'
 import { createCharacterAnims } from '../anims/CharacterAnims'
@@ -20,6 +20,8 @@ import { Projectile } from '~/objects/Projectile'
 import { ShipUIScene } from './ShipUIScene'
 import { MobSpawner } from '~/mobs/MobSpawner'
 import { EnemyShip } from '~/objects/EnemyShip'
+import { createEffectsAnims } from '~/anims/EffectsAnims'
+import { Effect } from '~/objects/Effect'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -182,6 +184,7 @@ export default class Game extends Phaser.Scene {
   create(): void {
     createCharacterAnims(this.anims)
     createMobAnims(ALL_MOBS, this.anims)
+    createEffectsAnims(ALL_EFFECTS, this.anims)
     this.initTilemap()
     this.initPlayer()
     this.initPlants()

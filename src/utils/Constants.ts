@@ -1697,6 +1697,23 @@ export const ALL_MOBS = [
   },
 ]
 
+export const ALL_EFFECTS = [
+  {
+    animName: 'explosion-small-anim',
+    name: 'explosion-small',
+    animation: {
+      key: 'explosion-small-anim',
+      frames: {
+        start: 1,
+        end: 8,
+        suffix: '.png',
+      },
+      repeat: -1,
+      frameRate: 12,
+    },
+  },
+]
+
 export const ALL_ITEMS: ItemConfig[] = [
   {
     name: 'Row boat',

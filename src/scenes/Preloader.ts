@@ -89,6 +89,9 @@ export default class Preloader extends Phaser.Scene {
 
     // Splash-art for main menu
     this.load.image('splash', 'splash/splash-art.png')
+
+    // Effects
+    this.load.atlas('explosion-small', 'effects/explosion.png', 'effects/explosion.json')
   }
   create() {
     this.scene.start('menu-ui')
