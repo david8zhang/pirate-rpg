@@ -3,7 +3,6 @@ import Game from '~/scenes/Game'
 export interface EffectConfig {
   animation: any
   name: string
-  animName: string
   scale: number
   ttl: number
 }
@@ -18,11 +17,30 @@ export class EffectSpawner {
     return this._instance
   }
 
-  public spawnEffect(effectConfig: EffectConfig, x: number, y: number) {
+  public spawnEffect(
+    effectConfig: EffectConfig,
+    x: number,
+    y: number,
+    rotationAngle?: number,
+    scale?: {
+      x?: number
+      y?: number
+    }
+  ) {
     const sprite = Game.instance.physics.add
       .sprite(x, y, effectConfig.name)
       .setScale(effectConfig.scale)
-    sprite.play(effectConfig.animName)
+    sprite.play(effectConfig.animation.key)
+    sprite.setDepth(1000)
+    sprite.setAngle(rotationAngle)
+    if (scale) {
+      if (scale.x) {
+        sprite.scaleX = scale.x
+      }
+      if (scale.y) {
+        sprite.scaleY = scale.y
+      }
+    }
     Game.instance.time.delayedCall(effectConfig.ttl, () => {
       sprite.destroy()
     })

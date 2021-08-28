@@ -1,6 +1,6 @@
 {
   "frames": {
-    "9.png": {
+    "8.png": {
       "frame": {
         "x": 0,
         "y": 0,
@@ -24,20 +24,44 @@
         "y": 0.5
       }
     },
-    "3.png": {
+    "2.png": {
       "frame": {
-        "x": 0,
-        "y": 40,
-        "w": 35,
-        "h": 35
+        "x": 40,
+        "y": 0,
+        "w": 28,
+        "h": 20
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 3,
-        "y": 3,
-        "w": 35,
-        "h": 35
+        "x": 12,
+        "y": 10,
+        "w": 28,
+        "h": 20
+      },
+      "sourceSize": {
+        "w": 40,
+        "h": 40
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "3.png": {
+      "frame": {
+        "x": 40,
+        "y": 20,
+        "w": 28,
+        "h": 20
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 12,
+        "y": 10,
+        "w": 28,
+        "h": 20
       },
       "sourceSize": {
         "w": 40,
@@ -51,17 +75,17 @@
     "4.png": {
       "frame": {
         "x": 0,
-        "y": 75,
-        "w": 35,
-        "h": 35
+        "y": 40,
+        "w": 26,
+        "h": 22
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 3,
-        "y": 3,
-        "w": 35,
-        "h": 35
+        "x": 11,
+        "y": 9,
+        "w": 26,
+        "h": 22
       },
       "sourceSize": {
         "w": 40,
@@ -74,18 +98,18 @@
     },
     "5.png": {
       "frame": {
-        "x": 0,
-        "y": 110,
-        "w": 34,
-        "h": 35
+        "x": 26,
+        "y": 40,
+        "w": 22,
+        "h": 19
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 3,
-        "y": 3,
-        "w": 34,
-        "h": 35
+        "x": 11,
+        "y": 13,
+        "w": 22,
+        "h": 19
       },
       "sourceSize": {
         "w": 40,
@@ -96,20 +120,20 @@
         "y": 0.5
       }
     },
-    "8.png": {
+    "6.png": {
       "frame": {
-        "x": 0,
-        "y": 145,
-        "w": 32,
-        "h": 30
+        "x": 48,
+        "y": 40,
+        "w": 18,
+        "h": 21
       },
-      "rotated": true,
+      "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 4,
-        "y": 3,
-        "w": 32,
-        "h": 30
+        "x": 7,
+        "y": 11,
+        "w": 18,
+        "h": 21
       },
       "sourceSize": {
         "w": 40,
@@ -123,17 +147,17 @@
     "7.png": {
       "frame": {
         "x": 0,
-        "y": 177,
-        "w": 29,
-        "h": 28
+        "y": 62,
+        "w": 11,
+        "h": 21
       },
-      "rotated": true,
+      "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 6,
-        "y": 4,
-        "w": 29,
-        "h": 28
+        "x": 7,
+        "y": 10,
+        "w": 11,
+        "h": 21
       },
       "sourceSize": {
         "w": 40,
@@ -144,20 +168,20 @@
         "y": 0.5
       }
     },
-    "6.png": {
+    "0.png": {
       "frame": {
-        "x": 0,
-        "y": 206,
-        "w": 26,
-        "h": 25
+        "x": 26,
+        "y": 59,
+        "w": 13,
+        "h": 12
       },
-      "rotated": true,
+      "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 7,
-        "y": 6,
-        "w": 26,
-        "h": 25
+        "x": 27,
+        "y": 15,
+        "w": 13,
+        "h": 12
       },
       "sourceSize": {
         "w": 40,
@@ -170,42 +194,18 @@
     },
     "1.png": {
       "frame": {
-        "x": 0,
-        "y": 232,
-        "w": 18,
-        "h": 18
+        "x": 11,
+        "y": 71,
+        "w": 13,
+        "h": 12
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 11,
-        "y": 12,
-        "w": 18,
-        "h": 18
-      },
-      "sourceSize": {
-        "w": 40,
-        "h": 40
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "2.png": {
-      "frame": {
-        "x": 0,
-        "y": 250,
-        "w": 18,
-        "h": 18
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 11,
-        "y": 12,
-        "w": 18,
-        "h": 18
+        "x": 27,
+        "y": 15,
+        "w": 13,
+        "h": 12
       },
       "sourceSize": {
         "w": 40,
@@ -223,8 +223,8 @@
     "image": "texture.png",
     "format": "RGBA8888",
     "size": {
-      "w": 40,
-      "h": 268
+      "w": 68,
+      "h": 83
     },
     "scale": 1
   }

@@ -1,5 +1,7 @@
 import { Direction } from '~/characters/Player'
+import { ALL_EFFECTS } from '~/utils/Constants'
 import Game from '../scenes/Game'
+import { EffectSpawner } from './Effect'
 import { Projectile } from './Projectile'
 import { Ship } from './Ship'
 
@@ -98,6 +100,41 @@ export class Cannon {
       this.scene.time.delayedCall(1500, () => {
         this.isFiring = false
       })
+
+      const scale: any = {}
+      let rotationAngle = 0
+      const offsets: any = {
+        x: 0,
+        y: 0,
+      }
+      switch (this.direction) {
+        case Direction.UP: {
+          offsets.y = -80
+          rotationAngle = 90
+          break
+        }
+        case Direction.DOWN: {
+          offsets.y = 80
+          rotationAngle = 270
+          break
+        }
+        case Direction.LEFT: {
+          offsets.x = -80
+          break
+        }
+        case Direction.RIGHT: {
+          offsets.x = 80
+          rotationAngle = 180
+          break
+        }
+      }
+      EffectSpawner.instance.spawnEffect(
+        ALL_EFFECTS[1],
+        xPos + offsets.x,
+        yPos + offsets.y,
+        rotationAngle,
+        scale
+      )
     }
   }
 

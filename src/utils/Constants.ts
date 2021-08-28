@@ -1701,17 +1701,31 @@ export const ALL_EFFECTS = [
   {
     scale: 3,
     ttl: 725,
-    animName: 'explosion-small-anim',
     name: 'explosion-small',
     animation: {
       key: 'explosion-small-anim',
       frames: {
-        start: 1,
+        start: 0,
         end: 8,
         suffix: '.png',
       },
       repeat: 0,
-      frameRate: 12,
+      frameRate: 15,
+    },
+  },
+  {
+    scale: 3,
+    ttl: 725,
+    name: 'cannon-flash',
+    animation: {
+      key: 'cannon-flash-anim',
+      frames: {
+        start: 0,
+        end: 8,
+        suffix: '.png',
+      },
+      repeat: 0,
+      frameRate: 15,
     },
   },
 ]

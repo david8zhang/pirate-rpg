@@ -75,7 +75,7 @@ export default class Game extends Phaser.Scene {
   public ship!: Ship
 
   // sprite names to ignore during depth-sorting
-  public ignoreNames = ['InAir', 'UI', 'Weapon', 'Structure', 'Transport', 'Ship']
+  public ignoreNames = ['InAir', 'UI', 'Weapon', 'Structure', 'Transport', 'Effect']
 
   // UI text
   public hoverText!: HoverText
