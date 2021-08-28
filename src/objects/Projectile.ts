@@ -1,6 +1,8 @@
 import { Direction } from '~/characters/Player'
+import { ALL_EFFECTS } from '~/utils/Constants'
 import { Mob } from '../mobs/Mob'
 import Game from '../scenes/Game'
+import { EffectSpawner } from './Effect'
 import { Harvestable } from './Harvestable'
 import { Ship } from './Ship'
 
@@ -30,6 +32,7 @@ export class Projectile {
   }
 
   public onHitShip(ship: Ship) {
+    EffectSpawner.instance.spawnEffect(ALL_EFFECTS[0], this.sprite.x, this.sprite.y)
     this.sprite.destroy()
     if (ship) {
       ship.takeDamage(this.damage)
@@ -37,11 +40,13 @@ export class Projectile {
   }
 
   public onHitMob(mob: Mob) {
+    EffectSpawner.instance.spawnEffect(ALL_EFFECTS[0], this.sprite.x, this.sprite.y)
     this.sprite.destroy()
     mob.onHit(this.damage)
   }
 
   public onHitHarvestable(harvestable: Harvestable) {
+    EffectSpawner.instance.spawnEffect(ALL_EFFECTS[0], this.sprite.x, this.sprite.y)
     this.sprite.destroy()
     harvestable.takeDamage(this.damage)
   }

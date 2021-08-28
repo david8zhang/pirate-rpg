@@ -1699,6 +1699,8 @@ export const ALL_MOBS = [
 
 export const ALL_EFFECTS = [
   {
+    scale: 3,
+    ttl: 725,
     animName: 'explosion-small-anim',
     name: 'explosion-small',
     animation: {
@@ -1708,7 +1710,7 @@ export const ALL_EFFECTS = [
         end: 8,
         suffix: '.png',
       },
-      repeat: -1,
+      repeat: 0,
       frameRate: 12,
     },
   },
