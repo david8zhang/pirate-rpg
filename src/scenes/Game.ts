@@ -22,6 +22,7 @@ import { MobSpawner } from '~/mobs/MobSpawner'
 import { EnemyShip } from '~/objects/EnemyShip'
 import { createEffectsAnims } from '~/anims/EffectsAnims'
 import { EffectSpawner } from '~/objects/Effect'
+import { createShipAnims } from '~/anims/ShipAnims'
 
 export default class Game extends Phaser.Scene {
   public player!: Player
@@ -187,6 +188,7 @@ export default class Game extends Phaser.Scene {
     createCharacterAnims(this.anims)
     createMobAnims(ALL_MOBS, this.anims)
     createEffectsAnims(ALL_EFFECTS, this.anims)
+    createShipAnims(ALL_SHIP_TYPES, this.anims)
     this.initTilemap()
     this.initPlayer()
     this.initPlants()
@@ -262,7 +264,9 @@ export default class Game extends Phaser.Scene {
     this.physics.add.collider(this.projectiles, this.mobs, (obj1, obj2) => {
       const projectile: Projectile = obj1.getData('ref')
       const mob: Mob = obj2.getData('ref')
-      projectile.onHitMob(mob)
+      if (projectile) {
+        projectile.onHitMob(mob)
+      }
     })
     this.physics.add.collider(this.projectiles, this.harvestables, (obj1, obj2) => {
       const projectile: Projectile = obj1.getData('ref')

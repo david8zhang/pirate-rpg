@@ -64,6 +64,44 @@ export const ALL_SHIP_TYPES = [
       down: 'sails-down',
       side: 'sails-side',
     },
+    animMapping: {
+      moveSide: 'sloop-move-side',
+      moveUp: 'sloop-move-up',
+      moveDown: 'sloop-move-down',
+    },
+    animFrameName: 'sloop',
+    animations: [
+      {
+        key: 'sloop-move-down',
+        frames: {
+          start: 0,
+          end: 3,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+      {
+        key: 'sloop-move-side',
+        frames: {
+          start: 4,
+          end: 7,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+      {
+        key: 'sloop-move-up',
+        frames: {
+          start: 8,
+          end: 11,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+    ],
     hullBodyConfig: {
       left: {
         xOffset: 0.2,
@@ -1699,7 +1737,10 @@ export const ALL_MOBS = [
 
 export const ALL_EFFECTS = [
   {
-    scale: 3,
+    scale: {
+      x: 3,
+      y: 3,
+    },
     ttl: 725,
     name: 'explosion-small',
     animation: {
@@ -1714,7 +1755,10 @@ export const ALL_EFFECTS = [
     },
   },
   {
-    scale: 3,
+    scale: {
+      x: 3,
+      y: 3,
+    },
     ttl: 725,
     name: 'cannon-flash',
     animation: {

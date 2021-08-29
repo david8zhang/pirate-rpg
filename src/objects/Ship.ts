@@ -13,6 +13,9 @@ export interface ShipConfig {
     down: string
     side: string
   }
+  animMapping: {
+    [key: string]: any
+  }
   hullBodyConfig: {
     up: any
     down: any
@@ -570,7 +573,9 @@ export class Ship {
     if (!this.wheelSprite.body.embedded || this.currDirection !== this.scene.player.direction) {
       this.canTakeWheel = false
     }
-
+    if (this.isAnchored) {
+      this.stop()
+    }
     if (
       this.boardableShip &&
       !this.scene.physics.overlap(this.boardableShip.hullSprite, this.boardableShipDetectorImg)
@@ -700,7 +705,6 @@ export class Ship {
     this.scene.disableShipCamera()
     this.scene.cameras.main.stopFollow()
     this.scene.cameras.main.startFollow(this.scene.player, true)
-
     this.setupWalls(this.shipConfig.colliderConfig)
   }
 
@@ -750,11 +754,17 @@ export class Ship {
   }
 
   public stop() {
+    const { hullImages } = this.shipConfig
     this.setAllVelocity(0, 0)
+    if (this.currDirection == Direction.LEFT || this.currDirection == Direction.RIGHT) {
+      this.hullSprite.setTexture(hullImages['side'])
+    } else {
+      this.hullSprite.setTexture(hullImages[this.currDirection])
+    }
   }
 
   public moveShip(direction: Direction) {
-    const { hullImages, sailsImages, wheelConfig, ladderConfig, cannonConfig, hitboxConfig } =
+    const { sailsImages, wheelConfig, ladderConfig, cannonConfig, hitboxConfig, animMapping } =
       this.shipConfig
     const speed = this.moveSpeed
     this.setupHitbox(hitboxConfig)
@@ -764,11 +774,17 @@ export class Ship {
           this.stop()
           return
         }
+        if (
+          !this.hullSprite.anims.currentAnim ||
+          this.hullSprite.anims.currentAnim.key !== animMapping['moveUp']
+        ) {
+          this.hullSprite.anims.play(animMapping['moveUp'])
+        }
         this.sailsSprite.setAlpha(1)
         this.currDirection = Direction.UP
         this.hullSprite.scaleX = 1
         this.sailsSprite.scaleX = 1
-        this.hullSprite.setTexture(hullImages.up)
+        // this.hullSprite.setTexture(hullImages.up)
         this.sailsSprite.setTexture(sailsImages.up)
         this.configureHullBody()
         this.setAllVelocity(0, -speed)
@@ -780,7 +796,12 @@ export class Ship {
         }
         this.sailsSprite.setAlpha(1)
         this.currDirection = Direction.LEFT
-        this.hullSprite.setTexture(hullImages.side)
+        if (
+          !this.hullSprite.anims.currentAnim ||
+          this.hullSprite.anims.currentAnim.key !== animMapping['moveSide']
+        ) {
+          this.hullSprite.anims.play(animMapping['moveSide'])
+        }
         this.sailsSprite.setTexture(sailsImages.side)
         this.hullSprite.scaleX = 1
         this.sailsSprite.scaleX = 1
@@ -794,7 +815,12 @@ export class Ship {
         }
         this.sailsSprite.setAlpha(1)
         this.currDirection = Direction.RIGHT
-        this.hullSprite.setTexture(hullImages.side)
+        if (
+          !this.hullSprite.anims.currentAnim ||
+          this.hullSprite.anims.currentAnim.key !== animMapping['moveSide']
+        ) {
+          this.hullSprite.anims.play(animMapping['moveSide'])
+        }
         this.sailsSprite.setTexture(sailsImages.side)
         this.sailsSprite.scaleX = -1
         this.hullSprite.scaleX = -1
@@ -807,11 +833,16 @@ export class Ship {
           this.stop()
           return
         }
+        if (
+          !this.hullSprite.anims.currentAnim ||
+          this.hullSprite.anims.currentAnim.key !== animMapping['moveDown']
+        ) {
+          this.hullSprite.anims.play(animMapping['moveDown'])
+        }
         this.sailsSprite.setAlpha(0.5)
         this.currDirection = Direction.DOWN
         this.hullSprite.scaleX = 1
         this.sailsSprite.scaleX = 1
-        this.hullSprite.setTexture(hullImages.down)
         this.sailsSprite.setTexture(sailsImages.down)
         this.configureHullBody()
         this.setAllVelocity(0, speed)
