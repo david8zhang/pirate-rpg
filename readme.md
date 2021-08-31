@@ -8,6 +8,7 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 - Fixed map
 - Effects (cannon fire, ship damage)
+- Pagination on crafting menu
 
 ## Nice to Have Features (after Alpha release):
 

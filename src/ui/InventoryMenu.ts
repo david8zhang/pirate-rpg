@@ -2,6 +2,7 @@ import { Inventory } from '../characters/Player'
 import UIScene from '../scenes/GameUIScene'
 import { TooltipPosition } from './ItemTooltip'
 import Game from '../scenes/Game'
+import { text } from './components/Text'
 
 export class ItemBox {
   // Dimensions
@@ -12,7 +13,7 @@ export class ItemBox {
   // Item contained inside
   private sprite!: Phaser.GameObjects.Sprite
   public itemName!: string
-  public countText!: Phaser.GameObjects.Text
+  public countText!: Phaser.GameObjects.DOMElement
 
   // instance vars
   private scene: Phaser.Scene
@@ -59,24 +60,20 @@ export class ItemBox {
     this.container.add(this.panel)
     this.container.add(this.sprite)
     if (!disableCount) {
-      this.countText = scene.add
-        .text(xPos + 8, yPos + 8, '', {
-          fontSize: '10px',
-          padding: {
-            left: 20,
-          },
-          align: 'right',
-          fontFamily: 'GraphicPixel',
-          color: 'white',
-        })
-        .setOrigin(0.5)
-      this.countText.autoRound = false
+      const countText = text('', { fontSize: '10px', fontFamily: 'GraphicPixel', color: 'white' })
+      this.countText = scene.add.dom(xPos + 5, yPos - 5, countText).setOrigin(0)
       this.container.add(this.countText)
     }
   }
 
   setTextColor(color: string) {
-    this.countText.setColor(color)
+    const currCount = this.countText.getData('value')
+    const newCountText = text(currCount ? currCount.toString() : '', {
+      fontSize: '10px',
+      fontFamily: 'GraphicPixel',
+      color,
+    })
+    this.countText.setElement(newCountText)
   }
 
   handleItemHover() {
@@ -98,6 +95,7 @@ export class ItemBox {
       this.sprite.setVisible(true)
     }
     if (this.countText) {
+      this.countText.setData('value', count)
       this.countText.setText(count.toString())
       this.countText.setVisible(true)
     }
@@ -113,6 +111,7 @@ export class ItemBox {
     this.isEmpty = true
 
     if (this.countText) {
+      this.countText.setData('value', 0)
       this.countText.setText('0')
       this.countText.setVisible(false)
     }
@@ -166,6 +165,14 @@ export class InventoryMenu {
   toggleInventoryExpand() {
     this.isExpanded = !this.isExpanded
     this.updateInventoryExpandState()
+  }
+
+  hide() {
+    for (let i = 0; i < this.itemBoxes.length; i++) {
+      for (let j = 0; j < this.itemBoxes[0].length; j++) {
+        this.itemBoxes[i][j].setVisible(false)
+      }
+    }
   }
 
   public updateInventoryExpandState() {
