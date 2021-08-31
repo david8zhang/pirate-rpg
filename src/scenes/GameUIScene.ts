@@ -154,11 +154,17 @@ export default class UIScene extends Phaser.Scene {
   hide() {
     this.pauseDisabled = true
     this.scene.setVisible(false)
+    if (this.inventoryMenu) {
+      this.inventoryMenu.hide()
+    }
   }
 
   show() {
     this.pauseDisabled = false
     this.scene.setVisible(true)
+    if (this.inventoryMenu) {
+      this.inventoryMenu.show()
+    }
   }
 
   togglePauseMenu() {

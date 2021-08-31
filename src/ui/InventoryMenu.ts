@@ -103,6 +103,9 @@ export class ItemBox {
 
   setVisible(isVisible: boolean) {
     this.container.setVisible(isVisible)
+    if (this.countText) {
+      this.countText.setVisible(isVisible)
+    }
   }
 
   removeItem() {
@@ -111,8 +114,8 @@ export class ItemBox {
     this.isEmpty = true
 
     if (this.countText) {
-      this.countText.setData('value', 0)
-      this.countText.setText('0')
+      this.countText.setData('value', null)
+      this.countText.setText('')
       this.countText.setVisible(false)
     }
   }
@@ -165,6 +168,18 @@ export class InventoryMenu {
   toggleInventoryExpand() {
     this.isExpanded = !this.isExpanded
     this.updateInventoryExpandState()
+  }
+
+  show() {
+    for (let i = 0; i < this.itemBoxes.length; i++) {
+      for (let j = 0; j < this.itemBoxes[0].length; j++) {
+        if (i > 0) {
+          this.itemBoxes[i][j].setVisible(this.isExpanded)
+        } else {
+          this.itemBoxes[i][j].setVisible(true)
+        }
+      }
+    }
   }
 
   hide() {

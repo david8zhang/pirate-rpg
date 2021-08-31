@@ -687,11 +687,7 @@ export default class Game extends Phaser.Scene {
         if (ref instanceof Ship) {
           y = ref.getCenterPoint().y
         }
-        return (
-          y &&
-          this.cameras.main.worldView.contains(child.x, y) &&
-          !this.ignoreNames.includes(child.name)
-        )
+        return y && !this.ignoreNames.includes(child.name)
       })
       .sort((a: any, b: any) => {
         const aY = getY(a)
