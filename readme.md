@@ -6,9 +6,17 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Must haves for Alpha release:
 
-- Fixed map
-- Effects (cannon fire, ship damage)
-- Pagination on crafting menu
+- Map with different regions
+  - region transitions
+  - Lazy spawning / rendering
+- Sail boat
+- More weapons
+  - Stone sword
+  - Cutlass
+  - Dagger
+- Effects
+  - ship damage
+  - ship explosion (death)
 
 ## Nice to Have Features (after Alpha release):
 
