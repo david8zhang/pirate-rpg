@@ -30,6 +30,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('elevated-tiles', 'tiles/elevated-tiles.png')
     this.load.tilemapTiledJSON('starter-island', 'tiles/starter-island.json')
     this.load.tilemapTiledJSON('starter-island-2', 'tiles/starter-island-2.json')
+    this.load.tilemapTiledJSON('starter-island-large', 'tiles/starter-island-large.json')
     this.load.tilemapTiledJSON('tent', 'tiles/tent.json')
 
     // Items

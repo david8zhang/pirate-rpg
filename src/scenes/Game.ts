@@ -202,7 +202,7 @@ export default class Game extends Phaser.Scene {
   }
 
   initTilemap() {
-    this.map = this.make.tilemap({ key: 'starter-island-2' })
+    this.map = this.make.tilemap({ key: 'starter-island-large' })
     const tileset = this.map.addTilesetImage('beach-tiles', 'beach-tiles')
     this.oceanLayer = this.map.createLayer('Ocean', tileset).setName('Ocean')
     this.sandLayer = this.map.createLayer('Sand', tileset).setName('Sand')

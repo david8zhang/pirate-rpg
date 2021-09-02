@@ -18,6 +18,7 @@ export class Projectile {
   public damage: number
   public sprite: Phaser.Physics.Arcade.Sprite
   public sourceShip?: Ship
+  private static TIME_TO_LIVE = 5000
   constructor(scene: Game, config: ProjectileConfig) {
     const { x, y, texture, damage } = config
     this.scene = scene
@@ -66,5 +67,8 @@ export class Projectile {
         this.sprite.setVelocityY(speed)
         break
     }
+    this.scene.time.delayedCall(Projectile.TIME_TO_LIVE, () => {
+      this.sprite.destroy()
+    })
   }
 }
