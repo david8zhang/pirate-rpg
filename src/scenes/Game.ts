@@ -1,5 +1,11 @@
 import Phaser, { Physics } from 'phaser'
-import { ALL_EFFECTS, ALL_HARVESTABLES, ALL_SHIP_TYPES, Constants } from '../utils/Constants'
+import {
+  ALL_EFFECTS,
+  ALL_HARVESTABLES,
+  ALL_ITEMS,
+  ALL_SHIP_TYPES,
+  Constants,
+} from '../utils/Constants'
 import '../characters/Player'
 import Player from '../characters/Player'
 import { createCharacterAnims } from '../anims/CharacterAnims'
@@ -55,6 +61,7 @@ export default class Game extends Phaser.Scene {
   // Items
   public items!: Phaser.GameObjects.Group
   public itemsOnGround: Item[] = []
+  public itemPool: any = {}
 
   // Projectiles
   public projectiles!: Phaser.GameObjects.Group
@@ -455,29 +462,37 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  initItems() {
+  lazyLoadItems() {
     const objectLayer = this.map.getObjectLayer('Objects')
+    const allItemTypes = ['Rock', 'Stick']
+    objectLayer.objects.forEach((obj) => {
+      const xPos = obj.x! + obj.width! * 0.5
+      const yPos = obj.y! - obj.height! * 0.5
+      if (this.cameras.main.worldView.contains(xPos, yPos)) {
+        let type = ''
+        if (!this.itemPool[`${xPos},${yPos}`]) {
+          type = allItemTypes[Math.floor(Math.random() * allItemTypes.length)]
+          this.itemPool[`${xPos},${yPos}`] = {
+            type,
+            isActive: true,
+          }
+          const item = ItemFactory.instance.createItem(type, xPos, yPos)
+          if (item) {
+            this.itemsOnGround.push(item)
+            this.items.add(item.sprite)
+          }
+        }
+      }
+    })
+  }
+
+  initItems() {
     if (!this.items) {
       this.items = this.physics.add.group({ classType: Item })
     } else {
       this.items.destroy()
       this.items = this.physics.add.group({ classType: Item })
     }
-    objectLayer.objects.forEach((obj) => {
-      const xPos = obj.x! + obj.width! * 0.5
-      const yPos = obj.y! - obj.height! * 0.5
-      const randNum = Math.floor(Math.random() * 2)
-      let item: Item | null
-      if (randNum === 0) {
-        item = ItemFactory.instance.createItem('Rock', xPos, yPos)
-      } else {
-        item = ItemFactory.instance.createItem('Stick', xPos, yPos)
-      }
-      if (item) {
-        this.itemsOnGround.push(item)
-        this.items.add(item.sprite)
-      }
-    })
     this.playerItemsCollider = this.physics.add.overlap(this.player, this.items, (obj1, obj2) => {
       const item = obj2.getData('ref') as Item
       item.onPlayerHoverItem()
@@ -643,6 +658,7 @@ export default class Game extends Phaser.Scene {
   }
 
   update() {
+    this.lazyLoadItems()
     if (this.player.ship && !this.player.ship.isAnchored) {
       ShipUIScene.instance.show()
     } else {

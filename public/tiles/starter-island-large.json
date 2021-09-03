@@ -4,7 +4,7 @@
      "export":
         {
          "format":"json",
-         "target":"starter-island-2.json"
+         "target":"starter-island-large.json"
         }
     },
  "height":500,
@@ -509,7 +509,7 @@
          "y":0
         }],
  "nextlayerid":11,
- "nextobjectid":53,
+ "nextobjectid":111,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
@@ -1078,7 +1078,8 @@
                          "name":"type",
                          "type":"string",
                          "value":"stick"
-                        }]
+                        }],
+                 "type":"stick"
                 }, 
                 {
                  "id":1,
@@ -1087,7 +1088,8 @@
                          "name":"type",
                          "type":"string",
                          "value":"rock"
-                        }]
+                        }],
+                 "type":"rock"
                 }],
          "tilewidth":16
         }, 

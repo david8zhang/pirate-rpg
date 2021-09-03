@@ -235,6 +235,7 @@ export class Mob {
         this.sprite.body.offset.x = this.mobConfig.moveOffsets.right
         this.sprite.scaleX = -1
       } else if (this.sprite.body.velocity.y != 0) {
+        this.sprite.body.offset.x = this.mobConfig.moveOffsets.left
         this.sprite.scaleX = 1
       }
     }
