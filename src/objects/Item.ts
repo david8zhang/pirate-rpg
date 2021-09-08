@@ -1,4 +1,5 @@
 import Game from '../scenes/Game'
+import { ItemConfig } from './ItemConfig'
 
 export class Item {
   itemName: string = ''

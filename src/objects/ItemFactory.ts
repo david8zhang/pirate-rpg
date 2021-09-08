@@ -25,6 +25,17 @@ export class ItemFactory {
     return null
   }
 
+  changeItem(item: Item, itemType: string, x: number, y: number): void {
+    const newItem = ALL_ITEMS.find((i) => i.name === itemType)
+    if (newItem && item) {
+      item.sprite.setTexture(newItem.image)
+      item.dropLength = newItem.stats && newItem.stats.dropLength ? newItem.stats.dropLength : 650
+      item.itemName = newItem.name
+      item.sprite.x = x
+      item.sprite.y = y
+    }
+  }
+
   // Get whether the item is a weapon, armor, resource, etc.
   getItemType(itemName: string) {
     return ALL_ITEMS.find((i) => i.name == itemName)
