@@ -10,12 +10,9 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 - Lazy spawning / rendering
 
-  1. Set an object pool of a fixed size for mobs, objects, harvestables, ships
-  2. On each Update cycle:
-
-     - remove items from the object pool that aren't visible in the current camera view
-
-     - add items from the tilemap layer config which are in the current camera view
+  - Static mob pool with blank mob objects initialized at the beginning of the game
+  - Mob spawners can only spawn mobs by "using" them from the Mob pool. If there are no more mobs available in the pool, grab a mob
+    that is offscreen and recycle it. If no mobs are available, then don't spawn any mobs
 
 - Sail boat
 - More weapons

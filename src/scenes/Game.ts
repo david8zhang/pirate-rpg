@@ -206,7 +206,6 @@ export default class Game extends Phaser.Scene {
     this.initProjectiles()
     this.initShips()
     this.initEnemyShips()
-    // this.initSpawners()
     this.loadSaveFile()
   }
 
@@ -358,22 +357,6 @@ export default class Game extends Phaser.Scene {
       }
     })
   }
-
-  // initSpawners() {
-  //   const spawnerLayer = this.map.getObjectLayer('Spawners')
-  //   spawnerLayer.objects.forEach((spawnerObj) => {
-
-  //     const config = Constants.getMob(spawnerObj.type)
-  //     this.spawners.push(
-  //       new MobSpawner(this, {
-  //         position: { x: xPos, y: yPos },
-  //         spawnDelay: 2000,
-  //         mobConfig: config,
-  //         mobLimit: Math.floor(Math.random() * 3 + 2),
-  //       })
-  //     )
-  //   })
-  // }
 
   initMobs() {
     this.mobs = this.physics.add.group({
