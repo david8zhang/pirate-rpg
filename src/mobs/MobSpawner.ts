@@ -1,3 +1,4 @@
+import { Constants } from '~/utils/Constants'
 import Game from '../scenes/Game'
 import { Mob } from './Mob'
 
@@ -42,8 +43,18 @@ export class MobSpawner {
   }
 
   spawnMobs() {
-    if (this.spawnedMobs.length < this.mobLimit) {
-      const mob = new Mob(this.scene, this.spawnPos.x, this.spawnPos.y, this.mobConfig)
+    if (
+      this.spawnedMobs.length < this.mobLimit &&
+      this.scene.cameras.main.worldView.contains(this.spawnPos.x, this.spawnPos.y)
+    ) {
+      const randXOffset = Constants.getRandomNum(-10, 10)
+      const randYOffset = Constants.getRandomNum(-10, 10)
+      const mob = new Mob(
+        this.scene,
+        this.spawnPos.x + randXOffset,
+        this.spawnPos.y + randYOffset,
+        this.mobConfig
+      )
       this.spawnedMobs.push(mob)
       this.scene.addMob(mob)
     }

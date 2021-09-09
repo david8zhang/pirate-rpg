@@ -184,8 +184,8 @@ export class Mob {
   }
 
   onHit(damage: number) {
-    this.scene.cameras.main.shake(100, 0.005)
     if (!this.isHit) {
+      this.scene.cameras.main.shake(100, 0.005)
       this.isHit = true
       ParticleSpawner.instance.spawnParticle('blood-particle', this.sprite.x, this.sprite.y, 4)
       this.activeBehavior.stop()

@@ -52,7 +52,8 @@ export default class Game extends Phaser.Scene {
   // Mobs
   public mobsList: Mob[] = []
   public mobs!: Phaser.GameObjects.Group
-  public spawners: MobSpawner[] = []
+  public static MAX_ACTIVE_SPAWNERS = 10
+  public spawnersPool: any = {}
 
   // Harvestables (Trees, bushes, etc.)
   public harvestableList: Harvestable[] = []
@@ -60,8 +61,7 @@ export default class Game extends Phaser.Scene {
 
   // Items
   public items!: Phaser.GameObjects.Group
-  public static MAX_ITEMS_ON_SCREEN = 200
-  public itemsOnGround: Item[] = new Array(Game.MAX_ITEMS_ON_SCREEN)
+  public static MAX_ITEMS_ON_SCREEN = 50
   public itemPool: any = {}
   public itemLocations: any[] = []
 
@@ -206,7 +206,7 @@ export default class Game extends Phaser.Scene {
     this.initProjectiles()
     this.initShips()
     this.initEnemyShips()
-    this.initSpawners()
+    // this.initSpawners()
     this.loadSaveFile()
   }
 
@@ -339,22 +339,41 @@ export default class Game extends Phaser.Scene {
     )
   }
 
-  initSpawners() {
+  lazyLoadSpawners() {
     const spawnerLayer = this.map.getObjectLayer('Spawners')
     spawnerLayer.objects.forEach((spawnerObj) => {
+      const config = Constants.getMob(spawnerObj.type)
       const xPos = spawnerObj.x! + spawnerObj.width! * 0.5
       const yPos = spawnerObj.y! - spawnerObj.height! * 0.5
-      const config = Constants.getMob(spawnerObj.type)
-      this.spawners.push(
-        new MobSpawner(this, {
-          position: { x: xPos, y: yPos },
-          spawnDelay: 2000,
-          mobConfig: config,
-          mobLimit: Math.floor(Math.random() * 3 + 2),
-        })
-      )
+      if (this.cameras.main.worldView.contains(xPos, yPos)) {
+        if (!this.spawnersPool[`${xPos},${yPos}`]) {
+          const newSpawner = new MobSpawner(this, {
+            position: { x: xPos, y: yPos },
+            spawnDelay: 2000,
+            mobConfig: config,
+            mobLimit: Math.floor(Math.random() * 3 + 2),
+          })
+          this.spawnersPool[`${xPos},${yPos}`] = newSpawner
+        }
+      }
     })
   }
+
+  // initSpawners() {
+  //   const spawnerLayer = this.map.getObjectLayer('Spawners')
+  //   spawnerLayer.objects.forEach((spawnerObj) => {
+
+  //     const config = Constants.getMob(spawnerObj.type)
+  //     this.spawners.push(
+  //       new MobSpawner(this, {
+  //         position: { x: xPos, y: yPos },
+  //         spawnDelay: 2000,
+  //         mobConfig: config,
+  //         mobLimit: Math.floor(Math.random() * 3 + 2),
+  //       })
+  //     )
+  //   })
+  // }
 
   initMobs() {
     this.mobs = this.physics.add.group({
@@ -366,10 +385,6 @@ export default class Game extends Phaser.Scene {
         mobRef.onHit(Player.UNARMED_DAMAGE)
       }
     })
-
-    const skeletonConfig = Constants.getMob('Skeleton')
-    const mob = new Mob(this, 100, 150, skeletonConfig)
-    this.addMob(mob)
   }
 
   public addMob(mob: Mob) {
@@ -465,33 +480,43 @@ export default class Game extends Phaser.Scene {
   }
 
   lazyLoadItems() {
+    const getExistingOffscreenItem = () => {
+      const itemKey = Object.keys(this.itemPool).find((key) => {
+        const itemSprite = this.itemPool[key].sprite
+        return !this.cameras.main.worldView.contains(itemSprite.x, itemSprite.y)
+      })
+      if (itemKey) {
+        return this.itemPool[itemKey]
+      }
+      return null
+    }
+
     const objectLayer = this.map.getObjectLayer('Objects')
     const allItemTypes = ['Rock', 'Stick']
-    let itemOnGroundIdx = 0
-    const locations = this.itemLocations
-    // const locations = this.generateItemLocations()
-    // const locations = objectLayer.objects.map((obj) => ({
-    //   x: obj.x! + obj.width! * 0.5,
-    //   y: obj.y! - obj.height! * 0.5,
-    // }))
+    const locations = objectLayer.objects.map((obj) => ({
+      x: obj.x! + obj.width! * 0.5,
+      y: obj.y! - obj.height! * 0.5,
+    }))
     locations.forEach((obj) => {
       const { x, y } = obj
       if (this.cameras.main.worldView.contains(x, y)) {
         let type = ''
         type = allItemTypes[Math.floor(x) % allItemTypes.length]
-        if (itemOnGroundIdx < Game.MAX_ITEMS_ON_SCREEN) {
-          const existingItem = this.itemsOnGround[itemOnGroundIdx]
-          if (existingItem) {
-            ItemFactory.instance.changeItem(existingItem, type, x, y)
-            // this.items.getChildren()[itemOnGroundIdx] = existingItem.sprite
-          } else {
+        if (!this.itemPool[`${x},${y}`]) {
+          if (Object.keys(this.itemPool).length < Game.MAX_ITEMS_ON_SCREEN) {
             const item = ItemFactory.instance.createItem(type, x, y)
             if (item) {
-              this.itemsOnGround[itemOnGroundIdx] = item
-              this.items.getChildren()[itemOnGroundIdx] = item?.sprite
+              this.itemPool[`${x},${y}`] = item
+              this.items.add(item.sprite)
+            }
+          } else {
+            const offscreenItem = getExistingOffscreenItem()
+            if (offscreenItem) {
+              delete this.itemPool[`${offscreenItem.sprite.x},${offscreenItem.sprite.y}`]
+              ItemFactory.instance.changeItem(offscreenItem, type, x, y)
+              this.itemPool[`${x},${y}`] = offscreenItem
             }
           }
-          itemOnGroundIdx++
         }
       }
     })
@@ -522,27 +547,10 @@ export default class Game extends Phaser.Scene {
       const item = obj2.getData('ref') as Item
       item.onPlayerHoverItem()
     })
-
-    // Stress test
-    // const allItemTypes = ['Rock', 'Stick']
-    // for (let i = 0; i < 10000; i++) {
-    //   // Get random X and Y positions
-    //   const randX = Math.floor(Math.random() * Constants.BG_WIDTH)
-    //   const randY = Math.floor(Math.random() * Constants.BG_HEIGHT)
-    //   const item = ItemFactory.instance.createItem(
-    //     allItemTypes[randX % allItemTypes.length],
-    //     randX,
-    //     randY
-    //   )
-    //   if (item) {
-    //     this.items.add(item.sprite)
-    //     this.itemsOnGround.push(item)
-    //   }
-    // }
   }
 
   addItem(item) {
-    this.itemsOnGround.push(item)
+    this.itemPool[`${item.x},${item.y}`] = item
     this.items.add(item.sprite)
   }
 
@@ -695,12 +703,13 @@ export default class Game extends Phaser.Scene {
   }
 
   dropItem(item: Item) {
-    this.itemsOnGround.push(item)
+    this.itemPool[`${item.sprite.x},${item.sprite.y}`] = item
     this.items.add(item.sprite)
   }
 
   update() {
     this.lazyLoadItems()
+    this.lazyLoadSpawners()
     if (this.player.ship && !this.player.ship.isAnchored) {
       ShipUIScene.instance.show()
     } else {

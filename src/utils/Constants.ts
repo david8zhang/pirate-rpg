@@ -30,6 +30,10 @@ export class Constants {
   static getShip(shipName: string) {
     return ALL_SHIP_TYPES.find((shipConfig) => shipConfig.name === shipName)
   }
+
+  static getRandomNum(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min) + min)
+  }
 }
 
 export enum AnimationType {
