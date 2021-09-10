@@ -113,7 +113,9 @@ export class RandomMovementBehavior extends MovementBehavior {
   }
 
   stop() {
-    this.sprite.setVelocity(0)
+    if (this.sprite.active) {
+      this.sprite.setVelocity(0)
+    }
     this.isStopped = true
   }
 

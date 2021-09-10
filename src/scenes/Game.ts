@@ -52,7 +52,8 @@ export default class Game extends Phaser.Scene {
   // Mobs
   public mobsList: Mob[] = []
   public mobs!: Phaser.GameObjects.Group
-  public static MAX_ACTIVE_SPAWNERS = 10
+  public mobPool: Mob[] = []
+  public static MAX_MOBS_IN_POOL = 50
   public spawnersPool: any = {}
 
   // Harvestables (Trees, bushes, etc.)
@@ -348,14 +349,45 @@ export default class Game extends Phaser.Scene {
         if (!this.spawnersPool[`${xPos},${yPos}`]) {
           const newSpawner = new MobSpawner(this, {
             position: { x: xPos, y: yPos },
-            spawnDelay: 2000,
+            spawnDelay: 1000,
             mobConfig: config,
-            mobLimit: Math.floor(Math.random() * 3 + 2),
+            mobLimit: 5,
           })
           this.spawnersPool[`${xPos},${yPos}`] = newSpawner
         }
       }
     })
+  }
+
+  removeMobFromPool(mob: Mob) {
+    this.mobPool = this.mobPool.filter((m: Mob) => {
+      return m !== mob
+    })
+  }
+
+  isMobPoolFull() {
+    return this.mobPool.length >= Game.MAX_MOBS_IN_POOL
+  }
+
+  hasAvailableMobInPool() {
+    if (this.mobPool.length < Game.MAX_MOBS_IN_POOL) {
+      return true
+    }
+    const offscreenMob = this.mobPool.find((mob) => {
+      return !this.cameras.main.worldView.contains(mob.sprite.x, mob.sprite.y)
+    })
+    return offscreenMob !== undefined
+  }
+
+  getAvailableMobInPool() {
+    const offscreenMob = this.mobPool.find((mob) => {
+      return !this.cameras.main.worldView.contains(mob.sprite.x, mob.sprite.y)
+    })
+    return offscreenMob ? offscreenMob : null
+  }
+
+  addMobToPool(mob: Mob) {
+    this.mobPool.push(mob)
   }
 
   initMobs() {

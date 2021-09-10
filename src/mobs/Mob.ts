@@ -9,6 +9,7 @@ import { MeleeAttackBehavior } from '~/lib/components/MeleeAttackBehavior'
 import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
 import { SailingBehavior } from '~/lib/components/SailingBehavior'
 import { EnemyShip } from '~/objects/EnemyShip'
+import { MobSpawner } from './MobSpawner'
 
 export interface MobAnimation {
   key: string
@@ -40,13 +41,16 @@ export class Mob {
   animations: {
     [key: string]: string
   } = {}
+  tileColliders: Phaser.Physics.Arcade.Collider[] = []
+  spawner: MobSpawner
 
-  constructor(scene: Phaser.Scene, x: number, y: number, mobConfig: any) {
+  constructor(scene: Phaser.Scene, x: number, y: number, mobConfig: any, spawner: MobSpawner) {
     const { animFrameName, animMapping, collidableLayers } = mobConfig
     this.mobConfig = mobConfig
     this.scene = scene
     this.x = x
     this.y = y
+    this.spawner = spawner
 
     this.maxHealth = mobConfig.health
     this.health = mobConfig.health
@@ -85,13 +89,14 @@ export class Mob {
     collidableLayers?.forEach((layerName: string) => {
       const layer = (this.scene as Game).getAllTileLayers().find((l) => l.name === layerName)
       if (layer) {
-        this.scene.physics.add.collider(
+        const collider = this.scene.physics.add.collider(
           layer,
           this.sprite,
           (obj1: any, obj2: any) => this.handleTileCollision(obj1, obj2, animMapping),
           undefined,
           this
         )
+        this.tileColliders.push(collider)
       }
     })
 
@@ -102,6 +107,85 @@ export class Mob {
       () => {}
     )
     this.sprite.setData('ref', this)
+  }
+
+  removeFromPrevSpawner() {
+    this.spawner.removeMobFromSpawnerList(this)
+  }
+
+  initNewConfig(x: number, y: number, mobConfig: any, spawner: MobSpawner) {
+    const { animFrameName, animMapping, collidableLayers } = mobConfig
+    this.mobConfig = mobConfig
+    this.x = x
+    this.y = y
+    this.spawner = spawner
+
+    this.maxHealth = mobConfig.health
+    this.health = mobConfig.health
+    this.maxHealth = mobConfig.health
+    this.health = mobConfig.health
+    this.activeBehavior.stop()
+    this.sprite.anims.stop()
+    this.sprite.setTexture(animFrameName)
+    this.sprite.setData('ref', this)
+
+    this.sprite.setOrigin(0)
+    this.sprite.x = x
+    this.sprite.y = y
+    this.animations = animMapping
+    this.drops = mobConfig.drops
+
+    if (mobConfig.body) {
+      const body = mobConfig.body
+      this.sprite.body.setSize(this.sprite.width * body.width, this.sprite.height * body.height)
+      if (body.offsetY) {
+        this.sprite.body.offset.y = body.offsetY
+      }
+      if (body.offsetX) {
+        this.sprite.body.offset.x = body.offsetX
+      }
+    }
+
+    // Reinitialize tile collider
+    this.tileColliders.forEach((c) => {
+      if (c) {
+        c.destroy()
+      }
+    })
+    this.tileColliders = []
+    collidableLayers?.forEach((layerName: string) => {
+      const layer = (this.scene as Game).getAllTileLayers().find((l) => l.name === layerName)
+      if (layer) {
+        const collider = this.scene.physics.add.collider(
+          layer,
+          this.sprite,
+          (obj1: any, obj2: any) => this.handleTileCollision(obj1, obj2, animMapping),
+          undefined,
+          this
+        )
+        this.tileColliders.push(collider)
+      }
+    })
+
+    // Re-initialize health bar
+    this.healthBar.destroy()
+    const healthBarWidth = this.sprite.width * 1.5
+    const healthBarConfig = {
+      x: this.sprite.x - healthBarWidth / 2,
+      y: this.sprite.y - this.sprite.height,
+      width: healthBarWidth,
+      height: 3,
+      maxValue: this.maxHealth,
+      fillColor: 0x00ff00,
+      showBorder: false,
+      borderWidth: 0,
+    }
+    this.healthBar = new HealthBar(this.scene, healthBarConfig)
+    this.healthBar.setVisible(false)
+
+    this.setActiveBehavior(
+      new RandomMovementBehavior(this.sprite, this.scene, this.animations, () => {})
+    )
   }
 
   setActiveBehavior(behavior: Behavior) {
@@ -115,6 +199,8 @@ export class Mob {
   }
 
   die(): void {
+    const gameScene = this.scene as Game
+    gameScene.removeMobFromPool(this)
     this.activeBehavior.stop()
     this.sprite.on('animationcomplete', () => {
       this.scene.time.delayedCall(300, () => {
@@ -142,6 +228,8 @@ export class Mob {
   }
 
   destroy() {
+    const gameScene = this.scene as Game
+    gameScene.removeMobFromPool(this)
     this.activeBehavior.stop()
     this.healthBar.destroy()
     this.sprite.destroy()

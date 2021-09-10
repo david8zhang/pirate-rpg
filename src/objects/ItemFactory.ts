@@ -27,7 +27,7 @@ export class ItemFactory {
 
   changeItem(item: Item, itemType: string, x: number, y: number): void {
     const newItem = ALL_ITEMS.find((i) => i.name === itemType)
-    if (newItem && item) {
+    if (newItem && item && item.sprite) {
       item.sprite.setTexture(newItem.image)
       item.dropLength = newItem.stats && newItem.stats.dropLength ? newItem.stats.dropLength : 650
       item.itemName = newItem.name
