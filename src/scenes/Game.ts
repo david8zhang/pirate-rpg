@@ -50,7 +50,6 @@ export default class Game extends Phaser.Scene {
   public playerOceanCollider!: Physics.Arcade.Collider
 
   // Mobs
-  public mobsList: Mob[] = []
   public mobs!: Phaser.GameObjects.Group
   public mobPool: Mob[] = []
   public static MAX_MOBS_IN_POOL = 50
@@ -403,7 +402,6 @@ export default class Game extends Phaser.Scene {
   }
 
   public addMob(mob: Mob) {
-    this.mobsList.push(mob)
     this.mobs.add(mob.sprite)
   }
 
@@ -732,7 +730,7 @@ export default class Game extends Phaser.Scene {
     }
     this.player.update()
     if (!this.isInsideStructure) {
-      this.mobsList.forEach((mob: Mob) => {
+      this.mobPool.forEach((mob: Mob) => {
         mob.update()
       })
     }
@@ -745,7 +743,7 @@ export default class Game extends Phaser.Scene {
   }
 
   removeAllDeadMobs() {
-    this.mobsList = this.mobsList.filter((mob) => {
+    this.mobPool = this.mobPool.filter((mob) => {
       return mob.health > 0
     })
   }
