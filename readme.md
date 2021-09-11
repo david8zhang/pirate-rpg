@@ -7,13 +7,6 @@ A top down pirate themed survival/crafting game build using Phaser 3
 ## Must haves for Alpha release:
 
 - Bigger map with more islands and more tiles
-
-- Lazy spawning / rendering
-
-  - Static mob pool with blank mob objects initialized at the beginning of the game
-  - Mob spawners can only spawn mobs by "using" them from the Mob pool. If there are no more mobs available in the pool, grab a mob
-    that is offscreen and recycle it. If no mobs are available, then don't spawn any mobs
-
 - Sail boat
 - More weapons
   - Stone sword
@@ -25,6 +18,7 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Nice to Have Features (after Alpha release):
 
+- Save harvestable state (if a harvestable has been harvested already, store that in player's save data)
 - Armor (Head, Chest, Feet)
 - Ranged weapons
 - Make rowboats + tents have health

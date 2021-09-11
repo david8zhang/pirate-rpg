@@ -57,6 +57,7 @@ export default class Game extends Phaser.Scene {
 
   // Harvestables (Trees, bushes, etc.)
   public harvestableList: Harvestable[] = []
+  public static MAX_HARVESTABLES_IN_POOL = 50
   public harvestables!: Phaser.GameObjects.Group
 
   // Items
@@ -200,12 +201,11 @@ export default class Game extends Phaser.Scene {
     createShipAnims(ALL_SHIP_TYPES, this.anims)
     this.initTilemap()
     this.initPlayer()
-    this.initPlants()
+    this.initHarvestables()
     this.initMobs()
     this.initItems()
     this.initProjectiles()
     this.initShips()
-    this.initEnemyShips()
     this.loadSaveFile()
   }
 
@@ -232,29 +232,64 @@ export default class Game extends Phaser.Scene {
     this.cameras.main.startFollow(this.player, true)
   }
 
-  initPlants() {
-    // initialize plants
-    const plantsLayer = this.map.getObjectLayer('Plants')
-    const sortedByY = plantsLayer.objects.sort((a, b) => {
-      return a.y! - b.y!
-    })
-    this.harvestables = this.physics.add.group({
-      classType: Harvestable,
-    })
+  lazyLoadHarvestables() {
+    const harvestablesLayer = this.map.getObjectLayer('Harvestables')
 
-    // TODO: Add other plant types
+    const locations = harvestablesLayer.objects
+      .sort((a, b) => {
+        return a.y! - b.y!
+      })
+      .map((obj) => {
+        return {
+          x: obj.x! + obj.width! * 0.5,
+          y: obj.y! - obj.height! * 0.5,
+        }
+      })
     const palmTreeConfig = ALL_HARVESTABLES[0]
 
-    sortedByY.forEach((plantObj) => {
-      const xPos = plantObj.x! + plantObj.width! * 0.5
-      const yPos = plantObj.y! - plantObj.height! * 0.5
-      const harvestable = new Harvestable(this, {
-        ...palmTreeConfig,
-        xPos,
-        yPos,
+    const isInHarvestablesList = (x: number, y: number) => {
+      return (
+        this.harvestableList.find((h: Harvestable) => {
+          return h.sprite.x === x && h.sprite.y === y
+        }) !== undefined
+      )
+    }
+    const getAvailableHarvestable = () => {
+      return this.harvestableList.find((h: Harvestable) => {
+        return !this.cameras.main.worldView.contains(h.sprite.x, h.sprite.y)
       })
-      this.harvestables.add(harvestable.sprite)
-      this.harvestableList.push(harvestable)
+    }
+    locations.forEach(({ x, y }) => {
+      if (this.cameras.main.worldView.contains(x, y)) {
+        if (!isInHarvestablesList(x, y)) {
+          if (this.harvestableList.length >= 50) {
+            const recyclableHarvestable = getAvailableHarvestable()
+            if (recyclableHarvestable) {
+              recyclableHarvestable.initNewConfig({
+                ...palmTreeConfig,
+                xPos: x,
+                yPos: y,
+              })
+            }
+          } else {
+            const harvestable = new Harvestable(this, {
+              ...palmTreeConfig,
+              xPos: x,
+              yPos: y,
+            })
+            this.harvestableList.push(harvestable)
+            this.harvestables.add(harvestable.sprite)
+          }
+        }
+      }
+    })
+  }
+
+  initHarvestables() {
+    // initialize harvestables (things that drop stuff when the player hits them)
+    const harvestablesLayer = this.map.getObjectLayer('Harvestables')
+    this.harvestables = this.physics.add.group({
+      classType: Harvestable,
     })
 
     this.playerHarvestableCollider = this.physics.add.collider(
@@ -301,8 +336,6 @@ export default class Game extends Phaser.Scene {
       }
     })
   }
-
-  initEnemyShips() {}
 
   public enableShipCamera() {
     UIScene.instance.hide()
@@ -723,6 +756,7 @@ export default class Game extends Phaser.Scene {
   update() {
     this.lazyLoadItems()
     this.lazyLoadSpawners()
+    this.lazyLoadHarvestables()
     if (this.player.ship && !this.player.ship.isAnchored) {
       ShipUIScene.instance.show()
     } else {

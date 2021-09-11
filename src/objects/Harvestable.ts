@@ -2,7 +2,6 @@ import Player, { Direction } from '~/characters/Player'
 import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
 import Game from '~/scenes/Game'
 import { Constants } from '~/utils/Constants'
-import { ItemConfig } from './ItemConfig'
 import { ItemFactory } from './ItemFactory'
 
 export interface HarvestableConfig {
@@ -64,6 +63,34 @@ export class Harvestable {
     }
     this.sprite.setData('ref', this)
     this.sprite.setPushable(false)
+  }
+
+  initNewConfig(config: HarvestableConfig) {
+    const { xPos, yPos, texture, bodyResize, health, defaultFrame, onDropItem } = config
+    this.config = config
+    this.sprite.setTexture(texture, defaultFrame)
+    this.sprite.x = xPos
+    this.sprite.y = yPos
+    this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
+    this.health = health
+
+    if (onDropItem) {
+      this.onDropItem = onDropItem
+    }
+
+    if (bodyResize) {
+      const { width, height } = bodyResize
+      const newWidth = width ? this.sprite.width * width : this.sprite.width * 1
+      const newHeight = height ? this.sprite.height * height : this.sprite.height * 1
+      this.sprite.body.setSize(newWidth, newHeight)
+
+      if (bodyResize.offset && bodyResize.offset.y) {
+        this.sprite.body.offset.y = bodyResize.offset.y
+      }
+      if (bodyResize.offset && bodyResize.offset.x) {
+        this.sprite.body.offset.x = bodyResize.offset.x
+      }
+    }
   }
 
   handlePlantPlayerCollision() {

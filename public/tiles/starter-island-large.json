@@ -61,7 +61,7 @@
         {
          "draworder":"topdown",
          "id":4,
-         "name":"Plants",
+         "name":"Harvestables",
          "objects":[
                 {
                  "gid":58,
@@ -249,7 +249,7 @@
                  "name":"",
                  "rotation":0,
                  "type":"",
-                 "visible":true,
+                 "visible":false,
                  "width":16,
                  "x":147,
                  "y":576
@@ -509,7 +509,7 @@
          "y":0
         }],
  "nextlayerid":11,
- "nextobjectid":111,
+ "nextobjectid":112,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
