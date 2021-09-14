@@ -222,7 +222,7 @@ export default class Game extends Phaser.Scene {
 
   initPlayer() {
     // TODO: Fix this
-    this.player = this.add.player(100, 100, 'player')
+    this.player = this.add.player(800, 500, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()
@@ -324,9 +324,7 @@ export default class Game extends Phaser.Scene {
 
   initShips() {
     this.ships = this.physics.add.group({ classType: Ship })
-    const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1000, y: 1000 })
-    const ship2 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1200, y: 500 })
-    this.ships.add(ship1.hullSprite)
+    const ship2 = new Ship(this, ALL_SHIP_TYPES[1], { x: 1200, y: 500 })
     this.ships.add(ship2.hullSprite)
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
       const ship: Ship = obj1.getData('ref')

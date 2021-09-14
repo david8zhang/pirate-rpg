@@ -1219,6 +1219,200 @@ export const ALL_SHIP_TYPES = [
       },
     },
   },
+  {
+    defaultHealth: 500,
+    name: 'Sailboat',
+    hullImages: {
+      up: 'sailboat-up',
+      down: 'sailboat-down',
+      side: 'sailboat-side',
+    },
+    sailsImages: {
+      up: 'sailboat-sails-up',
+      down: 'sailboat-sails-down',
+      side: 'sailboat-sails-side',
+    },
+    animMapping: {
+      moveSide: 'sailboat-move-side',
+      up: 'sailboat-move-up',
+      down: 'sailboat-move-down',
+    },
+    animFrameName: 'sailboat',
+    animations: [
+      {
+        key: 'sailboat-move-down',
+        frames: {
+          start: 0,
+          end: 3,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+      {
+        key: 'sailboat-move-side',
+        frames: {
+          start: 4,
+          end: 7,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+      {
+        key: 'sailboat-move-up',
+        frames: {
+          start: 8,
+          end: 11,
+          suffix: '.png',
+        },
+        repeat: -1,
+        frameRate: 10,
+      },
+    ],
+    wheelConfig: {
+      up: {
+        image: 'wheel-up',
+        xOffset: 0,
+        yOffset: 281,
+      },
+      left: {
+        image: 'wheel-side',
+        xOffset: 233,
+        yOffset: 52,
+      },
+      right: {
+        image: 'wheel-side',
+        xOffset: -50,
+        yOffset: 52,
+      },
+      down: {
+        image: 'wheel-down',
+        xOffset: -16,
+        yOffset: -122,
+      },
+    },
+    hullBodyConfig: {
+      left: {
+        xOffset: 0.2,
+        yOffset: 0.6,
+        width: 0.8,
+        height: 0.4,
+      },
+      right: {
+        xOffset: 1.0,
+        yOffset: 0.6,
+        width: 0.8,
+        height: 0.4,
+      },
+      up: {
+        xOffset: 0.35,
+        yOffset: 0.3,
+        width: 0.3,
+        height: 0.7,
+      },
+      down: {
+        xOffset: 0.33,
+        yOffset: 0.25,
+        width: 0.3,
+        height: 0.7,
+      },
+    },
+    ladderConfig: {
+      up: {},
+      down: {},
+      left: {},
+      right: {}
+    },
+    colliderConfig: {
+      left: [],
+      right: [],
+      up: [],
+      down: [],
+    },
+    hitboxConfig: {
+      left: [
+        {
+          xOffset: -37,
+          yOffset: 80,
+          width: 264,
+          height: 231,
+        },
+        {
+          xOffset: -140,
+          yOffset: 50,
+          width: 100,
+          height: 251,
+        },
+        {
+          xOffset: 205,
+          yOffset: 50,
+          width: 100,
+          height: 251,
+        },
+      ],
+      right: [
+        {
+          xOffset: -270,
+          yOffset: 50,
+          width: 100,
+          height: 231,
+        },
+        {
+          xOffset: -171,
+          yOffset: 80,
+          width: 264,
+          height: 231,
+        },
+        {
+          xOffset: 75,
+          yOffset: 50,
+          width: 100,
+          height: 251,
+        },
+      ],
+      up: [
+        {
+          xOffset: -75,
+          yOffset: -100,
+          height: 540,
+          width: 185,
+        },
+      ],
+      down: [
+        {
+          xOffset: -90,
+          yOffset: -160,
+          height: 540,
+          width: 185,
+        },
+      ],
+    },
+    centerOffset: {
+      right: {
+        x: -57,
+        y: 153,
+      },
+      up: {
+        x: 2,
+        y: 149,
+      },
+      down: {
+        x: -13,
+        y: 30,
+      },
+      left: {
+        x: 75,
+        y: 150,
+      },
+    },
+    cannonConfig: {
+      left: [],
+      right: [],
+      up: [],
+      down: [],
+    },
+  },
 ]
 
 export const ALL_HARVESTABLES = [

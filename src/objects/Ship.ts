@@ -302,6 +302,10 @@ export class Ship {
   }
 
   setupCannon(cannonConfig: any) {
+    if (!cannonConfig) {
+      this.cannons = []
+      return
+    }
     const config = cannonConfig[this.currDirection]
     if (this.cannons.length > 0) {
       this.cannons.forEach((c) => c.destroy())
@@ -397,7 +401,13 @@ export class Ship {
   }
 
   setupLadder(ladderConfig) {
+    if (!ladderConfig) {
+      return
+    }
     const directionConfig = ladderConfig[this.currDirection]
+    if (Object.keys(directionConfig).length == 0) {
+      return
+    }
     const xPos = this.hullSprite.x + directionConfig.xOffset
     const yPos = this.hullSprite.y + directionConfig.yOffset
     if (!this.ladderSprite) {
@@ -443,6 +453,9 @@ export class Ship {
   }
 
   setupWheel(wheelConfig) {
+    if (!wheelConfig) {
+      return
+    }
     const directionConfig = wheelConfig[this.currDirection]
     const xPos = this.hullSprite.x + directionConfig.xOffset
     const yPos = this.hullSprite.y + directionConfig.yOffset
@@ -488,6 +501,7 @@ export class Ship {
         : this.currDirection
     const hullImage = hullImages[direction]
     const sailsImage = sailsImages[direction]
+    console.log(hullImage, sailsImage)
     this.hullSprite = this.scene.physics.add.sprite(x, y, hullImage)
     this.sailsSprite = this.scene.physics.add.sprite(x, y, sailsImage)
     this.hullSprite.scaleX = this.currDirection === Direction.RIGHT ? -1 : 1
@@ -499,6 +513,9 @@ export class Ship {
   }
 
   setupHitbox(hitboxConfig: any) {
+    if (!hitboxConfig) {
+      return
+    }
     if (this.hitboxImages.length > 0) {
       this.hitboxImages.forEach((img) => img.destroy())
     }
@@ -514,6 +531,9 @@ export class Ship {
   }
 
   setupWalls(colliderConfig: any) {
+    if (!colliderConfig) {
+      return
+    }
     const configs = colliderConfig[this.currDirection]
     configs.forEach((wall) => {
       const wallImg = this.addWall(
@@ -643,7 +663,9 @@ export class Ship {
     this.cannons.forEach((cannon) => {
       cannon.sprite.setDepth(this.hullSprite.depth + 1)
     })
-    this.sailsSprite.setDepth(this.cannons[0].sprite.depth + 1)
+    this.sailsSprite.setDepth(
+      this.cannons.length > 0 ? this.cannons[0].sprite.depth + 1 : this.hullSprite.depth + 1
+    )
   }
 
   playerEnterShip() {
@@ -899,6 +921,9 @@ export class Ship {
   }
 
   configureHullBody() {
+    if (!this.hullBodyConfig) {
+      return
+    }
     const config = this.hullBodyConfig[this.currDirection]
     this.hullSprite.body.setSize(
       this.hullSprite.width * config.width,
