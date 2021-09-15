@@ -1234,8 +1234,8 @@ export const ALL_SHIP_TYPES = [
     },
     animMapping: {
       moveSide: 'sailboat-move-side',
-      up: 'sailboat-move-up',
-      down: 'sailboat-move-down',
+      moveUp: 'sailboat-move-up',
+      moveDown: 'sailboat-move-down',
     },
     animFrameName: 'sailboat',
     animations: [
@@ -1319,10 +1319,26 @@ export const ALL_SHIP_TYPES = [
       },
     },
     ladderConfig: {
-      up: {},
-      down: {},
-      left: {},
-      right: {}
+      up: {
+        image: 'sailboat-ladder-down',
+        xOffset: 10,
+        yOffset: 10,
+      },
+      down: {
+        image: 'sailboat-ladder-down',
+        xOffset: 10,
+        yOffset: 10,
+      },
+      left: {
+        image: 'sailboat-ladder-side',
+        xOffset: -10,
+        yOffset: 75,
+      },
+      right: {
+        image: 'sailboat-ladder-side',
+        xOffset: -10,
+        yOffset: 85,
+      },
     },
     colliderConfig: {
       left: [],
