@@ -103,7 +103,7 @@ export class Ship {
     scene: Game,
     shipConfig: ShipConfig,
     position: { x: number; y: number },
-    currDirection: Direction = Direction.RIGHT
+    currDirection: Direction = Direction.DOWN
   ) {
     this.scene = scene
     const { x, y } = position
@@ -501,7 +501,6 @@ export class Ship {
         : this.currDirection
     const hullImage = hullImages[direction]
     const sailsImage = sailsImages[direction]
-    console.log(hullImage, sailsImage)
     this.hullSprite = this.scene.physics.add.sprite(x, y, hullImage)
     this.sailsSprite = this.scene.physics.add.sprite(x, y, sailsImage)
     this.hullSprite.scaleX = this.currDirection === Direction.RIGHT ? -1 : 1
@@ -664,7 +663,7 @@ export class Ship {
       cannon.sprite.setDepth(this.hullSprite.depth + 1)
     })
     this.sailsSprite.setDepth(
-      this.cannons.length > 0 ? this.cannons[0].sprite.depth + 1 : this.hullSprite.depth + 1
+      this.cannons.length > 0 ? this.cannons[0].sprite.depth + 1 : this.wheelSprite.depth + 1
     )
   }
 

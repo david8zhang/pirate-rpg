@@ -1273,23 +1273,23 @@ export const ALL_SHIP_TYPES = [
     wheelConfig: {
       up: {
         image: 'wheel-up',
-        xOffset: 0,
-        yOffset: 281,
+        xOffset: 3,
+        yOffset: 85,
       },
       left: {
         image: 'wheel-side',
-        xOffset: 233,
+        xOffset: 45,
         yOffset: 52,
       },
       right: {
         image: 'wheel-side',
-        xOffset: -50,
+        xOffset: -40,
         yOffset: 52,
       },
       down: {
         image: 'wheel-down',
-        xOffset: -16,
-        yOffset: -122,
+        xOffset: 2,
+        yOffset: 14,
       },
     },
     hullBodyConfig: {
@@ -1308,31 +1308,31 @@ export const ALL_SHIP_TYPES = [
       up: {
         xOffset: 0.35,
         yOffset: 0.3,
-        width: 0.3,
+        width: 0.5,
         height: 0.7,
       },
       down: {
-        xOffset: 0.33,
-        yOffset: 0.25,
-        width: 0.3,
-        height: 0.7,
+        xOffset: 0.3,
+        yOffset: 0.5,
+        width: 0.4,
+        height: 0.4,
       },
     },
     ladderConfig: {
       up: {
         image: 'sailboat-ladder-down',
-        xOffset: 10,
-        yOffset: 10,
+        xOffset: -24,
+        yOffset: 60,
       },
       down: {
         image: 'sailboat-ladder-down',
-        xOffset: 10,
-        yOffset: 10,
+        xOffset: -24,
+        yOffset: 60,
       },
       left: {
         image: 'sailboat-ladder-side',
-        xOffset: -10,
-        yOffset: 75,
+        xOffset: 20,
+        yOffset: 85,
       },
       right: {
         image: 'sailboat-ladder-side',
