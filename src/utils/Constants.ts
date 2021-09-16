@@ -1218,6 +1218,30 @@ export const ALL_SHIP_TYPES = [
         y: 150,
       },
     },
+    landDetectorConfig: {
+      directions: {
+        up: {
+          xOffset: 0,
+          yOffset: -100,
+        },
+        down: {
+          xOffset: 0,
+          yOffset: 300,
+        },
+        left: {
+          xOffset: -200,
+          yOffset: 200,
+        },
+        right: {
+          xOffset: 200,
+          yOffset: 200,
+        },
+      },
+      size: {
+        x: 100,
+        y: 100,
+      },
+    },
   },
   {
     defaultHealth: 500,
@@ -1391,16 +1415,16 @@ export const ALL_SHIP_TYPES = [
         {
           xOffset: -75,
           yOffset: -100,
-          height: 540,
-          width: 185,
+          height: 165,
+          width: 53,
         },
       ],
       down: [
         {
-          xOffset: -90,
-          yOffset: -160,
-          height: 540,
-          width: 185,
+          xOffset: -10,
+          yOffset: -5,
+          height: 165,
+          width: 53,
         },
       ],
     },
@@ -1427,6 +1451,30 @@ export const ALL_SHIP_TYPES = [
       right: [],
       up: [],
       down: [],
+    },
+    landDetectorConfig: {
+      size: {
+        x: 50,
+        y: 50,
+      },
+      directions: {
+        up: {
+          xOffset: 0,
+          yOffset: -100,
+        },
+        down: {
+          xOffset: 0,
+          yOffset: 123,
+        },
+        left: {
+          xOffset: -200,
+          yOffset: 200,
+        },
+        right: {
+          xOffset: 200,
+          yOffset: 200,
+        },
+      },
     },
   },
 ]

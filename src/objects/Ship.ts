@@ -63,6 +63,15 @@ export interface ShipConfig {
     up: any
     down: any
   }
+  landDetectorConfig: {
+    directions: {
+      up: any
+      down: any
+      right: any
+      left: any
+    }
+    size: any
+  }
 }
 
 export class Ship {
@@ -117,6 +126,7 @@ export class Ship {
       cannonConfig,
       hullBodyConfig,
       name,
+      landDetectorConfig,
     } = shipConfig
     this.shipType = name
     this.hullBodyConfig = hullBodyConfig
@@ -131,7 +141,7 @@ export class Ship {
     this.setupCannon(cannonConfig)
 
     this.shipConfig = shipConfig
-    this.setupLandDetector(x, y)
+    this.setupLandDetector(x, y, landDetectorConfig)
 
     this.hullSprite.setData('ref', this)
     this.health = shipConfig.defaultHealth
@@ -370,34 +380,16 @@ export class Ship {
     this.boardableShipOverlap = undefined
   }
 
-  setupLandDetector(x: number, y: number) {
+  setupLandDetector(x: number, y: number, landDetectorConfig: any) {
     if (!this.landDetectorImg) {
       this.landDetectorImg = this.scene.physics.add.image(x, y, '').setVisible(false)
       this.scene.physics.world.enableBody(this.landDetectorImg, Phaser.Physics.Arcade.DYNAMIC_BODY)
     }
-    this.landDetectorImg.body.setSize(100, 100)
-    switch (this.currDirection) {
-      case Direction.UP: {
-        this.landDetectorImg.y = this.hullSprite.y - 100
-        this.landDetectorImg.x = this.hullSprite.x
-        break
-      }
-      case Direction.DOWN: {
-        this.landDetectorImg.y = this.hullSprite.y + 300
-        this.landDetectorImg.x = this.hullSprite.x
-        break
-      }
-      case Direction.LEFT: {
-        this.landDetectorImg.x = this.hullSprite.x - 200
-        this.landDetectorImg.y = this.hullSprite.y + this.hullSprite.height / 4
-        break
-      }
-      case Direction.RIGHT: {
-        this.landDetectorImg.x = this.hullSprite.x + 200
-        this.landDetectorImg.y = this.hullSprite.y + this.hullSprite.height / 4
-        break
-      }
-    }
+    const { size, directions } = landDetectorConfig
+    this.landDetectorImg.body.setSize(size.x, size.y)
+    const config = directions[this.currDirection]
+    this.landDetectorImg.y = this.hullSprite.y + config.yOffset
+    this.landDetectorImg.x = this.hullSprite.x + config.xOffset
   }
 
   setupLadder(ladderConfig) {
@@ -669,7 +661,7 @@ export class Ship {
 
   playerEnterShip() {
     this.sailsSprite.setAlpha(0.5)
-    this.setupLandDetector(this.hullSprite.x, this.hullSprite.y)
+    this.setupLandDetector(this.hullSprite.x, this.hullSprite.y, this.shipConfig.landDetectorConfig)
     switch (this.currDirection) {
       case Direction.UP:
         this.scene.player.y = this.ladderSprite.y
@@ -785,8 +777,15 @@ export class Ship {
   }
 
   public moveShip(direction: Direction) {
-    const { sailsImages, wheelConfig, ladderConfig, cannonConfig, hitboxConfig, animMapping } =
-      this.shipConfig
+    const {
+      sailsImages,
+      wheelConfig,
+      ladderConfig,
+      cannonConfig,
+      hitboxConfig,
+      animMapping,
+      landDetectorConfig,
+    } = this.shipConfig
     const speed = this.moveSpeed
     this.setupHitbox(hitboxConfig)
     switch (direction) {
@@ -872,7 +871,7 @@ export class Ship {
     this.setupWheel(wheelConfig)
     this.setupLadder(ladderConfig)
     this.setupCannon(cannonConfig)
-    this.setupLandDetector(this.hullSprite.x, this.hullSprite.y)
+    this.setupLandDetector(this.hullSprite.x, this.hullSprite.y, landDetectorConfig)
     this.setupBoardableShipDetector(this.hullSprite.x, this.hullSprite.y)
   }
 

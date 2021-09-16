@@ -27,12 +27,16 @@ export class ItemFactory {
 
   changeItem(item: Item, itemType: string, x: number, y: number): void {
     const newItem = ALL_ITEMS.find((i) => i.name === itemType)
-    if (newItem && item && item.sprite) {
-      item.sprite.setTexture(newItem.image)
-      item.dropLength = newItem.stats && newItem.stats.dropLength ? newItem.stats.dropLength : 650
-      item.itemName = newItem.name
-      item.sprite.x = x
-      item.sprite.y = y
+    try {
+      if (newItem && item && item.sprite) {
+        item.sprite.setTexture(newItem.image)
+        item.dropLength = newItem.stats && newItem.stats.dropLength ? newItem.stats.dropLength : 650
+        item.itemName = newItem.name
+        item.sprite.x = x
+        item.sprite.y = y
+      }
+    } catch (err) {
+      console.log(err)
     }
   }
 
