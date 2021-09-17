@@ -72,6 +72,24 @@ export interface ShipConfig {
     }
     size: any
   }
+  exitPoint: {
+    up: {
+      xOffset: number
+      yOffset: number
+    }
+    down: {
+      xOffset: number
+      yOffset: number
+    }
+    left: {
+      xOffset: number
+      yOffset: number
+    }
+    right: {
+      xOffset: number
+      yOffset: number
+    }
+  }
 }
 
 export class Ship {
@@ -112,7 +130,7 @@ export class Ship {
     scene: Game,
     shipConfig: ShipConfig,
     position: { x: number; y: number },
-    currDirection: Direction = Direction.DOWN
+    currDirection: Direction = Direction.LEFT
   ) {
     this.scene = scene
     const { x, y } = position
@@ -686,24 +704,10 @@ export class Ship {
   }
 
   playerExitShip() {
-    switch (this.currDirection) {
-      case Direction.UP:
-        this.scene.player.y = this.ladderSprite.y
-        this.scene.player.x = this.ladderSprite.x + 20
-        break
-      case Direction.DOWN:
-        this.scene.player.y = this.ladderSprite.y
-        this.scene.player.x = this.ladderSprite.x - 20
-        break
-      case Direction.LEFT:
-        this.scene.player.y = this.ladderSprite.y + 50
-        this.scene.player.x = this.ladderSprite.x
-        break
-      case Direction.RIGHT:
-        this.scene.player.y = this.ladderSprite.y + 50
-        this.scene.player.x = this.ladderSprite.x
-        break
-    }
+    const { exitPoint } = this.shipConfig
+    const config = exitPoint[this.currDirection]
+    this.scene.player.y = this.hullSprite.y + config.yOffset
+    this.scene.player.x = this.hullSprite.x + config.xOffset
     this.disembarkPoint = null
     this.canExitShip = false
     this.scene.hoverText.hide()

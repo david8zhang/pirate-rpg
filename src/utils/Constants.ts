@@ -1242,6 +1242,24 @@ export const ALL_SHIP_TYPES = [
         y: 100,
       },
     },
+    exitPoint: {
+      up: {
+        xOffset: 0,
+        yOffset: 0,
+      },
+      left: {
+        xOffset: 0,
+        yOffset: 0,
+      },
+      right: {
+        xOffset: 0,
+        yOffset: 0,
+      },
+      down: {
+        xOffset: 0,
+        yOffset: 0,
+      },
+    },
   },
   {
     defaultHealth: 500,
@@ -1330,10 +1348,10 @@ export const ALL_SHIP_TYPES = [
         height: 0.4,
       },
       up: {
-        xOffset: 0.35,
-        yOffset: 0.3,
-        width: 0.5,
-        height: 0.7,
+        xOffset: 0.3,
+        yOffset: 0.5,
+        width: 0.4,
+        height: 0.4,
       },
       down: {
         xOffset: 0.3,
@@ -1373,48 +1391,24 @@ export const ALL_SHIP_TYPES = [
     hitboxConfig: {
       left: [
         {
-          xOffset: -37,
-          yOffset: 80,
-          width: 264,
-          height: 231,
-        },
-        {
-          xOffset: -140,
-          yOffset: 50,
-          width: 100,
-          height: 251,
-        },
-        {
-          xOffset: 205,
-          yOffset: 50,
-          width: 100,
-          height: 251,
+          xOffset: -60,
+          yOffset: 40,
+          height: 75,
+          width: 165,
         },
       ],
       right: [
         {
-          xOffset: -270,
-          yOffset: 50,
-          width: 100,
-          height: 231,
-        },
-        {
-          xOffset: -171,
-          yOffset: 80,
-          width: 264,
-          height: 231,
-        },
-        {
-          xOffset: 75,
-          yOffset: 50,
-          width: 100,
-          height: 251,
+          xOffset: -60,
+          yOffset: 40,
+          height: 75,
+          width: 165,
         },
       ],
       up: [
         {
-          xOffset: -75,
-          yOffset: -100,
+          xOffset: -10,
+          yOffset: 0,
           height: 165,
           width: 53,
         },
@@ -1430,20 +1424,20 @@ export const ALL_SHIP_TYPES = [
     },
     centerOffset: {
       right: {
-        x: -57,
-        y: 153,
+        x: 8,
+        y: 54,
       },
       up: {
-        x: 2,
-        y: 149,
+        x: 3,
+        y: 57,
       },
       down: {
-        x: -13,
-        y: 30,
+        x: 1,
+        y: 60,
       },
       left: {
-        x: 75,
-        y: 150,
+        x: 9,
+        y: 55,
       },
     },
     cannonConfig: {
@@ -1459,21 +1453,39 @@ export const ALL_SHIP_TYPES = [
       },
       directions: {
         up: {
-          xOffset: 0,
-          yOffset: -100,
+          xOffset: 2,
+          yOffset: -5,
         },
         down: {
           xOffset: 0,
           yOffset: 123,
         },
         left: {
-          xOffset: -200,
-          yOffset: 200,
+          xOffset: -60,
+          yOffset: 50,
         },
         right: {
-          xOffset: 200,
-          yOffset: 200,
+          xOffset: 50,
+          yOffset: 50,
         },
+      },
+    },
+    exitPoint: {
+      up: {
+        xOffset: 0,
+        yOffset: 0,
+      },
+      left: {
+        xOffset: 0,
+        yOffset: 0,
+      },
+      right: {
+        xOffset: 0,
+        yOffset: 0,
+      },
+      down: {
+        xOffset: 0,
+        yOffset: 0,
       },
     },
   },

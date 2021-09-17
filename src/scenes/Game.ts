@@ -1,7 +1,7 @@
 import Phaser, { Physics } from 'phaser'
 import { ALL_EFFECTS, ALL_HARVESTABLES, ALL_SHIP_TYPES, Constants } from '../utils/Constants'
 import '../characters/Player'
-import Player from '../characters/Player'
+import Player, { Direction } from '../characters/Player'
 import { createCharacterAnims } from '../anims/CharacterAnims'
 import { Mob } from '../mobs/Mob'
 import { Item } from '~/objects/Item'
@@ -318,8 +318,15 @@ export default class Game extends Phaser.Scene {
 
   initShips() {
     this.ships = this.physics.add.group({ classType: Ship })
-    const ship2 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1200, y: 500 })
+    const ship2 = new Ship(this, ALL_SHIP_TYPES[1], { x: 1200, y: 500 }, Direction.LEFT)
+    const ship3 = new Ship(this, ALL_SHIP_TYPES[1], { x: 1400, y: 500 }, Direction.RIGHT)
+    const ship4 = new Ship(this, ALL_SHIP_TYPES[1], { x: 1200, y: 750 }, Direction.UP)
+    const ship5 = new Ship(this, ALL_SHIP_TYPES[1], { x: 1400, y: 750 }, Direction.DOWN)
     this.ships.add(ship2.hullSprite)
+    this.ships.add(ship3.hullSprite)
+    this.ships.add(ship4.hullSprite)
+    this.ships.add(ship5.hullSprite)
+
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
       const ship: Ship = obj1.getData('ref')
       const projectile: Projectile = obj2.getData('ref')
