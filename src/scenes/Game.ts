@@ -327,6 +327,9 @@ export default class Game extends Phaser.Scene {
     this.ships.add(ship4.hullSprite)
     this.ships.add(ship5.hullSprite)
 
+    const ship6 = new Ship(this, ALL_SHIP_TYPES[0], { x: 500, y: 1000 }, Direction.LEFT)
+    this.ships.add(ship6.hullSprite)
+
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
       const ship: Ship = obj1.getData('ref')
       const projectile: Projectile = obj2.getData('ref')
@@ -555,10 +558,10 @@ export default class Game extends Phaser.Scene {
               this.items.add(item.sprite)
             }
           } else {
-            const offscreenItem = getExistingOffscreenItem()
+            const offscreenItem = getExistingOffscreenItem() as Item
             if (offscreenItem) {
+              offscreenItem.changeConfig(type, x, y)
               delete this.itemPool[`${offscreenItem.sprite.x},${offscreenItem.sprite.y}`]
-              ItemFactory.instance.changeItem(offscreenItem, type, x, y)
               this.itemPool[`${x},${y}`] = offscreenItem
             }
           }
