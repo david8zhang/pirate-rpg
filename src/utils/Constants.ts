@@ -1242,24 +1242,6 @@ export const ALL_SHIP_TYPES = [
         y: 100,
       },
     },
-    exitPoint: {
-      up: {
-        xOffset: 0,
-        yOffset: 0,
-      },
-      left: {
-        xOffset: 0,
-        yOffset: 0,
-      },
-      right: {
-        xOffset: 0,
-        yOffset: 0,
-      },
-      down: {
-        xOffset: 0,
-        yOffset: 0,
-      },
-    },
   },
   {
     defaultHealth: 500,
@@ -1316,7 +1298,7 @@ export const ALL_SHIP_TYPES = [
       up: {
         image: 'wheel-up',
         xOffset: 3,
-        yOffset: 85,
+        yOffset: 80,
       },
       left: {
         image: 'wheel-side',
@@ -1362,8 +1344,8 @@ export const ALL_SHIP_TYPES = [
     },
     ladderConfig: {
       up: {
-        image: 'sailboat-ladder-down',
-        xOffset: -24,
+        image: 'sailboat-ladder-up',
+        xOffset: 28,
         yOffset: 60,
       },
       down: {
@@ -1421,9 +1403,120 @@ export const ALL_SHIP_TYPES = [
           height: 2,
         },
       ],
-      right: [],
-      up: [],
-      down: [],
+      right: [
+        {
+          xOffset: -8,
+          yOffset: 75,
+          width: 140,
+          height: 2,
+        },
+        {
+          xOffset: -8,
+          yOffset: 27,
+          width: 140,
+          height: 2,
+        },
+        {
+          xOffset: 65,
+          yOffset: 63,
+          width: 10,
+          height: 2,
+        },
+        {
+          xOffset: 65,
+          yOffset: 39,
+          width: 10,
+          height: 2,
+        },
+        {
+          xOffset: 73,
+          yOffset: 53,
+          width: 2,
+          height: 20,
+        },
+        {
+          xOffset: -77,
+          yOffset: 52,
+          height: 50,
+          width: 2,
+        },
+      ],
+      up: [
+        {
+          xOffset: 27,
+          yOffset: 62,
+          width: 2,
+          height: 120,
+        },
+        {
+          xOffset: -22,
+          yOffset: 62,
+          width: 2,
+          height: 120,
+        },
+        {
+          xOffset: 3,
+          yOffset: 120,
+          width: 50,
+          height: 2,
+        },
+        {
+          xOffset: -12,
+          yOffset: -4,
+          width: 2,
+          height: 10,
+        },
+        {
+          xOffset: 15,
+          yOffset: -4,
+          width: 2,
+          height: 10,
+        },
+        {
+          xOffset: 2,
+          yOffset: -11,
+          width: 20,
+          height: 2,
+        },
+      ],
+      down: [
+        {
+          xOffset: 3,
+          yOffset: -19,
+          width: 50,
+          height: 2,
+        },
+        {
+          xOffset: -22,
+          yOffset: 50,
+          height: 130,
+          width: 2,
+        },
+        {
+          xOffset: 27,
+          yOffset: 50,
+          height: 130,
+          width: 2,
+        },
+        {
+          xOffset: -10,
+          yOffset: 123,
+          height: 10,
+          width: 2,
+        },
+        {
+          xOffset: 14,
+          yOffset: 123,
+          height: 10,
+          width: 2,
+        },
+        {
+          xOffset: 2,
+          yOffset: 130,
+          height: 2,
+          width: 20,
+        },
+      ],
     },
     hitboxConfig: {
       left: [
@@ -1461,8 +1554,8 @@ export const ALL_SHIP_TYPES = [
     },
     centerOffset: {
       right: {
-        x: 8,
-        y: 54,
+        x: -6,
+        y: 51,
       },
       up: {
         x: 3,
@@ -1505,24 +1598,6 @@ export const ALL_SHIP_TYPES = [
           xOffset: 50,
           yOffset: 50,
         },
-      },
-    },
-    exitPoint: {
-      up: {
-        xOffset: 0,
-        yOffset: 0,
-      },
-      left: {
-        xOffset: 0,
-        yOffset: 0,
-      },
-      right: {
-        xOffset: 0,
-        yOffset: 0,
-      },
-      down: {
-        xOffset: 0,
-        yOffset: 0,
       },
     },
   },

@@ -318,17 +318,8 @@ export default class Game extends Phaser.Scene {
 
   initShips() {
     this.ships = this.physics.add.group({ classType: Ship })
-    const ship2 = new Ship(this, ALL_SHIP_TYPES[1], { x: 1200, y: 500 }, Direction.LEFT)
-    // const ship3 = new Ship(this, ALL_SHIP_TYPES[1], { x: 1400, y: 500 }, Direction.RIGHT)
-    // const ship4 = new Ship(this, ALL_SHIP_TYPES[1], { x: 1200, y: 750 }, Direction.UP)
-    // const ship5 = new Ship(this, ALL_SHIP_TYPES[1], { x: 1400, y: 750 }, Direction.DOWN)
-    this.ships.add(ship2.hullSprite)
-    // this.ships.add(ship3.hullSprite)
-    // this.ships.add(ship4.hullSprite)
-    // this.ships.add(ship5.hullSprite)
-
-    // const ship6 = new Ship(this, ALL_SHIP_TYPES[0], { x: 500, y: 1000 }, Direction.LEFT)
-    // this.ships.add(ship6.hullSprite)
+    const ship1 = new Ship(this, ALL_SHIP_TYPES[1], { x: 1200, y: 500 }, Direction.UP)
+    this.ships.add(ship1.hullSprite)
 
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
       const ship: Ship = obj1.getData('ref')

@@ -72,24 +72,6 @@ export interface ShipConfig {
     }
     size: any
   }
-  exitPoint: {
-    up: {
-      xOffset: number
-      yOffset: number
-    }
-    down: {
-      xOffset: number
-      yOffset: number
-    }
-    left: {
-      xOffset: number
-      yOffset: number
-    }
-    right: {
-      xOffset: number
-      yOffset: number
-    }
-  }
 }
 
 export class Ship {
@@ -680,34 +662,33 @@ export class Ship {
   playerEnterShip() {
     this.sailsSprite.setAlpha(0.5)
     this.setupLandDetector(this.hullSprite.x, this.hullSprite.y, this.shipConfig.landDetectorConfig)
-    switch (this.currDirection) {
-      case Direction.UP:
-        this.scene.player.y = this.ladderSprite.y
-        this.scene.player.x = this.ladderSprite.x - 20
-        break
-      case Direction.DOWN:
-        this.scene.player.y = this.ladderSprite.y
-        this.scene.player.x = this.ladderSprite.x + 20
-        break
-      case Direction.LEFT:
-        this.scene.player.y = this.ladderSprite.y - 50
-        this.scene.player.x = this.ladderSprite.x
-        break
-      case Direction.RIGHT:
-        this.scene.player.y = this.ladderSprite.y - 50
-        this.scene.player.x = this.ladderSprite.x
-        break
-    }
+    const { x, y } = this.shipConfig.centerOffset[this.currDirection]
+    this.scene.player.x = this.hullSprite.x + x
+    this.scene.player.y = this.hullSprite.y + y
     this.embarkPoint = null
     this.canEnterShip = false
     this.scene.hoverText.hide()
   }
 
   playerExitShip() {
-    const { exitPoint } = this.shipConfig
-    const config = exitPoint[this.currDirection]
-    this.scene.player.y = this.hullSprite.y + config.yOffset
-    this.scene.player.x = this.hullSprite.x + config.xOffset
+    switch (this.currDirection) {
+      case Direction.UP:
+        this.scene.player.y = this.ladderSprite.y
+        this.scene.player.x = this.ladderSprite.x + 20
+        break
+      case Direction.DOWN:
+        this.scene.player.y = this.ladderSprite.y
+        this.scene.player.x = this.ladderSprite.x - 20
+        break
+      case Direction.LEFT:
+        this.scene.player.y = this.ladderSprite.y + 50
+        this.scene.player.x = this.ladderSprite.x
+        break
+      case Direction.RIGHT:
+        this.scene.player.y = this.ladderSprite.y + 50
+        this.scene.player.x = this.ladderSprite.x
+        break
+    }
     this.disembarkPoint = null
     this.canExitShip = false
     this.scene.hoverText.hide()
@@ -749,22 +730,22 @@ export class Ship {
   setPlayerAtWheelPosition() {
     switch (this.currDirection) {
       case Direction.RIGHT: {
-        this.scene.player.x = this.wheelSprite.x - this.wheelSprite.width
+        this.scene.player.x = this.wheelSprite.x - 10
         this.scene.player.y = this.wheelSprite.y - 5
         break
       }
       case Direction.LEFT:
-        this.scene.player.x = this.wheelSprite.x + this.wheelSprite.width
+        this.scene.player.x = this.wheelSprite.x + 10
         this.scene.player.y = this.wheelSprite.y - 5
         break
       case Direction.UP: {
         this.scene.player.x = this.wheelSprite.x
-        this.scene.player.y = this.wheelSprite.y + this.wheelSprite.height / 2
+        this.scene.player.y = this.wheelSprite.y + 5
         break
       }
       case Direction.DOWN: {
         this.scene.player.x = this.wheelSprite.x
-        this.scene.player.y = this.wheelSprite.y - this.wheelSprite.height
+        this.scene.player.y = this.wheelSprite.y - 5
         break
       }
     }

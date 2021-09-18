@@ -7,7 +7,6 @@ A top down pirate themed survival/crafting game build using Phaser 3
 ## Must haves for Alpha release:
 
 - Bigger map with more islands and more tiles
-- Sail boat
 - More weapons
   - Stone sword
   - Cutlass
