@@ -1383,7 +1383,44 @@ export const ALL_SHIP_TYPES = [
       },
     },
     colliderConfig: {
-      left: [],
+      left: [
+        {
+          xOffset: 14,
+          yOffset: 77,
+          width: 140,
+          height: 2,
+        },
+        {
+          xOffset: 14,
+          yOffset: 27,
+          width: 140,
+          height: 2,
+        },
+        {
+          xOffset: 77,
+          yOffset: 47,
+          height: 50,
+          width: 2,
+        },
+        {
+          xOffset: -64,
+          yOffset: 64,
+          width: 10,
+          height: 2,
+        },
+        {
+          xOffset: -70,
+          yOffset: 52,
+          width: 2,
+          height: 20,
+        },
+        {
+          xOffset: -64,
+          yOffset: 41,
+          width: 10,
+          height: 2,
+        },
+      ],
       right: [],
       up: [],
       down: [],
