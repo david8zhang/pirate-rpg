@@ -386,6 +386,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         }
       }
 
+      // Handle if the double clicked item was a transport
       if (item.type === ItemTypes.transport) {
         if (!this.transportToBePlaced) {
           this.transportToBePlaced = new Placeable(this.scene as Game, item, ['Ocean'])
@@ -394,6 +395,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           this.transportToBePlaced.setShowPreview(false)
           this.transportToBePlaced.destroy()
           this.transportToBePlaced = null
+        }
+      }
+
+      // Handle if the double clicked item was a consumable
+      if (item.type === ItemTypes.consumable) {
+        this.removeItem(item.name, 1)
+        const { effects } = item
+        if (effects.health) {
+          this.setCurrHealth(Math.min(this.currHealth + effects.health, this.maxHealth))
         }
       }
     }

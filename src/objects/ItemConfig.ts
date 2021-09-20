@@ -5,6 +5,7 @@ export enum ItemTypes {
   particle = 'PARTICLE',
   structure = 'STRUCTURE',
   transport = 'TRANSPORT',
+  consumable = 'CONSUMABLE',
 }
 
 export interface ItemConfig {
@@ -15,5 +16,6 @@ export interface ItemConfig {
   inWorldImage?: string
   inWorldImageSet?: any
   recipe?: any
+  effects?: any
   stats?: any
 }

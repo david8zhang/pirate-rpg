@@ -2190,7 +2190,10 @@ export const ALL_ITEMS: ItemConfig[] = [
   {
     name: 'Coconut',
     image: 'coconut',
-    type: ItemTypes.resource,
+    type: ItemTypes.consumable,
+    effects: {
+      health: 20,
+    },
     description: 'A tasty coconut',
   },
   {

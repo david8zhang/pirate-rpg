@@ -318,7 +318,7 @@ export default class Game extends Phaser.Scene {
 
   initShips() {
     this.ships = this.physics.add.group({ classType: Ship })
-    const ship1 = new Ship(this, ALL_SHIP_TYPES[1], { x: 1200, y: 500 }, Direction.UP)
+    const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1200, y: 500 }, Direction.UP)
     this.ships.add(ship1.hullSprite)
 
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
@@ -516,6 +516,40 @@ export default class Game extends Phaser.Scene {
       this.structures.destroy()
       this.structures = null
     }
+    this.clearItemPool()
+    this.clearMobPool()
+    this.clearHarvestablesPool()
+    this.clearSpawnerPool()
+  }
+
+  clearSpawnerPool() {
+    Object.keys(this.spawnersPool).forEach((key) => {
+      this.spawnersPool[key].destroy()
+    })
+    this.spawnersPool = {}
+  }
+
+  clearHarvestablesPool() {
+    this.harvestableList.forEach((h) => {
+      h.destroy()
+    })
+    this.harvestableList = []
+  }
+
+  clearMobPool() {
+    this.mobPool.forEach((m) => {
+      m.destroy()
+    })
+    this.mobPool = []
+  }
+
+  clearItemPool() {
+    Object.keys(this.itemPool).forEach((key) => {
+      if (this.itemPool[key]) {
+        this.itemPool[key].destroy()
+      }
+    })
+    this.itemPool = {}
   }
 
   lazyLoadItems() {
@@ -552,7 +586,7 @@ export default class Game extends Phaser.Scene {
             const offscreenItem = getExistingOffscreenItem() as Item
             if (offscreenItem) {
               offscreenItem.changeConfig(type, x, y)
-              delete this.itemPool[`${offscreenItem.sprite.x},${offscreenItem.sprite.y}`]
+              this.itemPool[`${offscreenItem.sprite.x},${offscreenItem.sprite.y}`] = null
               this.itemPool[`${x},${y}`] = offscreenItem
             }
           }

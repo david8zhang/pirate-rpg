@@ -1,6 +1,5 @@
 import { Constants } from '~/utils/Constants'
 import Game from '../scenes/Game'
-import { ItemConfig } from './ItemConfig'
 
 export class Item {
   itemName: string = ''
@@ -79,11 +78,15 @@ export class Item {
   changeConfig(itemType: string, x: number, y: number) {
     const newItem = Constants.getItem(itemType)
     if (newItem) {
-      this.sprite.setTexture(newItem.image)
-      this.dropLength = newItem.stats && newItem.stats.dropLength ? newItem.stats.dropLength : 650
-      this.itemName = newItem.name
-      this.sprite.x = x
-      this.sprite.y = y
+      try {
+        this.sprite.setTexture(newItem.image)
+        this.dropLength = newItem.stats && newItem.stats.dropLength ? newItem.stats.dropLength : 650
+        this.itemName = newItem.name
+        this.sprite.x = x
+        this.sprite.y = y
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 }

@@ -127,13 +127,13 @@ export class Harvestable {
     this.health -= damage
     this.health = Math.max(0, this.health)
     if (this.health === 0) {
-      this.onDestroy()
+      this.destroy()
     }
     this.scene.cameras.main.shake(Constants.ATTACK_DURATION / 2, 0.002)
   }
 
   // Items to be dropped when broken completely
-  onDestroy() {
+  destroy() {
     const { onDestroyDrops } = this.config
     if (onDestroyDrops) {
       onDestroyDrops.forEach((drop) => {

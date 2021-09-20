@@ -21,25 +21,33 @@ export class MobSpawner {
   }
   private mobLimit: number
   private spawnedMobs: Mob[] = []
+  private spawnMobsEvent: Phaser.Time.TimerEvent
+  private clearDeadMobsEvent: Phaser.Time.TimerEvent
+
   constructor(scene: Game, mobSpawnerConfig: MobSpawnerConfig) {
     this.scene = scene
     this.mobConfig = mobSpawnerConfig.mobConfig
     this.spawnPos = mobSpawnerConfig.position
     this.mobLimit = mobSpawnerConfig.mobLimit
 
-    this.scene.time.addEvent({
+    this.spawnMobsEvent = this.scene.time.addEvent({
       callback: this.spawnMobs,
       callbackScope: this,
       delay: mobSpawnerConfig.spawnDelay,
       loop: true,
     })
 
-    this.scene.time.addEvent({
+    this.clearDeadMobsEvent = this.scene.time.addEvent({
       callback: this.clearDeadMobs,
       callbackScope: this,
       delay: 20000,
       loop: true,
     })
+  }
+
+  destroy() {
+    this.spawnMobsEvent.destroy()
+    this.clearDeadMobsEvent.destroy()
   }
 
   spawnMobs() {
