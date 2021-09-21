@@ -13,6 +13,7 @@ const config: any = {
   width: 600,
   height: 375,
   parent: 'phaser',
+  pixelArt: true,
   dom: {
     createContainer: true,
   },
@@ -20,7 +21,7 @@ const config: any = {
     default: 'arcade',
     arcade: {
       gravity: { x: 0, y: 0 },
-      // debug: true,
+      debug: true,
     },
   },
   plugins: {

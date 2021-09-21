@@ -2247,4 +2247,18 @@ export const ALL_ITEMS: ItemConfig[] = [
     },
     type: ItemTypes.weapon,
   },
+  {
+    name: 'Sword',
+    inWorldImage: 'sword',
+    image: 'sword-inventory',
+    description: 'Is the pen actually mightier?',
+    recipe: {
+      Stick: 1,
+    },
+    stats: {
+      damage: 35,
+      attackRange: 30,
+    },
+    type: ItemTypes.weapon,
+  },
 ]

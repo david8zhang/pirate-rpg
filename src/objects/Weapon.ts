@@ -28,7 +28,6 @@ export class Weapon {
     this.sprite = this.scene.add.sprite(player.x, player.y, '')
     this.sprite.setVisible(false)
     this.sprite.setOrigin(0.5)
-    this.sprite.setAngle(30)
     this.sprite.setName('Weapon')
     this.weaponTexture = weaponConfig.texture
     this.damage = weaponConfig.damage
@@ -187,7 +186,7 @@ export class Weapon {
       case Direction.RIGHT: {
         switch (currAnimFrame.textureFrame) {
           case '1.png': {
-            return 120
+            return 180
           }
           case '3.png': {
             return 60
@@ -213,7 +212,7 @@ export class Weapon {
     }
   }
 
-  // Refactor this
+  // Refactor thiss
   getPlayerHandPosition() {
     const currAnimFrame = this.player.anims.currentFrame
     switch (this.player.direction) {
