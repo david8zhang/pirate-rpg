@@ -186,7 +186,7 @@ export class Weapon {
       case Direction.RIGHT: {
         switch (currAnimFrame.textureFrame) {
           case '1.png': {
-            return 180
+            return 120
           }
           case '3.png': {
             return 60

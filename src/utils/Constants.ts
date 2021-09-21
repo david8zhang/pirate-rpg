@@ -2257,7 +2257,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     },
     stats: {
       damage: 35,
-      attackRange: 30,
+      'attack range': 30,
     },
     type: ItemTypes.weapon,
   },

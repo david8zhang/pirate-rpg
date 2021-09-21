@@ -4,11 +4,12 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Bugs to fix
 
+- Weapon hitboxes when hitting multiple enemies is not being deleted
+
 ## Must haves for Alpha release:
 
 - Bigger map with more islands and more tiles
 - More weapons
-  - Stone sword
   - Cutlass
   - Dagger
 - Effects
