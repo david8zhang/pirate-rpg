@@ -366,7 +366,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         }
         this.removeItem(item.name, 1)
         const weapon = new Weapon(this.scene, this, {
-          texture: item.inWorldImage as string,
+          textureSet: item.inWorldImageSet,
           damage: item.stats.damage as number,
           attackRange: item.stats['attack range'] as number,
           name: item.name,
@@ -451,7 +451,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       const item = ItemFactory.instance.getItemType(name)
       if (item) {
         const weapon = new Weapon(this.scene, this, {
-          texture: item.inWorldImage as string,
+          textureSet: item.inWorldImageSet,
           damage: item.stats.damage as number,
           attackRange: item.stats['attack range'] as number,
           name: item.name,

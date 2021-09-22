@@ -2,7 +2,12 @@ import { Constants } from '~/utils/Constants'
 import Player, { Direction } from '../characters/Player'
 
 export interface WeaponConfig {
-  texture: string
+  textureSet: {
+    up: string
+    down: string
+    left: string
+    right: string
+  }
   damage: number
   attackRange: number
   name: string
@@ -14,7 +19,7 @@ export class Weapon {
   public sprite: Phaser.GameObjects.Sprite
   public isEquipped: boolean = false
   public damage: number = 10
-  public weaponTexture: string
+  public textureSet: any
   public attackRange: number
   public name: string
 
@@ -29,7 +34,7 @@ export class Weapon {
     this.sprite.setVisible(false)
     this.sprite.setOrigin(0.5)
     this.sprite.setName('Weapon')
-    this.weaponTexture = weaponConfig.texture
+    this.textureSet = weaponConfig.textureSet
     this.damage = weaponConfig.damage
     this.attackRange = weaponConfig.attackRange
     this.name = weaponConfig.name
@@ -45,7 +50,7 @@ export class Weapon {
 
   setWeaponConfig(weaponConfig: WeaponConfig) {
     this.attackRange = weaponConfig.attackRange
-    this.weaponTexture = weaponConfig.texture
+    this.textureSet = weaponConfig.textureSet
     this.damage = weaponConfig.damage
   }
 
@@ -61,13 +66,15 @@ export class Weapon {
   show() {
     if (!this.isAttacking && this.isEquipped) {
       const handPosition = this.getPlayerHandPosition()
-      const rotationAngle = this.getWeaponRotationAngle()
       const weaponDepth = this.getWeaponDepth()
+      const rotationAngle = this.getWeaponRotationAngle()
       const scaleY = this.getWeaponScaleY()
 
       this.sprite.setX(handPosition.x)
       this.sprite.setY(handPosition.y)
-      this.sprite.setTexture(this.weaponTexture)
+
+      const currWeaponTexture = this.textureSet[this.player.direction]
+      this.sprite.setTexture(currWeaponTexture)
       this.sprite.setAngle(rotationAngle)
       this.sprite.setDepth(weaponDepth)
       this.sprite.scaleY = scaleY
@@ -149,7 +156,7 @@ export class Weapon {
           this.scene.tweens.add({
             targets: this.sprite,
             x: '-=20',
-            angle: isUp ? '-=150' : '+=150',
+            angle: isUp ? '-=200' : '+=150',
             duration: Constants.WEAPON_SWING_DURATION,
             onComplete: () => {
               this.scene.time.delayedCall(100, () => {
@@ -208,36 +215,36 @@ export class Weapon {
         }
       }
       default:
-        return 30
+        return 0
     }
   }
 
-  // Refactor thiss
+  // Refactor this
   getPlayerHandPosition() {
     const currAnimFrame = this.player.anims.currentFrame
     switch (this.player.direction) {
       case Direction.UP: {
         switch (currAnimFrame.textureFrame) {
           case '20.png': {
-            return { x: this.player.x + 15, y: this.player.y - 1 }
+            return { x: this.player.x + 5, y: this.player.y - 1 }
           }
           case '22.png': {
-            return { x: this.player.x + 15, y: this.player.y + 1 }
+            return { x: this.player.x + 5, y: this.player.y + 1 }
           }
           default:
-            return { x: this.player.x + 15, y: this.player.y }
+            return { x: this.player.x + 5, y: this.player.y }
         }
       }
       case Direction.DOWN: {
         switch (currAnimFrame.textureFrame) {
           case '6.png': {
-            return { x: this.player.x + 15, y: this.player.y - 1 }
+            return { x: this.player.x + 5, y: this.player.y - 1 }
           }
           case '7.png': {
-            return { x: this.player.x + 15, y: this.player.y + 1 }
+            return { x: this.player.x + 5, y: this.player.y + 1 }
           }
           default:
-            return { x: this.player.x + 15, y: this.player.y }
+            return { x: this.player.x + 5, y: this.player.y }
         }
       }
       case Direction.RIGHT: {

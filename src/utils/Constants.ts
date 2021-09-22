@@ -2234,7 +2234,12 @@ export const ALL_ITEMS: ItemConfig[] = [
   },
   {
     name: 'Stone Axe',
-    inWorldImage: 'axe',
+    inWorldImageSet: {
+      up: 'axe-diag',
+      down: 'axe-diag',
+      left: 'axe',
+      right: 'axe',
+    },
     image: 'axe-inventory',
     description: 'And my axe!',
     recipe: {
@@ -2249,7 +2254,12 @@ export const ALL_ITEMS: ItemConfig[] = [
   },
   {
     name: 'Sword',
-    inWorldImage: 'sword',
+    inWorldImageSet: {
+      up: 'sword-diag',
+      down: 'sword-diag',
+      left: 'sword',
+      right: 'sword',
+    },
     image: 'sword-inventory',
     description: 'Is the pen actually mightier?',
     recipe: {
