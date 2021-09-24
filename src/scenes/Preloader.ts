@@ -126,6 +126,8 @@ export default class Preloader extends Phaser.Scene {
       'effects/cannon/cannon-flash.png',
       'effects/cannon/cannon-flash.json'
     )
+    this.load.image('slash-1', 'weapons/animation-effects/slash-1.png')
+    this.load.image('slash-2', 'weapons/animation-effects/slash-2.png')
   }
   create() {
     this.scene.start('menu-ui')

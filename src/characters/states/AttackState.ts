@@ -22,7 +22,7 @@ export class AttackState extends State {
   adjustColliderOffset(player: Player) {
     const weapon = player.getWeapon()
     if (weapon && weapon.isEquipped) {
-      weapon.tweenWeaponAttack()
+      weapon.playAttackAnimation()
     }
     switch (player.direction) {
       case Direction.DOWN: {

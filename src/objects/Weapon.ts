@@ -22,15 +22,18 @@ export class Weapon {
   public textureSet: any
   public attackRange: number
   public name: string
+  public attackEffectSprite: Phaser.GameObjects.Sprite
 
   // Hitbox image
   public hitboxImage: Phaser.Physics.Arcade.Image
-  private isAttacking: boolean = false
+  public isAttacking: boolean = false
 
   constructor(scene: Phaser.Scene, player: Player, weaponConfig: WeaponConfig) {
     this.scene = scene
     this.player = player
     this.sprite = this.scene.add.sprite(player.x, player.y, '')
+    this.attackEffectSprite = this.scene.add.sprite(player.x, player.y, '')
+    this.attackEffectSprite.setVisible(false)
     this.sprite.setVisible(false)
     this.sprite.setOrigin(0.5)
     this.sprite.setName('Weapon')
@@ -60,6 +63,7 @@ export class Weapon {
 
   destroy() {
     this.sprite.destroy()
+    this.attackEffectSprite.destroy()
     this.hitboxImage.destroy()
   }
 
@@ -112,64 +116,117 @@ export class Weapon {
     }
   }
 
-  public tweenWeaponAttack() {
-    this.activateWeaponHitbox()
-    if (!this.isAttacking) {
-      this.isAttacking = true
-      this.sprite.setOrigin(0.5, 1)
-      switch (this.player.direction) {
-        case Direction.LEFT:
-        case Direction.RIGHT: {
-          const isLeft = this.player.direction === Direction.LEFT
-          this.sprite.setY(this.player.y + 5)
-          this.sprite.setX(isLeft ? this.player.x - 15 : this.player.x + 15)
-          this.sprite.setScale(1.25)
-          this.scene.tweens.add({
-            targets: this.sprite,
-            y: {
-              from: this.player.y - 10,
-              to: this.player.y + 10,
-            },
-            angle: {
-              from: isLeft ? 20 : -20,
-              to: isLeft ? -140 : 140,
-            },
-            duration: Constants.WEAPON_SWING_DURATION,
-            onComplete: () => {
-              this.scene.time.delayedCall(100, () => {
-                this.sprite.setScale(1)
-                this.sprite.setOrigin(0.5)
-                this.isAttacking = false
-                this.hitboxImage.body.enable = false
-              })
-            },
-          })
-          break
-        }
-        case Direction.UP:
-        case Direction.DOWN: {
-          const isUp = this.player.direction === Direction.UP
-          this.sprite.setY(isUp ? this.player.y - 10 : this.player.y + 10)
-          this.sprite.setX(this.player.x + 10)
-          this.sprite.setScale(1.25)
-          this.sprite.setAngle(90)
-          this.scene.tweens.add({
-            targets: this.sprite,
-            x: '-=20',
-            angle: isUp ? '-=200' : '+=150',
-            duration: Constants.WEAPON_SWING_DURATION,
-            onComplete: () => {
-              this.scene.time.delayedCall(100, () => {
-                this.sprite.setScale(1)
-                this.sprite.setOrigin(0.5)
-                this.isAttacking = false
-                this.hitboxImage.body.enable = false
-              })
-            },
-          })
-          break
-        }
+  playAnimationFrames(frames: any[], frameIndex: number, onCompletedFn: Function) {
+    if (frameIndex == frames.length) {
+      this.scene.time.delayedCall(100, onCompletedFn)
+      return
+    }
+    const frame = frames[frameIndex]
+    this.scene.time.delayedCall(frame.time, () => {
+      const xPos = this.player.x + frame.x
+      const yPos = this.player.y + frame.y
+      this.sprite.setAngle(frame.angle)
+      this.sprite.setTexture(frame.texture)
+      this.sprite.setPosition(xPos, yPos)
+      if (frame.onShowFn) {
+        frame.onShowFn()
       }
+      this.playAnimationFrames(frames, frameIndex + 1, onCompletedFn)
+    })
+  }
+
+  playAttackAnimation() {
+    if (this.isAttacking) {
+      return
+    }
+    this.isAttacking = true
+    const sideTexture = this.textureSet[Direction.LEFT]
+    const diagTexture = this.textureSet[Direction.DOWN]
+    console.log('Went here')
+
+    switch (this.player.direction) {
+      case Direction.LEFT: {
+        break
+      }
+      case Direction.RIGHT: {
+        const frames = [
+          {
+            texture: sideTexture,
+            x: 10,
+            y: -10,
+            time: 75,
+            angle: 0,
+          },
+          {
+            texture: sideTexture,
+            x: 15,
+            y: -15,
+            time: 75,
+            angle: 0,
+          },
+          {
+            texture: diagTexture,
+            x: 10,
+            y: -10,
+            time: 75,
+            angle: 0,
+          },
+          {
+            texture: sideTexture,
+            x: 10,
+            y: 30,
+            time: 75,
+            angle: 180,
+            onShowFn: () => {
+              this.activateWeaponHitbox()
+              this.attackEffectSprite.setVisible(true)
+              this.attackEffectSprite.setTexture('slash-1')
+              this.attackEffectSprite.setPosition(this.sprite.x + 15, this.sprite.y - 15)
+            },
+          },
+          {
+            texture: sideTexture,
+            x: 10,
+            y: 35,
+            time: 75,
+            angle: 180,
+            onShowFn: () => {
+              this.attackEffectSprite.setVisible(true)
+              this.attackEffectSprite.setTexture('slash-2')
+              this.attackEffectSprite.setPosition(this.sprite.x + 15, this.sprite.y - 15)
+            },
+          },
+          {
+            texture: sideTexture,
+            x: 10,
+            y: 35,
+            time: 75,
+            angle: 180,
+            onShowFn: () => {
+              this.attackEffectSprite.setVisible(false)
+            },
+          },
+        ]
+        this.playAnimationFrames(frames, 0, () => {
+          this.isAttacking = false
+          this.hitboxImage.body.enable = false
+        })
+        break
+      }
+      case Direction.DOWN: {
+        break
+      }
+      case Direction.UP: {
+        break
+      }
+    }
+
+    this.sprite.scaleY = 1
+
+    if (this.player.direction == Direction.LEFT) {
+      this.sprite.scaleX = -1
+    } else {
+      this.sprite.scaleX = 1
     }
   }
 

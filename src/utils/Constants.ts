@@ -16,7 +16,7 @@ export class Constants {
     return 400
   }
   static get WEAPON_SWING_DURATION() {
-    return 300
+    return 575
   }
 
   static getMob(mobName: string) {

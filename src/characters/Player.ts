@@ -114,7 +114,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.ship) {
       return this.ship.isAnchored
     }
-    return !this.currTransport
+    if (this.equipment.weapon) {
+      return !this.equipment.weapon.isAttacking
+    }
+    if (this.currTransport) {
+      return false
+    }
+    return true
   }
 
   configureKeyPresses() {
