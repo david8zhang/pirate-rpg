@@ -142,10 +142,74 @@ export class Weapon {
     this.isAttacking = true
     const sideTexture = this.textureSet[Direction.LEFT]
     const diagTexture = this.textureSet[Direction.DOWN]
-    console.log('Went here')
 
     switch (this.player.direction) {
       case Direction.LEFT: {
+        this.attackEffectSprite.scaleX = -1
+        const frames = [
+          {
+            texture: sideTexture,
+            x: -10,
+            y: -10,
+            time: 3000,
+            angle: 0,
+          },
+          {
+            texture: sideTexture,
+            x: -15,
+            y: -15,
+            time: 3000,
+            angle: 0,
+          },
+          {
+            texture: diagTexture,
+            x: -10,
+            y: -10,
+            time: 75,
+            angle: 0,
+          },
+          {
+            texture: sideTexture,
+            x: -10,
+            y: 30,
+            time: 75,
+            angle: 180,
+            onShowFn: () => {
+              this.activateWeaponHitbox()
+              this.attackEffectSprite.setVisible(true)
+              this.attackEffectSprite.setTexture('slash-1')
+              this.attackEffectSprite.setPosition(this.sprite.x - 15, this.sprite.y - 15)
+            },
+          },
+          {
+            texture: sideTexture,
+            x: -10,
+            y: 35,
+            time: 75,
+            angle: 180,
+            onShowFn: () => {
+              this.attackEffectSprite.setVisible(true)
+              this.attackEffectSprite.setTexture('slash-2')
+              this.attackEffectSprite.setPosition(this.sprite.x - 15, this.sprite.y - 15)
+            },
+          },
+          {
+            texture: sideTexture,
+            x: -10,
+            y: 35,
+            time: 75,
+            angle: 180,
+            onShowFn: () => {
+              this.attackEffectSprite.setVisible(false)
+            },
+          },
+        ]
+        this.playAnimationFrames(frames, 0, () => {
+          this.isAttacking = false
+          this.hitboxImage.body.enable = false
+          this.attackEffectSprite.scaleX = 1
+          this.sprite.scaleX = 1
+        })
         break
       }
       case Direction.RIGHT: {
@@ -214,9 +278,139 @@ export class Weapon {
         break
       }
       case Direction.DOWN: {
+        this.attackEffectSprite.setAngle(90)
+        const frames = [
+          {
+            texture: sideTexture,
+            x: 20,
+            y: 10,
+            time: 75,
+            angle: 90,
+          },
+          {
+            texture: sideTexture,
+            x: 30,
+            y: 5,
+            time: 75,
+            angle: 90,
+          },
+          {
+            texture: diagTexture,
+            x: 20,
+            y: 20,
+            time: 75,
+            angle: 90,
+          },
+          {
+            texture: sideTexture,
+            x: -30,
+            y: 5,
+            time: 75,
+            angle: 270,
+            onShowFn: () => {
+              this.activateWeaponHitbox()
+              this.sprite.scaleX = -1
+              this.attackEffectSprite.setVisible(true)
+              this.attackEffectSprite.setTexture('slash-1')
+              this.attackEffectSprite.setPosition(this.sprite.x + 15, this.sprite.y + 15)
+            },
+          },
+          {
+            texture: sideTexture,
+            x: -30,
+            y: 5,
+            time: 75,
+            angle: 270,
+            onShowFn: () => {
+              this.attackEffectSprite.setVisible(true)
+              this.attackEffectSprite.setTexture('slash-2')
+              this.attackEffectSprite.setPosition(this.sprite.x + 15, this.sprite.y + 15)
+            },
+          },
+          {
+            texture: sideTexture,
+            x: -30,
+            y: 5,
+            time: 75,
+            angle: 270,
+            onShowFn: () => {
+              this.attackEffectSprite.setVisible(false)
+              this.attackEffectSprite.setAngle(0)
+            },
+          },
+        ]
+        this.playAnimationFrames(frames, 0, () => {
+          this.isAttacking = false
+          this.hitboxImage.body.enable = false
+        })
         break
       }
       case Direction.UP: {
+        this.attackEffectSprite.setAngle(270)
+        const frames = [
+          {
+            texture: sideTexture,
+            x: -30,
+            y: 5,
+            time: 75,
+            angle: 270,
+          },
+          {
+            texture: sideTexture,
+            x: -35,
+            y: 10,
+            time: 75,
+            angle: 270,
+          },
+          {
+            texture: diagTexture,
+            x: -20,
+            y: 5,
+            time: 75,
+            angle: 270,
+          },
+          {
+            texture: sideTexture,
+            x: 30,
+            y: 10,
+            time: 75,
+            angle: 90,
+            onShowFn: () => {
+              this.activateWeaponHitbox()
+              this.attackEffectSprite.setVisible(true)
+              this.attackEffectSprite.setTexture('slash-1')
+              this.attackEffectSprite.setPosition(this.sprite.x - 30, this.sprite.y - 30)
+            },
+          },
+          {
+            texture: sideTexture,
+            x: 30,
+            y: 10,
+            time: 75,
+            angle: 90,
+            onShowFn: () => {
+              this.attackEffectSprite.setVisible(true)
+              this.attackEffectSprite.setTexture('slash-2')
+              this.attackEffectSprite.setPosition(this.sprite.x - 30, this.sprite.y - 30)
+            },
+          },
+          {
+            texture: sideTexture,
+            x: 20,
+            y: 10,
+            time: 75,
+            angle: 90,
+            onShowFn: () => {
+              this.attackEffectSprite.setVisible(false)
+              this.attackEffectSprite.setAngle(0)
+            },
+          },
+        ]
+        this.playAnimationFrames(frames, 0, () => {
+          this.sprite.scaleX = 1
+          this.isAttacking = false
+          this.hitboxImage.body.enable = false
+        })
         break
       }
     }
