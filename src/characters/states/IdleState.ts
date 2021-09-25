@@ -31,7 +31,7 @@ export class IdleState extends State {
         player.placeTransport()
         return
       }
-      if (player.getCurrState() !== 'attack') {
+      if (player.getCurrState() !== 'attack' && player.canAttack()) {
         this.stateMachine.transition('attack')
         return
       }

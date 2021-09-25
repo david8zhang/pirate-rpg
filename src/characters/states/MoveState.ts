@@ -13,7 +13,7 @@ export class MoveState extends State {
     // If the player is currently in a transport, let the transport override movement key mappings
     if (player.canMove()) {
       const speed = 100
-      if (spaceDown) {
+      if (spaceDown && player.canAttack()) {
         this.stateMachine.transition('attack')
         return
       }

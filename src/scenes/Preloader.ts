@@ -42,12 +42,12 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('palm-frond', 'items/palm-frond.png')
 
     // Weapons
-    this.load.image('axe', 'weapons/axe.png')
-    this.load.image('axe-diag', 'weapons/axe-diag.png')
-    this.load.image('axe-inventory', 'weapons/axe-inventory.png')
-    this.load.image('sword', 'weapons/sword.png')
-    this.load.image('sword-diag', 'weapons/sword-diag.png')
-    this.load.image('sword-inventory', 'weapons/sword-inventory.png')
+    this.load.image('axe', 'weapons/axe/axe.png')
+    this.load.image('axe-diag', 'weapons/axe/axe-diag.png')
+    this.load.image('axe-inventory', 'weapons/axe/axe-inventory.png')
+    this.load.image('sword', 'weapons/sword/sword.png')
+    this.load.image('sword-diag', 'weapons/sword/sword-diag.png')
+    this.load.image('sword-inventory', 'weapons/sword/sword-inventory.png')
 
     // Mobs
     this.load.atlas(
@@ -126,8 +126,8 @@ export default class Preloader extends Phaser.Scene {
       'effects/cannon/cannon-flash.png',
       'effects/cannon/cannon-flash.json'
     )
-    this.load.image('slash-1', 'weapons/animation-effects/slash-1.png')
-    this.load.image('slash-2', 'weapons/animation-effects/slash-2.png')
+    this.load.image('slash-1', 'weapons/effects/slash-1.png')
+    this.load.image('slash-2', 'weapons/effects/slash-2.png')
   }
   create() {
     this.scene.start('menu-ui')

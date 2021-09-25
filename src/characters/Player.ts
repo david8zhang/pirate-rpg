@@ -228,6 +228,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     return this.stateMachine.getState()
   }
 
+  canAttack(): boolean {
+    if (this.equipment.weapon) {
+      return !this.equipment.weapon.isAttacking
+    }
+    return true
+  }
+
   placeTransport() {
     if (this.transportToBePlaced) {
       const didPlaceTransport = this.transportToBePlaced?.placeItem(PlaceableType.transport)

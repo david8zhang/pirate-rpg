@@ -72,6 +72,7 @@ export class Weapon {
       const handPosition = this.getPlayerHandPosition()
       const weaponDepth = this.getWeaponDepth()
       const rotationAngle = this.getWeaponRotationAngle()
+      const scaleX = this.getWeaponScaleX()
       const scaleY = this.getWeaponScaleY()
 
       this.sprite.setX(handPosition.x)
@@ -82,6 +83,7 @@ export class Weapon {
       this.sprite.setAngle(rotationAngle)
       this.sprite.setDepth(weaponDepth)
       this.sprite.scaleY = scaleY
+      this.sprite.scaleX = scaleX
     }
     this.sprite.setVisible(this.isEquipped)
   }
@@ -145,20 +147,25 @@ export class Weapon {
 
     switch (this.player.direction) {
       case Direction.LEFT: {
+        this.sprite.scaleY = 1
+        this.sprite.scaleX = -1
         this.attackEffectSprite.scaleX = -1
+        this.sprite.setAngle(0)
+        this.sprite.x = this.player.x - 10
+        this.sprite.y = this.player.y - 10
         const frames = [
           {
             texture: sideTexture,
             x: -10,
             y: -10,
-            time: 3000,
+            time: 0,
             angle: 0,
           },
           {
             texture: sideTexture,
             x: -15,
             y: -15,
-            time: 3000,
+            time: 75,
             angle: 0,
           },
           {
@@ -208,17 +215,17 @@ export class Weapon {
           this.isAttacking = false
           this.hitboxImage.body.enable = false
           this.attackEffectSprite.scaleX = 1
-          this.sprite.scaleX = 1
         })
         break
       }
       case Direction.RIGHT: {
+        this.sprite.scaleX = 1
         const frames = [
           {
             texture: sideTexture,
             x: 10,
             y: -10,
-            time: 75,
+            time: 0,
             angle: 0,
           },
           {
@@ -284,7 +291,7 @@ export class Weapon {
             texture: sideTexture,
             x: 20,
             y: 10,
-            time: 75,
+            time: 0,
             angle: 90,
           },
           {
@@ -342,17 +349,21 @@ export class Weapon {
         this.playAnimationFrames(frames, 0, () => {
           this.isAttacking = false
           this.hitboxImage.body.enable = false
+          this.attackEffectSprite.setAngle(0)
         })
         break
       }
       case Direction.UP: {
-        this.attackEffectSprite.setAngle(270)
+        this.attackEffectSprite.scaleY = -1
+        this.attackEffectSprite.scaleX = -1
+        this.attackEffectSprite.setAngle(90)
+        this.sprite.scaleX = 1
         const frames = [
           {
             texture: sideTexture,
             x: -30,
             y: 5,
-            time: 75,
+            time: 0,
             angle: 270,
           },
           {
@@ -403,24 +414,17 @@ export class Weapon {
             onShowFn: () => {
               this.attackEffectSprite.setVisible(false)
               this.attackEffectSprite.setAngle(0)
+              this.attackEffectSprite.scaleX = 1
+              this.attackEffectSprite.scaleY = 1
             },
           },
         ]
         this.playAnimationFrames(frames, 0, () => {
-          this.sprite.scaleX = 1
           this.isAttacking = false
           this.hitboxImage.body.enable = false
         })
         break
       }
-    }
-
-    this.sprite.scaleY = 1
-
-    if (this.player.direction == Direction.LEFT) {
-      this.sprite.scaleX = -1
-    } else {
-      this.sprite.scaleX = 1
     }
   }
 
@@ -433,6 +437,13 @@ export class Weapon {
 
   getWeaponScaleY() {
     if (this.player.direction === Direction.LEFT) {
+      return -1
+    }
+    return 1
+  }
+
+  getWeaponScaleX() {
+    if (this.player.direction === Direction.UP) {
       return -1
     }
     return 1
@@ -477,13 +488,13 @@ export class Weapon {
       case Direction.UP: {
         switch (currAnimFrame.textureFrame) {
           case '20.png': {
-            return { x: this.player.x + 5, y: this.player.y - 1 }
+            return { x: this.player.x - 5, y: this.player.y - 1 }
           }
           case '22.png': {
-            return { x: this.player.x + 5, y: this.player.y + 1 }
+            return { x: this.player.x - 5, y: this.player.y + 1 }
           }
           default:
-            return { x: this.player.x + 5, y: this.player.y }
+            return { x: this.player.x - 5, y: this.player.y }
         }
       }
       case Direction.DOWN: {
