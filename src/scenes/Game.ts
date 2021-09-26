@@ -201,6 +201,8 @@ export default class Game extends Phaser.Scene {
     this.initProjectiles()
     this.initShips()
     this.loadSaveFile()
+
+    const boulder = this.physics.add.image(300, 300, 'boulder')
   }
 
   initTilemap() {
