@@ -31,6 +31,12 @@ export class Constants {
     return ALL_SHIP_TYPES.find((shipConfig) => shipConfig.name === shipName)
   }
 
+  static getHarvestable(harvestableName: string) {
+    return ALL_HARVESTABLES.find(
+      (harvestableConfig) => harvestableConfig.name.toLowerCase() == harvestableName.toLowerCase()
+    )
+  }
+
   static getRandomNum(min: number, max: number) {
     return Math.floor(Math.random() * (max - min) + min)
   }
@@ -1605,7 +1611,7 @@ export const ALL_SHIP_TYPES = [
 
 export const ALL_HARVESTABLES = [
   {
-    name: 'PalmTree',
+    name: 'Palm-Tree',
     texture: 'palm-trees',
     health: 100,
     defaultFrame: 1,
@@ -1630,6 +1636,26 @@ export const ALL_HARVESTABLES = [
         y: 53,
       },
     },
+    particleType: 'wood-particle',
+  },
+  {
+    name: 'Boulder',
+    texture: 'boulder',
+    health: 200,
+    onDestroyDrops: [
+      {
+        name: 'Rock',
+        quantity: 5,
+      },
+    ],
+    bodyResize: {
+      width: 0.5,
+      height: 0.3,
+      offset: {
+        y: 40,
+      },
+    },
+    particleType: 'wood-particle',
   },
 ]
 

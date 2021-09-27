@@ -201,8 +201,6 @@ export default class Game extends Phaser.Scene {
     this.initProjectiles()
     this.initShips()
     this.loadSaveFile()
-
-    const boulder = this.physics.add.image(300, 300, 'boulder')
   }
 
   initTilemap() {
@@ -239,9 +237,9 @@ export default class Game extends Phaser.Scene {
         return {
           x: obj.x! + obj.width! * 0.5,
           y: obj.y! - obj.height! * 0.5,
+          type: obj.type,
         }
       })
-    const palmTreeConfig = ALL_HARVESTABLES[0]
 
     const isInHarvestablesList = (x: number, y: number) => {
       return (
@@ -255,26 +253,29 @@ export default class Game extends Phaser.Scene {
         return !this.cameras.main.worldView.contains(h.sprite.x, h.sprite.y)
       })
     }
-    locations.forEach(({ x, y }) => {
+    locations.forEach(({ x, y, type }) => {
       if (this.cameras.main.worldView.contains(x, y)) {
         if (!isInHarvestablesList(x, y)) {
+          const harvestableConfig = Constants.getHarvestable(type)
           if (this.harvestableList.length >= 50) {
             const recyclableHarvestable = getAvailableHarvestable()
-            if (recyclableHarvestable) {
+            if (recyclableHarvestable && harvestableConfig) {
               recyclableHarvestable.initNewConfig({
-                ...palmTreeConfig,
+                ...harvestableConfig,
                 xPos: x,
                 yPos: y,
               })
             }
           } else {
-            const harvestable = new Harvestable(this, {
-              ...palmTreeConfig,
-              xPos: x,
-              yPos: y,
-            })
-            this.harvestableList.push(harvestable)
-            this.harvestables.add(harvestable.sprite)
+            if (harvestableConfig) {
+              const harvestable = new Harvestable(this, {
+                ...harvestableConfig,
+                xPos: x,
+                yPos: y,
+              })
+              this.harvestableList.push(harvestable)
+              this.harvestables.add(harvestable.sprite)
+            }
           }
         }
       }
@@ -283,7 +284,6 @@ export default class Game extends Phaser.Scene {
 
   initHarvestables() {
     // initialize harvestables (things that drop stuff when the player hits them)
-    const harvestablesLayer = this.map.getObjectLayer('Harvestables')
     this.harvestables = this.physics.add.group({
       classType: Harvestable,
     })
@@ -293,7 +293,7 @@ export default class Game extends Phaser.Scene {
       this.player,
       (obj1, obj2) => {
         const harvestableRef: Harvestable = obj2.getData('ref')
-        harvestableRef.handlePlantPlayerCollision()
+        harvestableRef.handlePlayerHarvestableCollision()
       }
     )
   }
@@ -320,7 +320,7 @@ export default class Game extends Phaser.Scene {
 
   initShips() {
     this.ships = this.physics.add.group({ classType: Ship })
-    const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 1200, y: 500 }, Direction.UP)
+    const ship1 = new Ship(this, ALL_SHIP_TYPES[1], { x: 1200, y: 500 }, Direction.LEFT)
     this.ships.add(ship1.hullSprite)
 
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
@@ -351,7 +351,7 @@ export default class Game extends Phaser.Scene {
       weapon ? weapon.hitboxImage : this.player,
       (obj1, obj2) => {
         const harvestableRef: Harvestable = obj2.getData('ref')
-        harvestableRef.handlePlantPlayerCollision()
+        harvestableRef.handlePlayerHarvestableCollision()
       }
     )
     this.playerMobsCollider = this.physics.add.collider(

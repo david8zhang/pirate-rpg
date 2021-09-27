@@ -25,6 +25,7 @@ export interface HarvestableConfig {
     quantity: number
   }[]
   onDropItem?: Function
+  particleType?: string
 }
 
 export class Harvestable {
@@ -93,12 +94,19 @@ export class Harvestable {
     }
   }
 
-  handlePlantPlayerCollision() {
+  handlePlayerHarvestableCollision() {
     if (this.scene.player.getCurrState() === 'attack' && !this.isAttacked) {
       const weapon = this.scene.player.getWeapon()
       this.takeDamage(weapon ? weapon.damage : Player.UNARMED_DAMAGE)
 
-      ParticleSpawner.instance.spawnParticle('wood-particle', this.sprite.x, this.sprite.y, 5)
+      if (this.config.particleType) {
+        ParticleSpawner.instance.spawnParticle(
+          this.config.particleType,
+          this.sprite.x,
+          this.sprite.y,
+          5
+        )
+      }
       this.isAttacked = true
       this.scene.time.delayedCall(Constants.ATTACK_DURATION, () => {
         this.isAttacked = false
