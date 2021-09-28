@@ -239,5 +239,10 @@ export class MeleeAttackBehavior extends AttackBehavior {
     this.isActive = true
   }
 
-  destroy() {}
+  destroy() {
+    this.stop()
+    if (this.hitboxImage) {
+      this.hitboxImage.destroy()
+    }
+  }
 }

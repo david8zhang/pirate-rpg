@@ -25,7 +25,10 @@ export interface HarvestableConfig {
     quantity: number
   }[]
   onDropItem?: Function
-  particleType?: string
+  particle?: {
+    type: string
+    dropLength: number
+  }
 }
 
 export class Harvestable {
@@ -98,13 +101,13 @@ export class Harvestable {
     if (this.scene.player.getCurrState() === 'attack' && !this.isAttacked) {
       const weapon = this.scene.player.getWeapon()
       this.takeDamage(weapon ? weapon.damage : Player.UNARMED_DAMAGE)
-
-      if (this.config.particleType) {
+      if (this.config.particle) {
         ParticleSpawner.instance.spawnParticle(
-          this.config.particleType,
+          this.config.particle.type,
           this.sprite.x,
           this.sprite.y,
-          5
+          5,
+          this.config.particle.dropLength
         )
       }
       this.isAttacked = true

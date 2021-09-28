@@ -1636,7 +1636,10 @@ export const ALL_HARVESTABLES = [
         y: 53,
       },
     },
-    particleType: 'wood-particle',
+    particle: {
+      type: 'wood-particle',
+      dropLength: 500,
+    },
   },
   {
     name: 'Boulder',
@@ -1655,7 +1658,10 @@ export const ALL_HARVESTABLES = [
         y: 40,
       },
     },
-    particleType: 'wood-particle',
+    particle: {
+      type: 'stone-particle',
+      dropLength: 550,
+    },
   },
 ]
 

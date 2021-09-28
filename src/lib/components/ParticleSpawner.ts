@@ -15,11 +15,12 @@ export class ParticleSpawner {
     x: number,
     y: number,
     quantity: number,
+    dropLength?: number,
     onDestroy?: Function
   ) {
     let items: Item[] = []
     for (let i = 0; i < quantity; i++) {
-      const item = new Item(this.scene, x, y, particleName, 500, true)
+      const item = new Item(this.scene, x, y, particleName, dropLength || 500, true)
       item.drop()
       items.push(item)
     }

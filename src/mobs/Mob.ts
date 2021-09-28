@@ -201,7 +201,7 @@ export class Mob {
   die(): void {
     const gameScene = this.scene as Game
     gameScene.removeMobFromPool(this)
-    this.activeBehavior.stop()
+    this.activeBehavior.destroy()
     this.sprite.on('animationcomplete', () => {
       this.scene.time.delayedCall(300, () => {
         this.sprite.destroy()

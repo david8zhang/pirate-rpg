@@ -53,7 +53,8 @@ export class EnemyShip extends Ship {
           this.scene,
           this.mobInControl?.sprite.x,
           this.mobInControl?.sprite.y,
-          this.mobInControl.mobConfig
+          this.mobInControl.mobConfig,
+          this.mobInControl?.spawner
         )
         ship.addPassenger(newMob)
         this.scene.addMob(newMob)

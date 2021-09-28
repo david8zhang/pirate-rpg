@@ -23,6 +23,7 @@ export default class Preloader extends Phaser.Scene {
     // Particles
     this.load.image('wood-particle', 'particles/wood-particle.png')
     this.load.image('blood-particle', 'particles/blood-particle.png')
+    this.load.image('stone-particle', 'particles/stone-particle.png')
 
     // Tiles
     this.load.image('beach-tiles', 'tiles/beach-tiles.png')

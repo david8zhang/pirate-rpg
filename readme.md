@@ -4,11 +4,10 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Bugs to fix
 
-- Weapon hitboxes when hitting multiple enemies is not being deleted
+- Some hitboxes when hitting multiple enemies is not being deleted
 
 ## Easy wins
 
-- exclude slash effect animation from depth sorting
 - change particle type for when boulders are hit
 - add new resource type for boulder
 

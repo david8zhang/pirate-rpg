@@ -46,7 +46,7 @@ export class Item {
     // Launch coconut in random direction
     this.sprite.setName('InAir') // InAir tells depth sorting logic to ignore this sprite
     this.sprite.setGravityY(500)
-    this.sprite.setDepth(100)
+    this.sprite.setDepth(10000)
     const randLaunchAngle = Math.random() * -60 + -60
     this.scene.physics.velocityFromAngle(
       randLaunchAngle,

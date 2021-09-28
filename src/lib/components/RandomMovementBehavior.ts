@@ -105,6 +105,7 @@ export class RandomMovementBehavior extends MovementBehavior {
   }
 
   destroy() {
+    this.stop()
     this.moveEvent.destroy()
   }
 

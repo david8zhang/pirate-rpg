@@ -34,6 +34,8 @@ export class Weapon {
     this.sprite = this.scene.add.sprite(player.x, player.y, '')
     this.attackEffectSprite = this.scene.add.sprite(player.x, player.y, '')
     this.attackEffectSprite.setVisible(false)
+    this.attackEffectSprite.setName('Effect')
+    this.attackEffectSprite.setDepth(1000)
     this.sprite.setVisible(false)
     this.sprite.setOrigin(0.5)
     this.sprite.setName('Weapon')
