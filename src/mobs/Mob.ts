@@ -1,4 +1,3 @@
-import { DamageNumber } from '../ui/DamageNumber'
 import { RandomMovementBehavior } from '../lib/components/RandomMovementBehavior'
 import { HealthBar } from '../ui/HealthBar'
 import { Behavior, Direction } from '../lib/components/Behavior'
@@ -10,6 +9,7 @@ import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
 import { SailingBehavior } from '~/lib/components/SailingBehavior'
 import { EnemyShip } from '~/objects/EnemyShip'
 import { MobSpawner } from './MobSpawner'
+import { UINumber } from '../ui/UINumber'
 
 export interface MobAnimation {
   key: string
@@ -297,7 +297,7 @@ export class Mob {
     this.health = Math.max(0, this.health)
     this.healthBar.decrease(damage)
     this.healthBar.setVisible(true)
-    DamageNumber.createDamageNumber(damage, this.scene, this.sprite.x, this.sprite.y - 10)
+    UINumber.createNumber(`-${damage}`, this.scene, this.sprite.x, this.sprite.y - 10)
     if (!this.isAggro && this.mobConfig.aggroBehavior) {
       const behaviorMapping = {
         Melee: MeleeAttackBehavior,

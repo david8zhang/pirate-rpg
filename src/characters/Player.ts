@@ -6,7 +6,7 @@ import Game from '../scenes/Game'
 import { StateMachine } from '../lib/StateMachine'
 import UIScene from '../scenes/GameUIScene'
 import { Item } from '../objects/Item'
-import { DamageNumber } from '../ui/DamageNumber'
+import { UINumber } from '../ui/UINumber'
 import { Weapon } from '../objects/Weapon'
 import { ItemTypes, ItemConfig } from '../objects/ItemConfig'
 import { ItemFactory } from '../objects/ItemFactory'
@@ -285,7 +285,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.scene.time.delayedCall(200, () => {
       this.setTint(0xffffff)
     })
-    DamageNumber.createDamageNumber(damage, this.scene, this.x, this.y)
+    UINumber.createNumber(`-${damage}`, this.scene, this.x, this.y)
     UIScene.instance.playerHealth.takeDamage(damage)
   }
 
@@ -415,6 +415,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       if (item.type === ItemTypes.consumable) {
         this.removeItem(item.name, 1)
         const { effects } = item
+        UINumber.createNumber(`+${effects.health}`, this.scene, this.x, this.y, 'green')
         if (effects.health) {
           this.setCurrHealth(Math.min(this.currHealth + effects.health, this.maxHealth))
         }

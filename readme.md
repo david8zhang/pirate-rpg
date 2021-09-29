@@ -8,12 +8,14 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Easy wins
 
-- change particle type for when boulders are hit
-- add new resource type for boulder
+- Add new resource type: Iron, which drops from boulders
+- Add numbers whenever a healing item is used
+- Update text for Coconut to include information about how much HP is healed
 
 ## Must haves for Alpha release:
 
-- Bigger map with more islands and more tiles
+- Zoned map
+  - transition between one map and another
 - Effects
   - ship damage
   - ship explosion (death)

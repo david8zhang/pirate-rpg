@@ -1,10 +1,10 @@
-export class DamageNumber {
-  static createDamageNumber(damageNumber: number, scene: Phaser.Scene, x: number, y: number) {
+export class UINumber {
+  static createNumber(str: string, scene: Phaser.Scene, x: number, y: number, color?: string) {
     const text = scene.add
-      .text(x, y, `-${damageNumber}`, {
+      .text(x, y, str, {
         fontSize: '10px',
         fontFamily: 'GraphicPixel',
-        color: 'red',
+        color: color || 'red',
       })
       .setOrigin(0.5)
       .setDepth(5000)
