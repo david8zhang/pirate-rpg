@@ -20,15 +20,17 @@ export class Constants {
   }
 
   static getMob(mobName: string) {
-    return ALL_MOBS.find((mobConfig) => mobConfig.name === mobName)
+    return ALL_MOBS.find((mobConfig) => mobConfig.name.toLowerCase() === mobName.toLowerCase())
   }
 
   static getItem(itemName: string) {
-    return ALL_ITEMS.find((itemConfig) => itemConfig.name === itemName)
+    return ALL_ITEMS.find((itemConfig) => itemConfig.name.toLowerCase() === itemName.toLowerCase())
   }
 
   static getShip(shipName: string) {
-    return ALL_SHIP_TYPES.find((shipConfig) => shipConfig.name === shipName)
+    return ALL_SHIP_TYPES.find(
+      (shipConfig) => shipConfig.name.toLowerCase() === shipName.toLowerCase()
+    )
   }
 
   static getHarvestable(harvestableName: string) {
@@ -2226,7 +2228,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     effects: {
       health: 20,
     },
-    description: 'A tasty coconut',
+    description: 'A tasty coconut. Heals 20 HP',
   },
   {
     name: 'Palm Frond',

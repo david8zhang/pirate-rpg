@@ -58,32 +58,34 @@ export class MobSpawner {
     ) {
       return
     }
-    const randXOffset = Constants.getRandomNum(-10, 10)
-    const randYOffset = Constants.getRandomNum(-10, 10)
-    let recycledMob: Mob | null = null
-    if (this.scene.isMobPoolFull()) {
-      recycledMob = this.scene.getAvailableMobInPool()
-      if (recycledMob) {
-        recycledMob.initNewConfig(
+    try {
+      const randXOffset = Constants.getRandomNum(-10, 10)
+      const randYOffset = Constants.getRandomNum(-10, 10)
+      let recycledMob: Mob | null = null
+      if (this.scene.isMobPoolFull()) {
+        recycledMob = this.scene.getAvailableMobInPool()
+        if (recycledMob) {
+          recycledMob.initNewConfig(
+            this.spawnPos.x + randXOffset,
+            this.spawnPos.y + randYOffset,
+            this.mobConfig,
+            this
+          )
+          recycledMob.removeFromPrevSpawner()
+        }
+      } else {
+        recycledMob = new Mob(
+          this.scene,
           this.spawnPos.x + randXOffset,
           this.spawnPos.y + randYOffset,
           this.mobConfig,
           this
         )
-        recycledMob.removeFromPrevSpawner()
+        this.scene.addMobToPool(recycledMob)
+        this.spawnedMobs.push(recycledMob)
+        this.scene.addMob(recycledMob)
       }
-    } else {
-      recycledMob = new Mob(
-        this.scene,
-        this.spawnPos.x + randXOffset,
-        this.spawnPos.y + randYOffset,
-        this.mobConfig,
-        this
-      )
-      this.scene.addMobToPool(recycledMob)
-      this.spawnedMobs.push(recycledMob)
-      this.scene.addMob(recycledMob)
-    }
+    } catch (err) {}
   }
 
   removeMobFromSpawnerList(mob: Mob) {

@@ -9,8 +9,8 @@ A top down pirate themed survival/crafting game build using Phaser 3
 ## Easy wins
 
 - Add new resource type: Iron, which drops from boulders
-- Add numbers whenever a healing item is used
-- Update text for Coconut to include information about how much HP is healed
+- Add "proximity items", like sticks that spawn near trees or rocks that spawn near boulders
+- Make tools that can be crafted from sticks / wood
 
 ## Must haves for Alpha release:
 
