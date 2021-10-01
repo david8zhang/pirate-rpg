@@ -2305,4 +2305,23 @@ export const ALL_ITEMS: ItemConfig[] = [
     },
     type: ItemTypes.weapon,
   },
+  {
+    name: 'Wood Club',
+    inWorldImageSet: {
+      up: 'wood-club-diag',
+      down: 'wood-club-diag',
+      left: 'wood-club',
+      right: 'wood-club',
+    },
+    image: 'wood-club-inventory',
+    description: 'Speak softly and carry a big stick',
+    recipe: {
+      Wood: 2,
+    },
+    stats: {
+      damage: 10,
+      'attack range': 15,
+    },
+    type: ItemTypes.weapon,
+  },
 ]

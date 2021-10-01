@@ -50,6 +50,9 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('sword', 'weapons/sword/sword.png')
     this.load.image('sword-diag', 'weapons/sword/sword-diag.png')
     this.load.image('sword-inventory', 'weapons/sword/sword-inventory.png')
+    this.load.image('wood-club', 'weapons/wood-club/wood-club.png')
+    this.load.image('wood-club-diag', 'weapons/wood-club/wood-club-diag.png')
+    this.load.image('wood-club-inventory', 'weapons/wood-club/wood-club-inventory.png')
 
     // Mobs
     this.load.atlas(
