@@ -131,8 +131,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         // Pick up items that user is hovering over
         if (keycode.code === 'KeyE') {
           if (this.itemOnHover) {
-            this.itemOnHover.sprite.destroy()
             this.addItem(this.itemOnHover)
+            this.itemOnHover.sprite.destroy()
             this.itemOnHover = null
           }
 

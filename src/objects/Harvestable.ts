@@ -2,6 +2,7 @@ import Player, { Direction } from '~/characters/Player'
 import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
 import Game from '~/scenes/Game'
 import { Constants } from '~/utils/Constants'
+import { Item } from './Item'
 import { ItemFactory } from './ItemFactory'
 
 export interface HarvestableConfig {
@@ -29,6 +30,10 @@ export interface HarvestableConfig {
     type: string
     dropLength: number
   }
+  proximityItems: {
+    name: string
+    max: number
+  }[]
 }
 
 export class Harvestable {
@@ -67,6 +72,28 @@ export class Harvestable {
     }
     this.sprite.setData('ref', this)
     this.sprite.setPushable(false)
+    this.initProximityItems()
+  }
+
+  initProximityItems() {
+    this.config.proximityItems.forEach((config) => {
+      const numItems = Constants.getRandomNum(0, config.max)
+      for (let i = 0; i < numItems; i++) {
+        const itemConfig = Constants.getItem(config.name)
+        if (itemConfig) {
+          const randXDiff = Constants.getRandomNum(-50, 20)
+          const randYDiff = Constants.getRandomNum(-50, 20)
+          const item = ItemFactory.instance.createItem(
+            itemConfig.name,
+            this.sprite.x + randXDiff,
+            this.sprite.y + randYDiff
+          )
+          if (item) {
+            this.scene.addItem(item)
+          }
+        }
+      }
+    })
   }
 
   initNewConfig(config: HarvestableConfig) {

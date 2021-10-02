@@ -195,14 +195,14 @@ export class CraftingMenu {
     return Math.round((listCutoffPoint - yPos) / 16) - 1
   }
 
-  fulfillsRecipe(inventory: Inventory, recipe: any) {
+  fulfillsRecipe(inventory: Inventory, recipe: any, name: string) {
     if (!inventory || Object.keys(inventory).length === 0) {
       return false
     }
     const reqIngredients = Object.keys(recipe)
     for (let i = 0; i < reqIngredients.length; i++) {
       const ing = reqIngredients[i]
-      if (!inventory[ing] || inventory[ing] < recipe[ing]) {
+      if (!inventory[ing] || inventory[ing].count < recipe[ing]) {
         return false
       }
     }
@@ -213,7 +213,7 @@ export class CraftingMenu {
     const craftableItems = ALL_ITEMS.filter((item) => {
       return (
         item.recipe !== undefined &&
-        this.fulfillsRecipe(Game.instance.player.inventory, item.recipe)
+        this.fulfillsRecipe(Game.instance.player.inventory, item.recipe, item.name)
       )
     })
     return craftableItems
@@ -226,7 +226,7 @@ export class CraftingMenu {
     const craftableItems = ALL_ITEMS.filter((item) => {
       return (
         item.recipe !== undefined &&
-        this.fulfillsRecipe(Game.instance.player.inventory, item.recipe)
+        this.fulfillsRecipe(Game.instance.player.inventory, item.recipe, item.name)
       )
     })
     const craftableItemPages = this.createCraftableItemPages(craftableItems)

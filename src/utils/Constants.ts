@@ -1642,6 +1642,12 @@ export const ALL_HARVESTABLES = [
       type: 'wood-particle',
       dropLength: 500,
     },
+    proximityItems: [
+      {
+        name: 'Stick',
+        max: 3,
+      },
+    ],
   },
   {
     name: 'Boulder',
@@ -1664,6 +1670,12 @@ export const ALL_HARVESTABLES = [
       type: 'stone-particle',
       dropLength: 550,
     },
+    proximityItems: [
+      {
+        name: 'Rock',
+        max: 2,
+      },
+    ],
   },
 ]
 
@@ -2207,7 +2219,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     type: ItemTypes.transport,
     description: 'Explore the oceans!',
     recipe: {
-      Stick: 1,
+      Wood: 20,
     },
   },
   {
@@ -2242,7 +2254,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     type: ItemTypes.resource,
     description: 'Some woody wood',
     recipe: {
-      Stick: 2,
+      Stick: 10,
     },
   },
   {
@@ -2297,7 +2309,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     image: 'sword-inventory',
     description: 'Is the pen actually mightier?',
     recipe: {
-      Stick: 1,
+      Steel: 1000,
     },
     stats: {
       damage: 35,
@@ -2316,7 +2328,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     image: 'wood-club-inventory',
     description: 'Speak softly and carry a big stick',
     recipe: {
-      Wood: 2,
+      Stick: 2,
     },
     stats: {
       damage: 10,

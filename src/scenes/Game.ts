@@ -621,9 +621,13 @@ export default class Game extends Phaser.Scene {
     })
   }
 
-  addItem(item) {
-    this.itemPool[`${item.x},${item.y}`] = item
+  addItem(item: Item) {
+    this.itemPool[`${item.sprite.x},${item.sprite.y}`] = item
     this.items.add(item.sprite)
+  }
+
+  removeItem(item: Item) {
+    delete this.itemPool[`${item.sprite.x},${item.sprite.y}`]
   }
 
   getAllTileLayers(): Phaser.Tilemaps.TilemapLayer[] {
