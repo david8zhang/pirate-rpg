@@ -24,16 +24,25 @@ export class Constants {
   }
 
   static getItem(itemName: string) {
+    if (!itemName) {
+      return undefined
+    }
     return ALL_ITEMS.find((itemConfig) => itemConfig.name.toLowerCase() === itemName.toLowerCase())
   }
 
   static getShip(shipName: string) {
+    if (!shipName) {
+      return undefined
+    }
     return ALL_SHIP_TYPES.find(
       (shipConfig) => shipConfig.name.toLowerCase() === shipName.toLowerCase()
     )
   }
 
   static getHarvestable(harvestableName: string) {
+    if (!harvestableName) {
+      return undefined
+    }
     return ALL_HARVESTABLES.find(
       (harvestableConfig) => harvestableConfig.name.toLowerCase() == harvestableName.toLowerCase()
     )

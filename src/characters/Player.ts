@@ -132,6 +132,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         if (keycode.code === 'KeyE') {
           if (this.itemOnHover) {
             this.addItem(this.itemOnHover)
+            ;(this.scene as Game).removeItem(this.itemOnHover)
             this.itemOnHover.sprite.destroy()
             this.itemOnHover = null
           }
