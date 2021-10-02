@@ -7,10 +7,10 @@ export class Constants {
     return 16
   }
   static get BG_HEIGHT() {
-    return 500 * Constants.TILE_SIZE
+    return 250 * Constants.TILE_SIZE
   }
   static get BG_WIDTH() {
-    return 500 * Constants.TILE_SIZE
+    return 250 * Constants.TILE_SIZE
   }
   static get ATTACK_DURATION() {
     return 400
@@ -1667,6 +1667,10 @@ export const ALL_HARVESTABLES = [
         name: 'Rock',
         quantity: 5,
       },
+      {
+        name: 'Iron Ore',
+        quantity: 1,
+      },
     ],
     bodyResize: {
       width: 0.5,
@@ -2288,6 +2292,21 @@ export const ALL_ITEMS: ItemConfig[] = [
     type: ItemTypes.resource,
   },
   {
+    name: 'Iron Ore',
+    image: 'iron-ore',
+    description: 'My life for iron',
+    type: ItemTypes.resource,
+  },
+  {
+    name: 'Iron Bar',
+    image: 'iron-bar',
+    description: 'Do you see the iron-y?',
+    type: ItemTypes.resource,
+    recipe: {
+      'Iron Ore': 15,
+    },
+  },
+  {
     name: 'Stone Axe',
     inWorldImageSet: {
       up: 'axe-diag',
@@ -2318,7 +2337,8 @@ export const ALL_ITEMS: ItemConfig[] = [
     image: 'sword-inventory',
     description: 'Is the pen actually mightier?',
     recipe: {
-      Steel: 1000,
+      'Iron Bar': 10,
+      Wood: 5,
     },
     stats: {
       damage: 35,

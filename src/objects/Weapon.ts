@@ -98,12 +98,12 @@ export class Weapon {
     this.hitboxImage.body.enable = true
     switch (this.player.direction) {
       case Direction.LEFT: {
-        this.hitboxImage.setSize(this.sprite.width, this.player.height + 20)
+        this.hitboxImage.setSize(this.sprite.width + 10, this.player.height + 20)
         this.hitboxImage.setPosition(this.player.x - this.attackRange, this.player.y)
         break
       }
       case Direction.RIGHT: {
-        this.hitboxImage.setSize(this.sprite.width, this.player.height + 20)
+        this.hitboxImage.setSize(this.sprite.width + 10, this.player.height + 20)
         this.hitboxImage.setPosition(this.player.x + this.attackRange, this.player.y)
         break
       }

@@ -1,5 +1,4 @@
 import { Inventory } from '~/characters/Player'
-import Game from '~/scenes/Game'
 import { ALL_ITEMS } from '~/utils/Constants'
 import { ItemConfig } from '../objects/ItemConfig'
 import { button } from './components/Button'

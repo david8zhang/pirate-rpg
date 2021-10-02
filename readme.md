@@ -9,7 +9,7 @@ A top down pirate themed survival/crafting game build using Phaser 3
 ## Easy wins
 
 - Add new resource type: Iron, which drops from boulders
-- Add "proximity items", like sticks that spawn near trees or rocks that spawn near boulders
+- Add damage numbers for harvestables
 
 ## Must haves for Alpha release:
 

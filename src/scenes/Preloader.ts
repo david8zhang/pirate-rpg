@@ -42,6 +42,8 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('rock', 'items/rock.png')
     this.load.image('wood', 'items/wood.png')
     this.load.image('palm-frond', 'items/palm-frond.png')
+    this.load.image('iron-ore', 'items/iron-ore.png')
+    this.load.image('iron-bar', 'items/iron-bar.png')
 
     // Weapons
     this.load.image('axe', 'weapons/axe/axe.png')

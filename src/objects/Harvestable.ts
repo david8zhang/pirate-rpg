@@ -1,6 +1,7 @@
 import Player, { Direction } from '~/characters/Player'
 import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
 import Game from '~/scenes/Game'
+import { UINumber } from '~/ui/UINumber'
 import { Constants } from '~/utils/Constants'
 import { Item } from './Item'
 import { ItemFactory } from './ItemFactory'
@@ -167,6 +168,7 @@ export class Harvestable {
     if (this.health === 0) {
       this.destroy()
     }
+    UINumber.createNumber(`-${damage}`, this.scene, this.sprite.x, this.sprite.y, 'red')
     this.scene.cameras.main.shake(Constants.ATTACK_DURATION / 2, 0.002)
   }
 
