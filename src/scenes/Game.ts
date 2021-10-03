@@ -34,8 +34,6 @@ export default class Game extends Phaser.Scene {
   public oceanLayer!: Phaser.Tilemaps.TilemapLayer
   public grassLayer!: Phaser.Tilemaps.TilemapLayer
   public sandLayer!: Phaser.Tilemaps.TilemapLayer
-  public structureInteriorLayer!: Phaser.Tilemaps.TilemapLayer
-  public structureEntranceLayer!: Phaser.Tilemaps.TilemapLayer
 
   // colliders
   public playerHarvestableCollider!: Physics.Arcade.Collider
@@ -68,12 +66,8 @@ export default class Game extends Phaser.Scene {
   public enemyShips!: Phaser.GameObjects.Group
 
   // Structures
-  public enteredStructure: Structure | null = null
   public structures!: Phaser.GameObjects.Group | null
   public structureLayer!: Phaser.Tilemaps.TilemapLayer
-  public isInsideStructure: boolean = false
-  public structureInteriorCollider!: Phaser.Physics.Arcade.Collider
-  public structureEntranceCollider!: Phaser.Physics.Arcade.Collider
 
   // Transports
   public transports!: Phaser.GameObjects.Group | null
@@ -104,7 +98,7 @@ export default class Game extends Phaser.Scene {
       const saveFile = JSON.parse(rawSaveData)
 
       // Configure player
-      const { player, enteredStructure } = saveFile
+      const { player } = saveFile
 
       if (player.ship) {
         const shipConfig = Constants.getShip(player.ship.type)
@@ -141,14 +135,6 @@ export default class Game extends Phaser.Scene {
           )
           this.player.enterableTransport.enterTransport()
         }
-      }
-      if (enteredStructure.texture) {
-        const structure = this.addStructure(
-          enteredStructure.texture,
-          enteredStructure.x,
-          enteredStructure.y
-        )
-        this.initEnteredStructure(structure)
       }
 
       if (saveFile.structures) {
@@ -448,26 +434,16 @@ export default class Game extends Phaser.Scene {
         ship: {},
         transport: {},
       },
-      enteredStructure: {},
-    }
-    if (this.enteredStructure) {
-      saveObject.enteredStructure = {
-        texture: this.enteredStructure.texture,
-        x: this.enteredStructure.sprite.x,
-        y: this.enteredStructure.sprite.y,
-      }
     }
     if (this.structures) {
       const structuresToSave: any[] = []
       this.structures.getChildren().forEach((structure) => {
         const s = structure.getData('ref')
-        if (s !== this.enteredStructure) {
-          structuresToSave.push({
-            texture: s.texture,
-            x: s.sprite.x,
-            y: s.sprite.y,
-          })
-        }
+        structuresToSave.push({
+          texture: s.texture,
+          x: s.sprite.x,
+          y: s.sprite.y,
+        })
       })
       saveObject.structures = structuresToSave
     }
@@ -678,126 +654,24 @@ export default class Game extends Phaser.Scene {
     return structure
   }
 
-  exitStructure(structure: Structure) {
-    this.enteredStructure = null
-    this.mobs.setVisible(true)
-    this.harvestables.setVisible(true)
-    this.oceanLayer.setVisible(true)
-    this.sandLayer.setVisible(true)
-    this.grassLayer.setVisible(true)
-    if (this.structures) {
-      this.structures.setVisible(true)
-    }
-    this.items.setVisible(true)
-    this.ships.children.entries.forEach((c) => {
-      const ship: Ship = c.getData('ref')
-      ship.setVisible(true)
-    })
-
-    if (this.transports) {
-      this.transports.setVisible(true)
-    }
-
-    this.structureEntranceLayer.setVisible(false)
-    this.structureInteriorLayer.setVisible(false)
-    this.player.setPosition(structure.sprite.x, structure.sprite.body.y + 10)
-
-    this.isInsideStructure = false
-    this.playerHarvestableCollider.active = true
-    this.playerMobsCollider.active = true
-    this.playerItemsCollider.active = true
-    this.structureEntranceCollider.active = false
-    this.structureInteriorCollider.active = false
-  }
-
-  initEnteredStructure(structure: Structure) {
-    this.enteredStructure = structure
-    this.mobs.setVisible(false)
-    this.harvestables.setVisible(false)
-    this.oceanLayer.setVisible(false)
-    this.sandLayer.setVisible(false)
-    this.grassLayer.setVisible(false)
-    if (this.structures) {
-      this.structures.setVisible(false)
-    }
-    this.items.setVisible(false)
-    this.ships.children.entries.forEach((child) => {
-      const ship: Ship = child.getData('ref')
-      ship.setVisible(false)
-    })
-    if (this.transports) {
-      this.transports.setVisible(false)
-    }
-
-    this.isInsideStructure = true
-    this.playerHarvestableCollider.active = false
-    this.playerMobsCollider.active = false
-    this.playerItemsCollider.active = false
-
-    const tentTileMap = this.make.tilemap({ key: 'tent' })
-    const tileset = tentTileMap.addTilesetImage('tent-tiles', 'tent-tiles')
-    this.structureEntranceLayer = tentTileMap.createLayer('Entrance', tileset)
-    this.structureInteriorLayer = tentTileMap.createLayer('Ground', tileset)
-
-    this.player.x = Constants.BG_WIDTH / 2
-    this.player.y = Constants.BG_HEIGHT / 2
-
-    this.structureEntranceLayer
-      .setPosition(
-        this.player.x - this.structureInteriorLayer.width / 2,
-        this.player.y - (this.structureInteriorLayer.height - Constants.TILE_SIZE * 4)
-      )
-      .setName('Structure')
-    this.structureInteriorLayer
-      .setPosition(
-        this.player.x - this.structureInteriorLayer.width / 2,
-        this.player.y - (this.structureInteriorLayer.height - Constants.TILE_SIZE * 4)
-      )
-      .setName('Structure')
-      .setCollisionByProperty({ collides: true })
-
-    if (this.structureEntranceCollider) {
-      this.structureEntranceCollider.destroy()
-    }
-    if (this.structureInteriorCollider) {
-      this.structureInteriorCollider.destroy()
-    }
-    this.structureInteriorCollider = this.physics.add.collider(
-      this.structureInteriorLayer,
-      this.player
-    )
-    this.structureEntranceCollider = this.physics.add.overlap(
-      this.structureEntranceLayer,
-      this.player,
-      (obj1, obj2: any) => {
-        if (obj2.properties.isEntrance) {
-          structure.exitStructure()
-          this.exitStructure(structure)
-        }
-      }
-    )
-  }
-
   dropItem(item: Item) {
     this.itemPool[`${item.sprite.x},${item.sprite.y}`] = item
     this.items.add(item.sprite)
   }
 
   update() {
-    this.lazyLoadItems()
-    this.lazyLoadSpawners()
-    this.lazyLoadHarvestables()
     if (this.player.ship && !this.player.ship.isAnchored) {
       ShipUIScene.instance.show()
     } else {
       ShipUIScene.instance.hide()
     }
     this.player.update()
-    if (!this.isInsideStructure) {
-      this.mobPool.forEach((mob: Mob) => {
-        mob.update()
-      })
-    }
+    this.mobPool.forEach((mob: Mob) => {
+      mob.update()
+    })
+    this.lazyLoadItems()
+    this.lazyLoadSpawners()
+    this.lazyLoadHarvestables()
     this.updateSortingLayers()
     this.ships.children.entries.forEach((child) => {
       const ship = child.getData('ref')

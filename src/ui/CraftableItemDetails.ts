@@ -4,6 +4,7 @@ import { ItemConfig } from '../objects/ItemConfig'
 import { button } from './components/Button'
 import { itemStats } from './components/ItemStats'
 import { text } from './components/Text'
+import { CraftingMenu } from './CraftingMenu'
 import { ItemBox } from './InventoryMenu'
 import { TooltipPosition } from './ItemTooltip'
 
@@ -22,14 +23,16 @@ export class CraftableItemDetails {
   private craftableItemNameElem: HTMLElement | null = null
   private craftableItemDescriptionElem: HTMLElement | null = null
   private itemCraftButtonElem: HTMLElement | null = null
+  private craftingMenu: CraftingMenu
   public craftableItem!: ItemConfig
 
   public static MAX_ING_PER_RECIPE = 3
 
   public isVisible: boolean = false
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, craftingMenu: CraftingMenu) {
     this.scene = scene
+    this.craftingMenu = craftingMenu
     this.container = scene.add.container(0, 0)
     this.sprite = this.scene.add.sprite(0, 0, '').setVisible(false)
     this.container.setVisible(false)
@@ -42,6 +45,7 @@ export class CraftableItemDetails {
     inventory: Inventory,
     cb: Function
   ) {
+    this.setVisible(true)
     this.craftableItem = craftableItem
     const xPos = itemToCraftDescription.x
     const yPos = itemToCraftDescription.y
@@ -124,6 +128,13 @@ export class CraftableItemDetails {
   onCraftButtonClick(inventory: Inventory, cb: Function) {
     if (this.isItemCraftable(this.craftableItem, inventory)) {
       cb(this.craftableItem)
+
+      // If the item is no longer craftable, get rid of highlight and show blank crafting details page
+      if (!this.isItemCraftable(this.craftableItem, inventory)) {
+        this.craftingMenu.currentCraftableItem = null
+        this.craftingMenu.currHighlight.setVisible(false)
+        this.setVisible(false)
+      }
     }
   }
 

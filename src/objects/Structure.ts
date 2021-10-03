@@ -14,7 +14,7 @@ export class Structure {
     this.sprite.body.setSize(this.sprite.width * 0.5, this.sprite.height * 0.5)
     this.sprite.body.offset.y = this.sprite.height - 20
     this.scene.physics.add.overlap(this.sprite, this.scene.player, () => {
-      if (scene.player.getCurrState() !== 'attack' && !scene.isInsideStructure) {
+      if (scene.player.getCurrState() !== 'attack') {
         this.scene.player.setStructureToEnter(this)
         this.scene.hoverText.showText(
           '(E) Enter',
@@ -41,9 +41,6 @@ export class Structure {
   }
 
   enterStructure() {
-    this.scene.hoverText.hide()
-    this.sprite.setVisible(false)
-    this.scene.initEnteredStructure(this)
-    this.boundsImage.body.enable = false
+    // TODO: Refactor entering structures
   }
 }

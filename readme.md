@@ -4,12 +4,11 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Bugs to fix
 
-- Some hitboxes when hitting multiple enemies is not being deleted
+- Crafting menu not updating when item is crafted and craftable items are updated
 
-## Easy wins
+## Meatier Stuff
 
-- Add new resource type: Iron, which drops from boulders
-- Add damage numbers for harvestables
+- Refactor the way structures work (have it load an entirely different scene)
 
 ## Must haves for Alpha release:
 

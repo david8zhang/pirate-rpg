@@ -141,7 +141,7 @@ export class CraftingMenu {
     this.container.add(this.itemToCraftDescription)
     this.container.add(this.currHighlight)
     this.container.setVisible(this.isVisible)
-    this.craftableItemDetails = new CraftableItemDetails(this.scene)
+    this.craftableItemDetails = new CraftableItemDetails(this.scene, this)
   }
 
   setOnCraftCallback(cb: Function) {
@@ -149,6 +149,12 @@ export class CraftingMenu {
   }
 
   public toggleVisible() {
+    if (this.isVisible) {
+      this.currentCraftableItem = null
+      this.craftableItemDetails.setVisible(false)
+      this.currHighlight.setVisible(false)
+    }
+
     if (!this.headerText) {
       const headerTextComp = text('Crafting', {
         fontSize: '15px',
@@ -162,7 +168,6 @@ export class CraftingMenu {
       this.container.add(this.headerText)
     }
     this.container.setVisible(!this.isVisible)
-    this.craftableItemDetails.setVisible(!this.isVisible)
     this.isVisible = !this.isVisible
   }
 
@@ -231,7 +236,6 @@ export class CraftingMenu {
     })
     const craftableItemPages = this.createCraftableItemPages(craftableItems)
     const currPage = craftableItemPages.length > 0 ? craftableItemPages[this.currPage] : []
-
     const pageSize = this.getPageSize()
     for (let i = 0; i < pageSize; i++) {
       let text = this.craftableItemsList[i]
@@ -276,6 +280,25 @@ export class CraftingMenu {
         inventory,
         this.onCraft as Function
       )
+    }
+
+    this.updateCurrHighlightPos(currPage)
+  }
+
+  updateCurrHighlightPos(currPage: any[]) {
+    const startingX = this.craftableItemsListWrapper.x
+    let yPos = this.craftableItemsListWrapper.y + 5
+    const pageSize = this.getPageSize()
+    for (let i = 0; i < pageSize; i++) {
+      const item = currPage[i]
+      if (item) {
+        if (this.currentCraftableItem && item.name == this.currentCraftableItem.item.name) {
+          const currYPos = yPos - 2
+          const currXPos = startingX
+          this.currHighlight.setPosition(currXPos, currYPos)
+        }
+      }
+      yPos += 16
     }
   }
 }

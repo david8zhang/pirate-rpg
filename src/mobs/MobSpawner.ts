@@ -31,15 +31,17 @@ export class MobSpawner {
     this.mobLimit = mobSpawnerConfig.mobLimit
 
     this.spawnMobsEvent = this.scene.time.addEvent({
-      callback: this.spawnMobs,
-      callbackScope: this,
+      callback: () => {
+        this.spawnMobs()
+      },
       delay: mobSpawnerConfig.spawnDelay,
       loop: true,
     })
 
     this.clearDeadMobsEvent = this.scene.time.addEvent({
-      callback: this.clearDeadMobs,
-      callbackScope: this,
+      callback: () => {
+        this.clearDeadMobs()
+      },
       delay: 20000,
       loop: true,
     })
@@ -50,12 +52,17 @@ export class MobSpawner {
     this.clearDeadMobsEvent.destroy()
   }
 
+  canSpawnMob(): boolean {
+    return (
+      this.spawnedMobs.length > this.mobLimit &&
+      this.scene.hasAvailableMobInPool() &&
+      this.scene.cameras.main.worldView.contains(this.spawnPos.x, this.spawnPos.y)
+    )
+  }
+
   spawnMobs() {
-    if (
-      this.spawnedMobs.length >= this.mobLimit ||
-      !this.scene.hasAvailableMobInPool() ||
-      !this.scene.cameras.main.worldView.contains(this.spawnPos.x, this.spawnPos.y)
-    ) {
+    const canSpawnMob = this.canSpawnMob()
+    if (canSpawnMob) {
       return
     }
     try {
