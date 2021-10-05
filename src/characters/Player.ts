@@ -317,7 +317,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         isOceanTile = true
       }
     })
-    return isOceanTile && !this.ship && !this.currTransport && !gameScene.isInsideStructure
+    return isOceanTile && !this.ship && !this.currTransport
   }
 
   update() {
@@ -551,6 +551,8 @@ Phaser.GameObjects.GameObjectFactory.register(
     this.scene.physics.world.enableBody(sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     sprite.setPushable(false)
     sprite.body.setSize(sprite.width * 0.4, sprite.height * 0.4)
+    ;(sprite.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(true)
+    ;(sprite.body as Phaser.Physics.Arcade.Body).onWorldBounds = true
     sprite.body.offset.y = 22
     return sprite
   }

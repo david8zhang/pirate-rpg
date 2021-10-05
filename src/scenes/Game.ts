@@ -34,6 +34,7 @@ export default class Game extends Phaser.Scene {
   public oceanLayer!: Phaser.Tilemaps.TilemapLayer
   public grassLayer!: Phaser.Tilemaps.TilemapLayer
   public sandLayer!: Phaser.Tilemaps.TilemapLayer
+  public currMapKey: string = 'map1'
 
   // colliders
   public playerHarvestableCollider!: Physics.Arcade.Collider
@@ -175,11 +176,22 @@ export default class Game extends Phaser.Scene {
   }
 
   create(): void {
+    this.physics.world.setBounds(
+      0,
+      0,
+      Constants.BG_WIDTH,
+      Constants.BG_HEIGHT,
+      true,
+      true,
+      true,
+      true
+    )
+
     createCharacterAnims(this.anims)
     createMobAnims(ALL_MOBS, this.anims)
     createEffectsAnims(ALL_EFFECTS, this.anims)
     createShipAnims(ALL_SHIP_TYPES, this.anims)
-    this.initTilemap()
+    this.initTilemap(this.currMapKey)
     this.initPlayer()
     this.initHarvestables()
     this.initMobs()
@@ -189,8 +201,8 @@ export default class Game extends Phaser.Scene {
     this.loadSaveFile()
   }
 
-  initTilemap() {
-    this.map = this.make.tilemap({ key: 'starter-island-large' })
+  initTilemap(tilemap: string) {
+    this.map = this.make.tilemap({ key: tilemap })
     const tileset = this.map.addTilesetImage('beach-tiles', 'beach-tiles')
     this.oceanLayer = this.map.createLayer('Ocean', tileset).setName('Ocean')
     this.sandLayer = this.map.createLayer('Sand', tileset).setName('Sand')
@@ -202,7 +214,7 @@ export default class Game extends Phaser.Scene {
 
   initPlayer() {
     // TODO: Fix this
-    this.player = this.add.player(2500, 2500, 'player')
+    this.player = this.add.player(3950, 3950, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()
@@ -305,7 +317,11 @@ export default class Game extends Phaser.Scene {
   }
 
   initShips() {
+    const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 3500, y: 3500 })
+
     this.ships = this.physics.add.group({ classType: Ship })
+    this.ships.add(ship1.hullSprite)
+
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
       const ship: Ship = obj1.getData('ref')
       const projectile: Projectile = obj2.getData('ref')
@@ -396,10 +412,6 @@ export default class Game extends Phaser.Scene {
     return offscreenMob ? offscreenMob : null
   }
 
-  addMobToPool(mob: Mob) {
-    this.mobPool.push(mob)
-  }
-
   initMobs() {
     this.mobs = this.physics.add.group({
       classType: Mob,
@@ -414,6 +426,7 @@ export default class Game extends Phaser.Scene {
 
   public addMob(mob: Mob) {
     this.mobs.add(mob.sprite)
+    this.mobPool.push(mob)
   }
 
   public saveAndQuit() {

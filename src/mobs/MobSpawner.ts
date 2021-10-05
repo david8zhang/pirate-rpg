@@ -88,7 +88,6 @@ export class MobSpawner {
           this.mobConfig,
           this
         )
-        this.scene.addMobToPool(recycledMob)
         this.spawnedMobs.push(recycledMob)
         this.scene.addMob(recycledMob)
       }
