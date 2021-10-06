@@ -1,5 +1,5 @@
 import Phaser, { Physics } from 'phaser'
-import { ALL_EFFECTS, ALL_HARVESTABLES, ALL_SHIP_TYPES, Constants } from '../utils/Constants'
+import { ALL_EFFECTS, ALL_SHIP_TYPES, Constants, OVERWORLD_CONFIG } from '../utils/Constants'
 import '../characters/Player'
 import Player, { Direction } from '../characters/Player'
 import { createCharacterAnims } from '../anims/CharacterAnims'
@@ -191,7 +191,7 @@ export default class Game extends Phaser.Scene {
     createMobAnims(ALL_MOBS, this.anims)
     createEffectsAnims(ALL_EFFECTS, this.anims)
     createShipAnims(ALL_SHIP_TYPES, this.anims)
-    this.initTilemap(this.currMapKey)
+    this.initTilemap()
     this.initPlayer()
     this.initHarvestables()
     this.initMobs()
@@ -199,10 +199,50 @@ export default class Game extends Phaser.Scene {
     this.initProjectiles()
     this.initShips()
     this.loadSaveFile()
+
+    this.physics.world.on('worldbounds', (obj) => {
+      this.handlePlayerCollideWorldBounds()
+    })
   }
 
-  initTilemap(tilemap: string) {
-    this.map = this.make.tilemap({ key: tilemap })
+  handlePlayerCollideWorldBounds() {
+    const leftBorder = 0
+    const rightBorder = Constants.BG_WIDTH
+    const downBorder = Constants.BG_HEIGHT
+    const upBorder = 0
+    const bufferZone = 20
+    const currMapConfig = OVERWORLD_CONFIG.find((config) => {
+      return config.key === this.currMapKey
+    })
+    if (currMapConfig) {
+      let toTransitionMapKey = ''
+      const spawnBuffer = 50
+      const positionToSpawn = {
+        left: { x: rightBorder - spawnBuffer, y: this.player.y },
+        right: { x: leftBorder + spawnBuffer, y: this.player.y },
+        up: { x: this.player.x, y: downBorder - spawnBuffer },
+        down: { x: this.player.x, y: upBorder + spawnBuffer },
+      }
+      if (this.player.x <= leftBorder + bufferZone) {
+        toTransitionMapKey = 'left'
+      } else if (this.player.x >= rightBorder - bufferZone) {
+        toTransitionMapKey = 'right'
+      } else if (this.player.y <= upBorder + bufferZone) {
+        toTransitionMapKey = 'up'
+      } else if (this.player.y >= downBorder - bufferZone) {
+        toTransitionMapKey = 'down'
+      }
+      if (currMapConfig.neighbors[toTransitionMapKey]) {
+        this.currMapKey = currMapConfig.neighbors[toTransitionMapKey]
+        const posToSpawn = positionToSpawn[toTransitionMapKey]
+        this.player.setPosition(posToSpawn.x, posToSpawn.y)
+        this.initTilemap()
+      }
+    }
+  }
+
+  initTilemap() {
+    this.map = this.make.tilemap({ key: this.currMapKey })
     const tileset = this.map.addTilesetImage('beach-tiles', 'beach-tiles')
     this.oceanLayer = this.map.createLayer('Ocean', tileset).setName('Ocean')
     this.sandLayer = this.map.createLayer('Sand', tileset).setName('Sand')
@@ -214,7 +254,7 @@ export default class Game extends Phaser.Scene {
 
   initPlayer() {
     // TODO: Fix this
-    this.player = this.add.player(3950, 3950, 'player')
+    this.player = this.add.player(3950, 50, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()
