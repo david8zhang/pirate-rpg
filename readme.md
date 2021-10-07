@@ -6,8 +6,6 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Easy wins
 
-- Detect which edge player collides with in map
-
 ## Meatier Stuff
 
 - Handle world bound collisions when player is in a ship or in a transport

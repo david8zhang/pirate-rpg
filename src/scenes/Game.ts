@@ -201,7 +201,9 @@ export default class Game extends Phaser.Scene {
     this.loadSaveFile()
 
     this.physics.world.on('worldbounds', (obj) => {
-      this.handlePlayerCollideWorldBounds()
+      if (obj.gameObject === this.player) {
+        this.handlePlayerCollideWorldBounds()
+      }
     })
   }
 
@@ -216,7 +218,11 @@ export default class Game extends Phaser.Scene {
     })
     if (currMapConfig) {
       let toTransitionMapKey = ''
-      const spawnBuffer = 50
+      let spawnBuffer = 50
+      if (this.player.ship) {
+        spawnBuffer += 300
+      }
+
       const positionToSpawn = {
         left: { x: rightBorder - spawnBuffer, y: this.player.y },
         right: { x: leftBorder + spawnBuffer, y: this.player.y },
@@ -235,7 +241,11 @@ export default class Game extends Phaser.Scene {
       if (currMapConfig.neighbors[toTransitionMapKey]) {
         this.currMapKey = currMapConfig.neighbors[toTransitionMapKey]
         const posToSpawn = positionToSpawn[toTransitionMapKey]
-        this.player.setPosition(posToSpawn.x, posToSpawn.y)
+        if (this.player.ship) {
+          this.player.ship.setPosition(posToSpawn.x, posToSpawn.y)
+        } else {
+          this.player.setPosition(posToSpawn.x, posToSpawn.y)
+        }
         this.initTilemap()
       }
     }
