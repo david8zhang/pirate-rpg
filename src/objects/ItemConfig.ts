@@ -4,7 +4,6 @@ export enum ItemTypes {
   resource = 'RESOURCE',
   particle = 'PARTICLE',
   structure = 'STRUCTURE',
-  transport = 'TRANSPORT',
   consumable = 'CONSUMABLE',
 }
 

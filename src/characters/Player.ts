@@ -13,7 +13,6 @@ import { ItemFactory } from '../objects/ItemFactory'
 import { ItemBox } from '../ui/InventoryMenu'
 import { Structure } from '../objects/Structure'
 import { Placeable, PlaceableType } from '../objects/Placeable'
-import { Transport } from '../objects/Transport'
 import { Ship } from '~/objects/Ship'
 
 declare global {
@@ -60,13 +59,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public structureToEnter!: Structure | null
   public structureColliders: Phaser.Physics.Arcade.Collider[] = []
 
-  // Transport (boats, etc.)
-  public transportToBePlaced: Placeable | null = null
-  public isInsideTransport: boolean = false
-  public currTransport: Transport | null = null
-  public enterableTransport: Transport | null = null
-
-  // Ships (Should be a subclass of transport but it's behavior is slightly different. Refactor this later...)
+  // Ships
   public ship: Ship | null = null
   public isSteeringShip: boolean = false
   public enterableShip: Ship | null = null
@@ -117,9 +110,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.equipment.weapon) {
       return !this.equipment.weapon.isAttacking
     }
-    if (this.currTransport) {
-      return false
-    }
     return true
   }
 
@@ -140,16 +130,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           // Enter a structure
           if (this.structureToEnter) {
             this.structureToEnter.enterStructure()
-          }
-
-          // Enter a transport
-          if (this.enterableTransport) {
-            this.enterableTransport.enterTransport()
-          }
-
-          // Exit a transport
-          if (this.currTransport) {
-            this.currTransport.exitTransport()
           }
 
           // Take the wheel of the ship, enabling it to be moved around like a boat, or let go of the wheel, allowing
@@ -180,9 +160,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           }
 
           if (this.enterableShip) {
-            if (this.currTransport) {
-              this.currTransport.exitTransport()
-            }
             this.ship = this.enterableShip
             this.enterableShip = null
             this.enterShip(this.ship)
@@ -236,15 +213,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     return true
   }
 
-  placeTransport() {
-    if (this.transportToBePlaced) {
-      const didPlaceTransport = this.transportToBePlaced?.placeItem(PlaceableType.transport)
-      if (didPlaceTransport) {
-        this.transportToBePlaced = null
-      }
-    }
-  }
-
   setCurrHealth(health: number) {
     this.currHealth = health
     const interval = setInterval(() => {
@@ -296,7 +264,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   resetEnterables() {
     this.structureToEnter = null
-    this.enterableTransport = null
     this.enterableShip = null
   }
 
@@ -317,7 +284,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         isOceanTile = true
       }
     })
-    return isOceanTile && !this.ship && !this.currTransport
+    return isOceanTile && !this.ship
   }
 
   update() {
@@ -330,26 +297,18 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
     this.isSubmerged = this.getIsSubmerged()
 
-    if (this.currTransport) {
-      this.currTransport.update()
-    } else {
-      // this.showStructureToBePlaced()
-      if (this.structureToBePlaced) {
-        this.structureToBePlaced.showPreview()
-      }
-      if (this.transportToBePlaced) {
-        this.transportToBePlaced?.showPreview()
-      }
-      this.stateMachine.step()
-      const gameScene = this.scene as Game
-      if (!this.body.embedded) {
-        this.itemOnHover = null
-        gameScene.hoverText.hide()
-        this.resetEnterables()
-      }
-      if (this.equipment.weapon) {
-        this.equipment.weapon.show()
-      }
+    if (this.structureToBePlaced) {
+      this.structureToBePlaced.showPreview()
+    }
+    this.stateMachine.step()
+    const gameScene = this.scene as Game
+    if (!this.body.embedded) {
+      this.itemOnHover = null
+      gameScene.hoverText.hide()
+      this.resetEnterables()
+    }
+    if (this.equipment.weapon) {
+      this.equipment.weapon.show()
     }
   }
 
@@ -397,18 +356,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           this.structureToBePlaced?.setShowPreview(false)
           this.structureToBePlaced?.destroy()
           this.structureToBePlaced = null
-        }
-      }
-
-      // Handle if the double clicked item was a transport
-      if (item.type === ItemTypes.transport) {
-        if (!this.transportToBePlaced) {
-          this.transportToBePlaced = new Placeable(this.scene as Game, item, ['Ocean'])
-          this.transportToBePlaced.setShowPreview(true)
-        } else {
-          this.transportToBePlaced.setShowPreview(false)
-          this.transportToBePlaced.destroy()
-          this.transportToBePlaced = null
         }
       }
 

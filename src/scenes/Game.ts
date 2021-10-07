@@ -11,8 +11,6 @@ import { Harvestable } from '~/objects/Harvestable'
 import UIScene from './GameUIScene'
 import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
 import { Structure } from '~/objects/Structure'
-import { Transport } from '~/objects/Transport'
-import { ItemConfig } from '~/objects/ItemConfig'
 import { createMobAnims } from '~/anims/MobAnims'
 import { ALL_MOBS } from '../utils/Constants'
 import { Ship } from '~/objects/Ship'
@@ -123,18 +121,6 @@ export default class Game extends Phaser.Scene {
               }
             }, 100)
           }
-        }
-      }
-      if (player.transport) {
-        const transportConfig = Constants.getItem(player.transport.name)
-        if (transportConfig) {
-          this.player.enterableTransport = new Transport(
-            this,
-            transportConfig,
-            player.transport.x,
-            player.transport.y
-          )
-          this.player.enterableTransport.enterTransport()
         }
       }
 
@@ -368,7 +354,7 @@ export default class Game extends Phaser.Scene {
   }
 
   initShips() {
-    const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 3500, y: 3500 })
+    const ship1 = new Ship(this, ALL_SHIP_TYPES[1], { x: 3500, y: 3500 })
 
     this.ships = this.physics.add.group({ classType: Ship })
     this.ships.add(ship1.hullSprite)
@@ -510,14 +496,6 @@ export default class Game extends Phaser.Scene {
         })
       })
       saveObject.structures = structuresToSave
-    }
-    if (this.player.currTransport) {
-      saveObject.player.transport = {
-        x: this.player.currTransport.sprite.x,
-        y: this.player.currTransport.sprite.y,
-        currDirection: this.player.currTransport.currDirection,
-        name: this.player.currTransport.itemRef.name,
-      }
     }
     if (this.player.ship) {
       saveObject.player.ship = {
@@ -695,14 +673,6 @@ export default class Game extends Phaser.Scene {
       allGroups.push(this.transports)
     }
     return allGroups
-  }
-
-  addTransport(itemRef: ItemConfig, x: number, y: number) {
-    if (!this.transports) {
-      this.transports = this.physics.add.group({ classType: Transport })
-    }
-    const transport = new Transport(this, itemRef, x, y)
-    this.transports.add(transport.sprite)
   }
 
   addShip(ship: Ship) {

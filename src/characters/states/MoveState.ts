@@ -10,7 +10,6 @@ export class MoveState extends State {
     const downDown = cursors.down?.isDown
     const spaceDown = cursors.space?.isDown
 
-    // If the player is currently in a transport, let the transport override movement key mappings
     if (player.canMove()) {
       const speed = 100
       if (spaceDown && player.canAttack()) {

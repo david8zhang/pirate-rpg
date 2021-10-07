@@ -3,7 +3,6 @@ import Game from '../scenes/Game'
 import { ItemConfig } from './ItemConfig'
 
 export enum PlaceableType {
-  transport = 'Transport',
   structure = 'Structure',
 }
 
@@ -36,9 +35,7 @@ export class Placeable {
       this.isShowingPreview = false
 
       // Add the object to the game's game object groups
-      if (type === PlaceableType.transport) {
-        this.scene.addTransport(this.itemRef, this.previewSprite.x, this.previewSprite.y)
-      } else if (type === PlaceableType.structure) {
+      if (type === PlaceableType.structure) {
         this.scene.addStructure(
           this.itemRef.inWorldImage as string,
           this.previewSprite.x,

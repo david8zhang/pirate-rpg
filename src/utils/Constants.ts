@@ -2250,21 +2250,6 @@ export const ALL_EFFECTS = [
 
 export const ALL_ITEMS: ItemConfig[] = [
   {
-    name: 'Row boat',
-    inWorldImageSet: {
-      side: 'rowboat',
-      up: 'rowboat-up',
-      down: 'rowboat-down',
-    },
-    inWorldImage: 'rowboat',
-    image: 'rowboat-inventory',
-    type: ItemTypes.transport,
-    description: 'Explore the oceans!',
-    recipe: {
-      Wood: 20,
-    },
-  },
-  {
     name: 'Tent',
     inWorldImage: 'tent',
     image: 'tent-inventory',

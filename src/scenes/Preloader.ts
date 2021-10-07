@@ -66,21 +66,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.atlas('crab', 'mobs/crab/crab.png', 'mobs/crab/crab.json')
     this.load.atlas('skeleton', 'mobs/skeleton/skeleton.png', 'mobs/skeleton/skeleton.json')
 
-    // Transport
-    this.load.image('ship', 'items/pirate-ship1.png')
-    this.load.image('rowboat', 'transport/rowboat/rowboat.png')
-    this.load.image('rowboat-up', 'transport/rowboat/rowboat-up.png')
-    this.load.image('rowboat-down', 'transport/rowboat/rowboat-down.png')
-    this.load.image('rowboat-inventory', 'transport/rowboat/rowboat-inventory.png')
-
-    // Sloop
-    this.load.image('sloop-icon', 'transport/sloop/sloop-icon.png')
-    this.load.image('sloop-side', 'transport/sloop/sloop-side.png')
-    this.load.image('sloop-up', 'transport/sloop/sloop-up.png')
-    this.load.image('sloop-down', 'transport/sloop/sloop-down.png')
-    this.load.image('sails-side', 'transport/sloop/sails-side.png')
-    this.load.image('sails-up', 'transport/sloop/sails-up.png')
-    this.load.image('sails-down', 'transport/sloop/sails-down.png')
+    // Ship Objects
     this.load.image('wheel-up', 'transport/sloop/wheel-up.png')
     this.load.image('wheel-down', 'transport/sloop/wheel-down.png')
     this.load.image('wheel-side', 'transport/sloop/wheel-side.png')
@@ -92,7 +78,14 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('cannon-down', 'transport/sloop/cannon-down.png')
     this.load.image('cannonball', 'transport/sloop/cannonball.png')
 
-    // Sloop-animations
+    // Sloop
+    this.load.image('sloop-icon', 'transport/sloop/sloop-icon.png')
+    this.load.image('sloop-side', 'transport/sloop/sloop-side.png')
+    this.load.image('sloop-up', 'transport/sloop/sloop-up.png')
+    this.load.image('sloop-down', 'transport/sloop/sloop-down.png')
+    this.load.image('sails-side', 'transport/sloop/sails-side.png')
+    this.load.image('sails-up', 'transport/sloop/sails-up.png')
+    this.load.image('sails-down', 'transport/sloop/sails-down.png')
     this.load.atlas(
       'sloop',
       'transport/sloop/animations/sloop.png',
