@@ -304,9 +304,9 @@ export class Ship {
     let moveable = true
     this.scene.getAllTileLayers().forEach((tileMap) => {
       const check = tileMap.getTileAtWorldXY(this.landDetectorImg.x, this.landDetectorImg.y)
-      if (check && check.layer.name !== 'Ocean') {
-        moveable = false
-      }
+      // if (check && check.layer.name !== 'Ocean') {
+      //   moveable = false
+      // }
     })
     return moveable
   }
@@ -387,6 +387,8 @@ export class Ship {
     }
     const { size, directions } = landDetectorConfig
     this.landDetectorImg.body.setSize(size.x, size.y)
+    ;(this.landDetectorImg.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(true)
+    ;(this.landDetectorImg.body as Phaser.Physics.Arcade.Body).onWorldBounds = true
     const config = directions[this.currDirection]
     this.landDetectorImg.y = this.hullSprite.y + config.yOffset
     this.landDetectorImg.x = this.hullSprite.x + config.xOffset
@@ -789,7 +791,6 @@ export class Ship {
         this.currDirection = Direction.UP
         this.hullSprite.scaleX = 1
         this.sailsSprite.scaleX = 1
-        // this.hullSprite.setTexture(hullImages.up)
         this.sailsSprite.setTexture(sailsImages.up)
         this.configureHullBody()
         this.setAllVelocity(0, -speed)
@@ -945,5 +946,10 @@ export class Ship {
         hitboxImage.setVelocity(xVelocity, yVelocity)
       }
     })
+  }
+
+  setPosition(x: number, y: number) {
+    this.hullSprite.setPosition(x, y)
+    this.sailsSprite.setPosition(x, y)
   }
 }
