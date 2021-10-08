@@ -949,7 +949,11 @@ export class Ship {
   }
 
   setPosition(x: number, y: number) {
+    const { wheelConfig, ladderConfig, cannonConfig } = this.shipConfig
     this.hullSprite.setPosition(x, y)
     this.sailsSprite.setPosition(x, y)
+    this.setupWheel(wheelConfig)
+    this.setupLadder(ladderConfig)
+    this.setupCannon(cannonConfig)
   }
 }

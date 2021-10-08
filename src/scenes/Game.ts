@@ -187,7 +187,6 @@ export default class Game extends Phaser.Scene {
     this.loadSaveFile()
 
     this.physics.world.on('worldbounds', (obj) => {
-      console.log('hello')
       if (obj.gameObject === this.player) {
         this.handlePlayerCollideWorldBounds()
       }
@@ -207,7 +206,11 @@ export default class Game extends Phaser.Scene {
       let toTransitionMapKey = ''
       let spawnBuffer = 50
       if (this.player.ship) {
-        spawnBuffer += 300
+        const shipDirection = this.player.ship.currDirection
+        const height = this.player.ship.hullSprite.body.height
+        const width = this.player.ship.hullSprite.body.width
+        spawnBuffer +=
+          shipDirection === Direction.UP || shipDirection === Direction.DOWN ? height : width
       }
 
       const positionToSpawn = {
@@ -251,7 +254,7 @@ export default class Game extends Phaser.Scene {
 
   initPlayer() {
     // TODO: Fix this
-    this.player = this.add.player(3950, 50, 'player')
+    this.player = this.add.player(50, 50, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()
@@ -354,7 +357,7 @@ export default class Game extends Phaser.Scene {
   }
 
   initShips() {
-    const ship1 = new Ship(this, ALL_SHIP_TYPES[1], { x: 3500, y: 3500 })
+    const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 650, y: 3500 })
 
     this.ships = this.physics.add.group({ classType: Ship })
     this.ships.add(ship1.hullSprite)

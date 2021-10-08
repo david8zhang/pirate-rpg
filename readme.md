@@ -6,6 +6,8 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Easy wins
 
+- Figure out how to offset the initial spawn position of ships after map transition based on ship's height/width
+
 ## Meatier Stuff
 
 - Handle world bound collisions when player is in a ship or in a transport
