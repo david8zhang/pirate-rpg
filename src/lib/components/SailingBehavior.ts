@@ -1,6 +1,4 @@
-import Player from '~/characters/Player'
 import { Mob } from '~/mobs/Mob'
-import { Ship } from '~/objects/Ship'
 import { Behavior } from './Behavior'
 import { Direction } from '../../characters/player'
 import { EnemyShip } from '~/objects/EnemyShip'

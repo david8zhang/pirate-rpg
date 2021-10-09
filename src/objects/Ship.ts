@@ -304,9 +304,9 @@ export class Ship {
     let moveable = true
     this.scene.getAllTileLayers().forEach((tileMap) => {
       const check = tileMap.getTileAtWorldXY(this.landDetectorImg.x, this.landDetectorImg.y)
-      // if (check && check.layer.name !== 'Ocean') {
-      //   moveable = false
-      // }
+      if (check && check.layer.name !== 'Ocean') {
+        moveable = false
+      }
     })
     return moveable
   }
@@ -937,7 +937,7 @@ export class Ship {
     }
   }
 
-  setAllVelocity(xVelocity, yVelocity) {
+  setAllVelocity(xVelocity: number, yVelocity: number) {
     this.hullSprite.setVelocity(xVelocity, yVelocity)
     this.sailsSprite.setVelocity(xVelocity, yVelocity)
     this.wheelSprite.setVelocity(xVelocity, yVelocity)

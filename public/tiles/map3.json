@@ -4,7 +4,7 @@
      "export":
         {
          "format":"json",
-         "target":"map2.json"
+         "target":"map3.json"
         }
     },
  "height":250,
@@ -48,6 +48,28 @@
         }, 
         {
          "draworder":"topdown",
+         "id":12,
+         "name":"Ships",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":13,
+         "name":"EnemyShips",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":4,
          "name":"Harvestables",
          "objects":[],
@@ -79,7 +101,7 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":12,
+ "nextlayerid":14,
  "nextobjectid":185,
  "orientation":"orthogonal",
  "renderorder":"right-down",

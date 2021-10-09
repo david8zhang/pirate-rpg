@@ -42,9 +42,9 @@ export class Mob {
     [key: string]: string
   } = {}
   tileColliders: Phaser.Physics.Arcade.Collider[] = []
-  spawner: MobSpawner
+  spawner?: MobSpawner
 
-  constructor(scene: Phaser.Scene, x: number, y: number, mobConfig: any, spawner: MobSpawner) {
+  constructor(scene: Phaser.Scene, x: number, y: number, mobConfig: any, spawner?: MobSpawner) {
     const { animFrameName, animMapping, collidableLayers } = mobConfig
     this.mobConfig = mobConfig
     this.scene = scene
@@ -110,7 +110,7 @@ export class Mob {
   }
 
   removeFromPrevSpawner() {
-    this.spawner.removeMobFromSpawnerList(this)
+    if (this.spawner) this.spawner.removeMobFromSpawnerList(this)
   }
 
   initNewConfig(x: number, y: number, mobConfig: any, spawner: MobSpawner) {

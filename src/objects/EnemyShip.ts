@@ -11,17 +11,11 @@ export class EnemyShip extends Ship {
 
   constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
     super(scene, shipConfig, position)
+    this.isAnchored = false
   }
 
   setupLadder() {
     return
-  }
-
-  canMoveInDirection(direction: Direction) {
-    if (this.currDirection == direction && !this.canMove()) {
-      return false
-    }
-    return true
   }
 
   setMobInControl(mobInControl: Mob) {
@@ -84,7 +78,7 @@ export class EnemyShip extends Ship {
 
   update() {
     if (this.mobInControl) {
-      this.mobInControl.sprite.setDepth(this.hullSprite.depth + 1)
+      this.mobInControl.sprite.setDepth(this.sailsSprite.depth)
     }
     super.update()
   }

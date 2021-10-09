@@ -4,13 +4,14 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Bugs to fix
 
+- Mob spawner seems to continue to spawn mobs indefinitely if the spawner is off-screen
+
 ## Easy wins
 
-- Figure out how to offset the initial spawn position of ships after map transition based on ship's height/width
+- Make ships only spawn in specific maps
 
 ## Meatier Stuff
 
-- Handle world bound collisions when player is in a ship or in a transport
 - Stop enemy ship when player attempts to board
 - Refactor the way structures work (have it load an entirely different scene)
 

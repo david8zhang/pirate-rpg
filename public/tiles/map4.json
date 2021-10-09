@@ -4,7 +4,7 @@
      "export":
         {
          "format":"json",
-         "target":"map2.json"
+         "target":"map4.json"
         }
     },
  "height":250,
@@ -31,6 +31,28 @@
          "type":"tilelayer",
          "visible":true,
          "width":250,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":12,
+         "name":"EnemyShips",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":13,
+         "name":"Ships",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -79,7 +101,7 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":12,
+ "nextlayerid":14,
  "nextobjectid":185,
  "orientation":"orthogonal",
  "renderorder":"right-down",

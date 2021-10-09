@@ -23,6 +23,8 @@ import { EffectSpawner } from '~/objects/Effect'
 import { createShipAnims } from '~/anims/ShipAnims'
 
 export default class Game extends Phaser.Scene {
+  private static PLAYER_SPAWN_POS = { x: 2500, y: 2500 }
+
   public player!: Player
   public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   public map!: Phaser.Tilemaps.Tilemap
@@ -184,6 +186,7 @@ export default class Game extends Phaser.Scene {
     this.initItems()
     this.initProjectiles()
     this.initShips()
+    this.initEnemyShips()
     this.loadSaveFile()
 
     this.physics.world.on('worldbounds', (obj) => {
@@ -253,13 +256,12 @@ export default class Game extends Phaser.Scene {
   }
 
   initPlayer() {
-    // TODO: Fix this
-    this.player = this.add.player(50, 50, 'player')
+    const { x, y } = Game.PLAYER_SPAWN_POS
+    this.player = this.add.player(x, y, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
       this.updateCollidersOnWeaponEquip()
     })
-    // this.playerOceanCollider = this.physics.add.collider(this.player, this.oceanLayer)
     this.cameras.main.setBounds(0, 0, Constants.BG_WIDTH, Constants.BG_HEIGHT)
     this.cameras.main.startFollow(this.player, true)
   }
@@ -357,11 +359,7 @@ export default class Game extends Phaser.Scene {
   }
 
   initShips() {
-    const ship1 = new Ship(this, ALL_SHIP_TYPES[0], { x: 650, y: 3500 })
-
     this.ships = this.physics.add.group({ classType: Ship })
-    this.ships.add(ship1.hullSprite)
-
     this.physics.add.overlap(this.ships, this.projectiles, (obj1, obj2) => {
       const ship: Ship = obj1.getData('ref')
       const projectile: Projectile = obj2.getData('ref')
@@ -369,6 +367,42 @@ export default class Game extends Phaser.Scene {
         projectile.onHitShip(ship)
       }
     })
+    const shipsLayer = this.map.getObjectLayer('Ships')
+    if (shipsLayer) {
+      shipsLayer.objects.forEach((obj) => {
+        const shipConfig = Constants.getShip(obj.type)
+        if (shipConfig) {
+          const ship = new Ship(this, shipConfig, { x: obj.x as number, y: obj.y as number })
+          this.ships.add(ship.hullSprite)
+        }
+      })
+    }
+  }
+
+  initEnemyShips() {
+    const enemyShipLayer = this.map.getObjectLayer('EnemyShips')
+    if (enemyShipLayer) {
+      enemyShipLayer.objects.forEach((obj) => {
+        const captainMobType = obj.type
+        const shipTypeProp = obj.properties.find((prop) => prop.name == 'shipType')
+        if (shipTypeProp) {
+          const shipType = shipTypeProp.value
+          const shipConfig = Constants.getShip(shipType)
+          const mobConfig = Constants.getMob(captainMobType)
+          if (shipConfig && mobConfig) {
+            const enemyShipCaptain = new Mob(this, 0, 0, mobConfig)
+            const enemyShip = new EnemyShip(this, shipConfig, {
+              x: obj.x as number,
+              y: obj.y as number,
+            })
+            enemyShip.setMobInControl(enemyShipCaptain)
+            enemyShipCaptain.startSailing(enemyShip)
+            this.ships.add(enemyShip.hullSprite)
+            this.addMob(enemyShipCaptain)
+          }
+        }
+      })
+    }
   }
 
   public enableShipCamera() {
