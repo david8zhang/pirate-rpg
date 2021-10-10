@@ -8,8 +8,6 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Easy wins
 
-- Make ships only spawn in specific maps
-
 ## Meatier Stuff
 
 - Stop enemy ship when player attempts to board

@@ -164,6 +164,24 @@ export default class Game extends Phaser.Scene {
   }
 
   create(): void {
+    createCharacterAnims(this.anims)
+    createMobAnims(ALL_MOBS, this.anims)
+    createEffectsAnims(ALL_EFFECTS, this.anims)
+    createShipAnims(ALL_SHIP_TYPES, this.anims)
+    this.initWorldCollider()
+    this.initTilemap()
+    this.initPlayer()
+    this.initHarvestables()
+    this.initSpawners()
+    this.initMobs()
+    this.initItems()
+    this.initProjectiles()
+    this.initShips()
+    this.initEnemyShips()
+    this.loadSaveFile()
+  }
+
+  initWorldCollider() {
     this.physics.world.setBounds(
       0,
       0,
@@ -174,21 +192,6 @@ export default class Game extends Phaser.Scene {
       true,
       true
     )
-
-    createCharacterAnims(this.anims)
-    createMobAnims(ALL_MOBS, this.anims)
-    createEffectsAnims(ALL_EFFECTS, this.anims)
-    createShipAnims(ALL_SHIP_TYPES, this.anims)
-    this.initTilemap()
-    this.initPlayer()
-    this.initHarvestables()
-    this.initMobs()
-    this.initItems()
-    this.initProjectiles()
-    this.initShips()
-    this.initEnemyShips()
-    this.loadSaveFile()
-
     this.physics.world.on('worldbounds', (obj) => {
       if (obj.gameObject === this.player) {
         this.handlePlayerCollideWorldBounds()
@@ -242,6 +245,22 @@ export default class Game extends Phaser.Scene {
         this.initTilemap()
       }
     }
+  }
+
+  initSpawners() {
+    const spawnerLayer = this.map.getObjectLayer('Spawners')
+    spawnerLayer.objects.forEach((spawnerObj) => {
+      const config = Constants.getMob(spawnerObj.type)
+      const xPos = spawnerObj.x! + spawnerObj.width! * 0.5
+      const yPos = spawnerObj.y! - spawnerObj.height! * 0.5
+      const newSpawner = new MobSpawner(this, {
+        position: { x: xPos, y: yPos },
+        spawnDelay: 1000,
+        mobConfig: config,
+        mobLimit: 5,
+      })
+      this.spawnersPool[`${xPos},${yPos}`] = newSpawner
+    })
   }
 
   initTilemap() {
@@ -437,26 +456,6 @@ export default class Game extends Phaser.Scene {
         }
       }
     )
-  }
-
-  lazyLoadSpawners() {
-    const spawnerLayer = this.map.getObjectLayer('Spawners')
-    spawnerLayer.objects.forEach((spawnerObj) => {
-      const config = Constants.getMob(spawnerObj.type)
-      const xPos = spawnerObj.x! + spawnerObj.width! * 0.5
-      const yPos = spawnerObj.y! - spawnerObj.height! * 0.5
-      if (this.cameras.main.worldView.contains(xPos, yPos)) {
-        if (!this.spawnersPool[`${xPos},${yPos}`]) {
-          const newSpawner = new MobSpawner(this, {
-            position: { x: xPos, y: yPos },
-            spawnDelay: 1000,
-            mobConfig: config,
-            mobLimit: 5,
-          })
-          this.spawnersPool[`${xPos},${yPos}`] = newSpawner
-        }
-      }
-    })
   }
 
   removeMobFromPool(mob: Mob) {
@@ -741,7 +740,6 @@ export default class Game extends Phaser.Scene {
       mob.update()
     })
     this.lazyLoadItems()
-    this.lazyLoadSpawners()
     this.lazyLoadHarvestables()
     this.updateSortingLayers()
     this.ships.children.entries.forEach((child) => {
