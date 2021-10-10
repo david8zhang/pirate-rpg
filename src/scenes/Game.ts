@@ -172,7 +172,6 @@ export default class Game extends Phaser.Scene {
     this.initTilemap()
     this.initPlayer()
     this.initHarvestables()
-    this.initSpawners()
     this.initMobs()
     this.initItems()
     this.initProjectiles()
@@ -247,19 +246,25 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  initSpawners() {
+  lazyLoadSpawners() {
     const spawnerLayer = this.map.getObjectLayer('Spawners')
     spawnerLayer.objects.forEach((spawnerObj) => {
       const config = Constants.getMob(spawnerObj.type)
       const xPos = spawnerObj.x! + spawnerObj.width! * 0.5
       const yPos = spawnerObj.y! - spawnerObj.height! * 0.5
-      const newSpawner = new MobSpawner(this, {
-        position: { x: xPos, y: yPos },
-        spawnDelay: 1000,
-        mobConfig: config,
-        mobLimit: 5,
-      })
-      this.spawnersPool[`${xPos},${yPos}`] = newSpawner
+      if (this.cameras.main.worldView.contains(xPos, yPos)) {
+        if (!this.spawnersPool[`${xPos},${yPos}`]) {
+          console.log(this.spawnersPool)
+
+          const newSpawner = new MobSpawner(this, {
+            position: { x: xPos, y: yPos },
+            spawnDelay: 1000,
+            mobConfig: config,
+            mobLimit: 5,
+          })
+          this.spawnersPool[`${xPos},${yPos}`] = newSpawner
+        }
+      }
     })
   }
 
@@ -739,6 +744,7 @@ export default class Game extends Phaser.Scene {
     this.mobPool.forEach((mob: Mob) => {
       mob.update()
     })
+    this.lazyLoadSpawners()
     this.lazyLoadItems()
     this.lazyLoadHarvestables()
     this.updateSortingLayers()

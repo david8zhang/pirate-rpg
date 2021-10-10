@@ -52,17 +52,12 @@ export class MobSpawner {
     this.clearDeadMobsEvent.destroy()
   }
 
-  canSpawnMob(): boolean {
-    return (
-      this.spawnedMobs.length > this.mobLimit &&
-      this.scene.hasAvailableMobInPool() &&
-      this.scene.cameras.main.worldView.contains(this.spawnPos.x, this.spawnPos.y)
-    )
-  }
-
   spawnMobs() {
-    const canSpawnMob = this.canSpawnMob()
-    if (canSpawnMob) {
+    if (
+      this.spawnedMobs.length === this.mobLimit ||
+      !this.scene.hasAvailableMobInPool() ||
+      !this.scene.cameras.main.worldView.contains(this.spawnPos.x, this.spawnPos.y)
+    ) {
       return
     }
     try {

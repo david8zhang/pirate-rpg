@@ -4,8 +4,6 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Bugs to fix
 
-- Mob spawner seems to continue to spawn mobs indefinitely if the spawner is off-screen
-
 ## Easy wins
 
 ## Meatier Stuff
@@ -24,7 +22,7 @@ A top down pirate themed survival/crafting game build using Phaser 3
 ### Better Ships
 
 - Spawn pirate ships with crews
-- Allow player to board enemy ships that are moving. When ship is moving and player tries to board, enemy ship stops and allows player to fight crew to take over the ship
+- single sail two-cannon craft (sloop)
 
 ### More game content
 
