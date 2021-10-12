@@ -63,6 +63,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   public ship: Ship | null = null
   public isSteeringShip: boolean = false
   public enterableShip: Ship | null = null
+  public shipToBePlaced: Placeable | null = null
 
   // Equipment and inventory
   public inventory: Inventory
@@ -248,6 +249,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  placeShip() {
+    if (this.shipToBePlaced) {
+      const didPlaceShip = this.shipToBePlaced.placeItem(PlaceableType.ship)
+      if (didPlaceShip) {
+        this.shipToBePlaced = null
+      }
+    }
+  }
+
   takeDamage(damage: number) {
     this.currHealth -= damage
     this.setTint(0xff0000)
@@ -299,6 +309,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     if (this.structureToBePlaced) {
       this.structureToBePlaced.showPreview()
+    }
+    if (this.shipToBePlaced) {
+      this.shipToBePlaced.showPreview()
     }
     this.stateMachine.step()
     const gameScene = this.scene as Game
@@ -356,6 +369,18 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           this.structureToBePlaced?.setShowPreview(false)
           this.structureToBePlaced?.destroy()
           this.structureToBePlaced = null
+        }
+      }
+
+      // Handle if the double clicked item was a ship
+      if (item.type === ItemTypes.ship) {
+        if (!this.shipToBePlaced) {
+          this.shipToBePlaced = new Placeable(this.scene as Game, item, ['Ocean'])
+          this.shipToBePlaced.setShowPreview(true)
+        } else {
+          this.shipToBePlaced.setShowPreview(false)
+          this.shipToBePlaced.destroy()
+          this.shipToBePlaced = null
         }
       }
 

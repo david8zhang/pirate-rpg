@@ -5,6 +5,7 @@ export enum ItemTypes {
   particle = 'PARTICLE',
   structure = 'STRUCTURE',
   consumable = 'CONSUMABLE',
+  ship = 'SHIP',
 }
 
 export interface ItemConfig {

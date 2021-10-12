@@ -1,9 +1,12 @@
+import { Constants } from '~/utils/Constants'
 import { Direction } from '../characters/Player'
 import Game from '../scenes/Game'
 import { ItemConfig } from './ItemConfig'
+import { Ship } from './Ship'
 
 export enum PlaceableType {
   structure = 'Structure',
+  ship = 'Ship',
 }
 
 export class Placeable {
@@ -41,6 +44,15 @@ export class Placeable {
           this.previewSprite.x,
           this.previewSprite.y
         )
+      }
+
+      if (type === PlaceableType.ship) {
+        const shipConfig = Constants.getShip(this.itemRef.name)
+        if (shipConfig) {
+          this.scene.addShip(
+            new Ship(this.scene, shipConfig, { x: this.previewSprite.x, y: this.previewSprite.y })
+          )
+        }
       }
 
       this.colliders.forEach((collider) => {
