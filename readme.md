@@ -8,7 +8,10 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Meatier Stuff
 
-- Stop enemy ship when player attempts to board
+- Allow player to construct a sailboat and place it in the water
+  - Sails and hull must be constructed separately
+  - once a ship is constructed, player can place it in the water and camera zooms out
+- Have enemy ships fire cannons when they "see" the player
 - Refactor the way structures work (have it load an entirely different scene)
 
 ## Must haves for Alpha release:

@@ -44,6 +44,8 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('palm-frond', 'items/palm-frond.png')
     this.load.image('iron-ore', 'items/iron-ore.png')
     this.load.image('iron-bar', 'items/iron-bar.png')
+    this.load.image('rope', 'items/rope.png')
+    this.load.image('canvas', 'items/canvas.png')
 
     // Weapons
     this.load.image('axe', 'weapons/axe/axe.png')
@@ -107,6 +109,9 @@ export default class Preloader extends Phaser.Scene {
       'transport/sailboat/sailboat.png',
       'transport/sailboat/sailboat.json'
     )
+    this.load.image('sailboat-inventory-sails', 'items/sailboat-sail.png')
+    this.load.image('sailboat-inventory-hull', 'items/sailboat-hull.png')
+    this.load.image('sailboat-inventory', 'items/sailboat.png')
 
     // Structures
     this.load.image('tent', 'structures/tent.png')

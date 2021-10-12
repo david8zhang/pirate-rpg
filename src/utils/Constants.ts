@@ -2285,6 +2285,55 @@ export const ALL_ITEMS: ItemConfig[] = [
     },
   },
   {
+    name: 'Canvas',
+    image: 'canvas',
+    type: ItemTypes.resource,
+    description: 'This world is but a canvas to our imagination',
+    recipe: {
+      'Palm Frond': 5,
+    },
+  },
+  {
+    name: 'Rope',
+    image: 'rope',
+    type: ItemTypes.resource,
+    recipe: {
+      'Palm Frond': 5,
+    },
+    description: "I'm at the end of my rope!",
+  },
+  {
+    name: 'Sailboat Sail',
+    image: 'sailboat-inventory-sails',
+    type: ItemTypes.resource,
+    description: 'Now all you need is a hull!',
+    recipe: {
+      Canvas: 2,
+      Rope: 2,
+      Wood: 10,
+    },
+  },
+  {
+    name: 'Sailboat Hull',
+    image: 'sailboat-inventory-hull',
+    type: ItemTypes.resource,
+    description: 'The "hull" enchilada',
+    recipe: {
+      Wood: 20,
+      'Iron Bar': 5,
+    },
+  },
+  {
+    name: 'Sailboat',
+    image: 'sailboat-inventory',
+    type: ItemTypes.resource,
+    description: 'How the hell are you able to fit this in your pockets?!',
+    recipe: {
+      'Sailboat Hull': 1,
+      'Sailboat Sail': 1,
+    },
+  },
+  {
     name: 'Crab claw',
     image: 'crabclaw',
     stats: {
