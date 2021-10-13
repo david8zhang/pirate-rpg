@@ -37,27 +37,32 @@ export class EnemyShip extends Ship {
     }
 
     if (this.health <= 0) {
-      this.stop()
-      if (this.mobInControl) {
-        this.mobInControl.stopSailing()
-      }
-      const ship = this.convertToRegularShip()
-      if (this.mobInControl) {
-        const newMob = new Mob(
-          this.scene,
-          this.mobInControl?.sprite.x,
-          this.mobInControl?.sprite.y,
-          this.mobInControl.mobConfig,
-          this.mobInControl?.spawner
-        )
-        ship.addPassenger(newMob)
-        this.scene.addMob(newMob)
-      }
-      if (this.mobInControl) {
-        ;(this.mobInControl as Mob).destroy()
-        this.mobInControl = null
-      }
+      this.stopControllingShip()
     }
+  }
+
+  stopControllingShip() {
+    this.stop()
+    if (this.mobInControl) {
+      this.mobInControl.stopSailing()
+    }
+    const ship = this.convertToRegularShip()
+    if (this.mobInControl) {
+      const newMob = new Mob(
+        this.scene,
+        this.mobInControl?.sprite.x,
+        this.mobInControl?.sprite.y,
+        this.mobInControl.mobConfig,
+        this.mobInControl?.spawner
+      )
+      ship.addPassenger(newMob)
+      this.scene.addMob(newMob)
+    }
+    if (this.mobInControl) {
+      ;(this.mobInControl as Mob).destroy()
+      this.mobInControl = null
+    }
+    return ship
   }
 
   setupBoardableShipDetector() {
@@ -71,6 +76,7 @@ export class EnemyShip extends Ship {
       { x: this.hullSprite.x, y: this.hullSprite.y },
       this.currDirection
     )
+    ship.anchor()
     this.scene.addShip(ship)
     this.destroy()
     return ship

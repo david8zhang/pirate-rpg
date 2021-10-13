@@ -360,8 +360,7 @@ export class Ship {
         this.scene.ships,
         (obj1, obj2) => {
           const ship: Ship = obj2.getData('ref')
-          const enemyShip = ship as EnemyShip
-          if (ship !== this && !enemyShip.mobInControl && this.scene.player.ship === this) {
+          if (ship !== this && this.scene.player.ship === this) {
             this.boardableShip = ship
           }
         }

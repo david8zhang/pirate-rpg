@@ -14,6 +14,7 @@ import { ItemBox } from '../ui/InventoryMenu'
 import { Structure } from '../objects/Structure'
 import { Placeable, PlaceableType } from '../objects/Placeable'
 import { Ship } from '~/objects/Ship'
+import { EnemyShip } from '~/objects/EnemyShip'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -140,13 +141,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
               this.ship.takeWheel()
               this.isSteeringShip = true
             } else if (this.ship.boardableShip) {
-              this.ship.anchor()
-              this.ship.playerExitShip()
-              this.isSteeringShip = false
-              const boardableShip = this.ship.boardableShip
-              this.ship.destroyBoardableShipDetector()
-              this.ship = boardableShip
-              this.ship.playerEnterShip()
+              this.boardEnemyShip()
             } else if (this.ship.canAnchor) {
               this.ship.anchor()
               this.isSteeringShip = false
@@ -205,6 +200,22 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   getCurrState(): string {
     return this.stateMachine.getState()
+  }
+
+  boardEnemyShip() {
+    if (this.ship && this.ship.boardableShip) {
+      const enemyShip = this.ship.boardableShip as EnemyShip
+      if (enemyShip.mobInControl) {
+        this.ship.anchor()
+        this.ship.playerExitShip()
+        this.isSteeringShip = false
+        const newEnemyShip = enemyShip.stopControllingShip()
+        this.ship.destroyBoardableShipDetector()
+        this.ship = newEnemyShip
+        this.ship.playerEnterShip()
+        this.enterShip(newEnemyShip)
+      }
+    }
   }
 
   canAttack(): boolean {

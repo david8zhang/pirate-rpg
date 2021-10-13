@@ -257,8 +257,6 @@ export default class Game extends Phaser.Scene {
       const yPos = spawnerObj.y! - spawnerObj.height! * 0.5
       if (this.cameras.main.worldView.contains(xPos, yPos)) {
         if (!this.spawnersPool[`${xPos},${yPos}`]) {
-          console.log(this.spawnersPool)
-
           const newSpawner = new MobSpawner(this, {
             position: { x: xPos, y: yPos },
             spawnDelay: 1000,
