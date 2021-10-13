@@ -2328,7 +2328,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     image: 'sailboat-inventory',
     type: ItemTypes.ship,
     description: 'How the hell are you able to fit this in your pockets?!',
-    inWorldImage: 'sailboat-side',
+    inWorldImage: 'sailboat-preview',
     recipe: {
       'Sailboat Hull': 1,
       'Sailboat Sail': 1,
