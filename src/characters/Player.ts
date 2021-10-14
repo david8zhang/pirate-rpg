@@ -204,16 +204,18 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   boardEnemyShip() {
     if (this.ship && this.ship.boardableShip) {
+      this.ship.anchor()
+      this.ship.playerExitShip()
+      this.isSteeringShip = false
+      this.ship.destroyBoardableShipDetector()
       const enemyShip = this.ship.boardableShip as EnemyShip
       if (enemyShip.mobInControl) {
-        this.ship.anchor()
-        this.ship.playerExitShip()
-        this.isSteeringShip = false
         const newEnemyShip = enemyShip.stopControllingShip()
-        this.ship.destroyBoardableShipDetector()
         this.ship = newEnemyShip
-        this.ship.playerEnterShip()
         this.enterShip(newEnemyShip)
+      } else {
+        this.ship = this.ship.boardableShip
+        this.enterShip(this.ship)
       }
     }
   }
