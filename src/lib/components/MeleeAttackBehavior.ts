@@ -17,6 +17,7 @@ export class MeleeAttackBehavior extends AttackBehavior {
 
   private hitboxImage: Phaser.Physics.Arcade.Image
   private hitboxCollider: Phaser.Physics.Arcade.Collider
+  public name: string = 'MELEE_ATTACK'
 
   constructor(mob: Mob) {
     super()

@@ -9,8 +9,13 @@ export class EnemyShip extends Ship {
   public mobInControl: Mob | null = null
   public moveSpeed: number = 150
 
-  constructor(scene: Game, shipConfig: ShipConfig, position: { x: number; y: number }) {
-    super(scene, shipConfig, position)
+  constructor(
+    scene: Game,
+    shipConfig: ShipConfig,
+    position: { x: number; y: number },
+    currDirection?: Direction
+  ) {
+    super(scene, shipConfig, position, currDirection)
     this.isAnchored = false
   }
 
@@ -90,8 +95,7 @@ export class EnemyShip extends Ship {
   }
 
   turn(direction: Direction) {
-    const { hullImages, sailsImages, wheelConfig, ladderConfig, cannonConfig, hitboxConfig } =
-      this.shipConfig
+    const { hullImages, sailsImages, wheelConfig, cannonConfig } = this.shipConfig
     switch (direction) {
       case Direction.UP:
         if (this.currDirection === Direction.UP && !this.canMove()) {

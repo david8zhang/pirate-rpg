@@ -6,13 +6,11 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Easy wins
 
+- Make enemies "de-aggro" after a certain amount of time has passed
+
 ## Meatier Stuff
 
-- Allow player to construct a sailboat and place it in the water
-  - Sails and hull must be constructed separately
-  - once a ship is constructed, player can place it in the water and camera zooms out
 - Have enemy ships fire cannons when they "see" the player
-- Refactor the way structures work (have it load an entirely different scene)
 
 ## Must haves for Alpha release:
 
@@ -46,7 +44,8 @@ A top down pirate themed survival/crafting game build using Phaser 3
 - Armor (Head, Chest, Feet)
 - Ranged weapons
 - Make rowboats + tents have health
-- Make structures removable
+- Reworked structures
+  - Make structures removable
 - Procedural Map generation
 - Sails
   - Sails unfurling animations

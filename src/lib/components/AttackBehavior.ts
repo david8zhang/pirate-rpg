@@ -2,6 +2,7 @@ import { AnimationType } from '~/utils/Constants'
 import { Behavior, Direction } from './Behavior'
 
 export class AttackBehavior implements Behavior {
+  name: string = 'ATTACK'
   isActive: boolean = false
   direction: Direction | null = null
   ignoreTileCollision = true

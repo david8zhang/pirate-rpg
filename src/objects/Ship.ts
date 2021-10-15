@@ -3,7 +3,6 @@ import { Mob } from '~/mobs/Mob'
 import { ShipUIScene } from '~/scenes/ShipUIScene'
 import Game from '../scenes/Game'
 import { Cannon } from './Cannon'
-import { EnemyShip } from './EnemyShip'
 
 export interface ShipConfig {
   defaultHealth: number
@@ -83,7 +82,6 @@ export class Ship {
   public currDirection = Direction.RIGHT
   public wallImages: Phaser.Physics.Arcade.Image[] = []
   public hitboxImages: Phaser.Physics.Arcade.Image[] = []
-  public wheelCollider!: Phaser.Physics.Arcade.Collider
   public shipConfig: ShipConfig
   public landDetectorImg!: Phaser.Physics.Arcade.Image
   public boardableShipDetectorImg?: Phaser.Physics.Arcade.Image
@@ -91,7 +89,6 @@ export class Ship {
   public embarkPoint: Phaser.Physics.Arcade.Image | null = null
   public cannons: Cannon[] = []
   public hullBodyConfig: any
-  public wallColliders: Phaser.Physics.Arcade.Collider[] = []
 
   public isAnchored: boolean = true
   public canTakeWheel: boolean = false
@@ -107,6 +104,12 @@ export class Ship {
   public boardableShip: Ship | null = null
   public boardableShipOverlap?: Phaser.Physics.Arcade.Collider
   public shipType: string
+
+  // Colliders
+  public wallColliders: Phaser.Physics.Arcade.Collider[] = []
+  public wheelCollider!: Phaser.Physics.Arcade.Collider
+  public wheelMobCollider!: Phaser.Physics.Arcade.Collider
+  public ladderCollider!: Phaser.Physics.Arcade.Collider
 
   constructor(
     scene: Game,
@@ -298,6 +301,9 @@ export class Ship {
     this.passengers.forEach((p) => {
       p.die()
     })
+    if (this.wheelCollider) this.wheelCollider.destroy()
+    if (this.wheelMobCollider) this.wheelMobCollider.destroy()
+    if (this.ladderCollider) this.ladderCollider.destroy()
   }
 
   canMove() {
@@ -407,8 +413,10 @@ export class Ship {
       this.ladderSprite = this.scene.physics.add.sprite(xPos, yPos, directionConfig.image)
       this.ladderSprite.setName('Transport')
       this.scene.physics.world.enableBody(this.ladderSprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
-      this.scene.physics.add.overlap(this.ladderSprite, this.scene.player, () =>
-        this.onPlayerLadderCollide()
+      this.ladderCollider = this.scene.physics.add.overlap(
+        this.ladderSprite,
+        this.scene.player,
+        () => this.onPlayerLadderCollide()
       )
     } else {
       this.ladderSprite.setTexture(directionConfig.image)
@@ -422,16 +430,6 @@ export class Ship {
       this.ladderSprite.body.offset.x = this.ladderSprite.width
     } else {
       this.ladderSprite.scaleX = 1
-    }
-
-    if (!this.wheelCollider) {
-      this.wheelCollider = this.scene.physics.add.overlap(
-        this.scene.player,
-        this.wheelSprite,
-        () => {
-          this.onWheelOverlap()
-        }
-      )
     }
   }
 
@@ -467,6 +465,27 @@ export class Ship {
       this.wheelSprite.body.offset.x = this.wheelSprite.width * 1.5
     } else {
       this.wheelSprite.scaleX = 1
+    }
+
+    if (!this.wheelCollider) {
+      this.wheelCollider = this.scene.physics.add.overlap(
+        this.scene.player,
+        this.wheelSprite,
+        () => {
+          this.onWheelOverlap()
+        }
+      )
+    }
+
+    if (!this.wheelMobCollider) {
+      this.wheelMobCollider = this.scene.physics.add.overlap(
+        this.wheelSprite,
+        this.scene.mobs,
+        (obj1, obj2) => {
+          const collidedMob = obj2.getData('ref') as Mob
+          collidedMob.takeControlOfShip(this)
+        }
+      )
     }
   }
 

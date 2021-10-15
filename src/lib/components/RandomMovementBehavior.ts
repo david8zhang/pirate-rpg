@@ -23,6 +23,7 @@ export class RandomMovementBehavior extends MovementBehavior {
   public state: MoveState = MoveState.MOVING
   public speed: number = 50
   public onMove: Function = () => {}
+  public name: string = 'RANDOM_MOVE'
 
   constructor(
     sprite: Phaser.Physics.Arcade.Sprite,

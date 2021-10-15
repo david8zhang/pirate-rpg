@@ -12,6 +12,7 @@ export class MovementBehavior implements Behavior {
   public ignoreTileCollision = false
   public speed: number = 50
   public onMove: Function = () => {}
+  public name: string = 'MOVE'
 
   constructor() {}
 

@@ -13,6 +13,7 @@ export class SailingBehavior implements Behavior {
   public fireDelay: number = 5000
   public firedCannon: boolean = false
   public isStopped: boolean = false
+  public name: string = 'SAIL'
 
   constructor(mob: Mob, ship: EnemyShip) {
     this.mob = mob

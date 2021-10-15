@@ -479,14 +479,20 @@ export default class Game extends Phaser.Scene {
       return true
     }
     const offscreenMob = this.mobPool.find((mob) => {
-      return !this.cameras.main.worldView.contains(mob.sprite.x, mob.sprite.y)
+      return (
+        !this.cameras.main.worldView.contains(mob.sprite.x, mob.sprite.y) &&
+        mob.activeBehavior.name !== 'SAIL'
+      )
     })
     return offscreenMob !== undefined
   }
 
   getAvailableMobInPool() {
     const offscreenMob = this.mobPool.find((mob) => {
-      return !this.cameras.main.worldView.contains(mob.sprite.x, mob.sprite.y)
+      return (
+        !this.cameras.main.worldView.contains(mob.sprite.x, mob.sprite.y) &&
+        mob.activeBehavior.name !== 'SAIL'
+      )
     })
     return offscreenMob ? offscreenMob : null
   }

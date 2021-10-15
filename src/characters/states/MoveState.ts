@@ -10,8 +10,6 @@ export class MoveState extends State {
     const downDown = cursors.down?.isDown
     const spaceDown = cursors.space?.isDown
 
-    console.log('Can Move: ', player.canMove())
-
     if (player.canMove()) {
       const speed = 100
       if (spaceDown && player.canAttack()) {

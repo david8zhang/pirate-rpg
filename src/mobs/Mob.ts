@@ -10,6 +10,7 @@ import { SailingBehavior } from '~/lib/components/SailingBehavior'
 import { EnemyShip } from '~/objects/EnemyShip'
 import { MobSpawner } from './MobSpawner'
 import { UINumber } from '../ui/UINumber'
+import { Ship } from '~/objects/Ship'
 
 export interface MobAnimation {
   key: string
@@ -30,7 +31,6 @@ export class Mob {
   health: number
   sprite: Phaser.Physics.Arcade.Sprite
   isAggro: boolean = false
-  isSailing: boolean = false
   drops: string[] = []
   mobConfig: any
   isHit: boolean = false
@@ -341,10 +341,38 @@ export class Mob {
       this.healthBar.setVisible(false)
     }
 
-    // If this mob is currently colliding with a ship wheel, start the sailing behavior (if sailing behavior is enabled on this mob)
+    // If this mob is currently colliding with a ship wheel and there's no players on this ship, start the sailing behavior
+
     this.healthBar.x = this.sprite.x - this.healthBar.width / 2
     this.healthBar.y = this.sprite.y - this.sprite.height / 2
     this.healthBar.draw()
     this.activeBehavior.update()
+  }
+
+  // Take control of the ship and start sailing it if not currently sailing and collides with wheel
+  takeControlOfShip(ship: Ship) {
+    const gameScene = this.scene as Game
+    if (
+      this.mobConfig.canSail &&
+      this.activeBehavior.name !== 'SAIL' &&
+      ship !== gameScene.player.ship
+    ) {
+      ship.destroy()
+      const newEnemyShip = new EnemyShip(
+        gameScene,
+        ship.shipConfig,
+        {
+          x: ship.hullSprite.x,
+          y: ship.hullSprite.y,
+        },
+        ship.currDirection
+      )
+      const newMob = new Mob(this.scene, this.sprite.x, this.sprite.y, this.mobConfig)
+      gameScene.addShip(newEnemyShip)
+      gameScene.addMob(newMob)
+      newMob.startSailing(newEnemyShip)
+      newEnemyShip.setMobInControl(newMob)
+      this.destroy()
+    }
   }
 }
