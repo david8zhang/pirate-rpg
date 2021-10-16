@@ -15,6 +15,7 @@ import { Structure } from '../objects/Structure'
 import { Placeable, PlaceableType } from '../objects/Placeable'
 import { Ship } from '~/objects/Ship'
 import { EnemyShip } from '~/objects/EnemyShip'
+import { Constants } from '~/utils/Constants'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -206,6 +207,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.ship && this.ship.boardableShip) {
       this.ship.anchor()
       this.ship.playerExitShip()
+
       this.isSteeringShip = false
       this.ship.destroyBoardableShipDetector()
       const enemyShip = this.ship.boardableShip as EnemyShip

@@ -108,7 +108,6 @@ export class Ship {
   // Colliders
   public wallColliders: Phaser.Physics.Arcade.Collider[] = []
   public wheelCollider!: Phaser.Physics.Arcade.Collider
-  public wheelMobCollider!: Phaser.Physics.Arcade.Collider
   public ladderCollider!: Phaser.Physics.Arcade.Collider
 
   constructor(
@@ -302,7 +301,6 @@ export class Ship {
       p.die()
     })
     if (this.wheelCollider) this.wheelCollider.destroy()
-    if (this.wheelMobCollider) this.wheelMobCollider.destroy()
     if (this.ladderCollider) this.ladderCollider.destroy()
   }
 
@@ -473,17 +471,6 @@ export class Ship {
         this.wheelSprite,
         () => {
           this.onWheelOverlap()
-        }
-      )
-    }
-
-    if (!this.wheelMobCollider) {
-      this.wheelMobCollider = this.scene.physics.add.overlap(
-        this.wheelSprite,
-        this.scene.mobs,
-        (obj1, obj2) => {
-          const collidedMob = obj2.getData('ref') as Mob
-          collidedMob.takeControlOfShip(this)
         }
       )
     }
@@ -690,7 +677,20 @@ export class Ship {
     this.scene.hoverText.hide()
   }
 
+  mobTakeControlIfPossible() {
+    this.scene.time.delayedCall(1000, () => {
+      const captain = this.passengers.find((mob) => {
+        return mob.mobConfig.canSail
+      })
+      if (captain) {
+        ;(captain as Mob).takeControlOfShip(this)
+      }
+    })
+  }
+
   playerExitShip() {
+    // If there are still passengers aboard this ship who can sail, then have one of them become a captain and start sailing
+    this.mobTakeControlIfPossible()
     switch (this.currDirection) {
       case Direction.UP:
         this.scene.player.y = this.ladderSprite.y
@@ -779,6 +779,54 @@ export class Ship {
     } else {
       this.hullSprite.setTexture(hullImages[this.currDirection])
     }
+  }
+
+  public setDirection(direction: Direction) {
+    const { sailsImages, wheelConfig, ladderConfig, cannonConfig, landDetectorConfig } =
+      this.shipConfig
+    switch (direction) {
+      case Direction.LEFT: {
+        this.sailsSprite.setAlpha(1)
+        this.currDirection = Direction.LEFT
+        this.sailsSprite.setTexture(sailsImages.side)
+        this.hullSprite.scaleX = 1
+        this.sailsSprite.scaleX = 1
+        break
+      }
+      case Direction.RIGHT: {
+        this.sailsSprite.setAlpha(1)
+        this.currDirection = Direction.RIGHT
+        this.sailsSprite.setTexture(sailsImages.side)
+        this.sailsSprite.scaleX = -1
+        this.hullSprite.scaleX = -1
+        this.wheelSprite.body.offset.x = this.wheelSprite.width
+        this.configureHullBody()
+        break
+      }
+      case Direction.UP: {
+        this.sailsSprite.setAlpha(1)
+        this.currDirection = Direction.UP
+        this.hullSprite.scaleX = 1
+        this.sailsSprite.scaleX = 1
+        this.sailsSprite.setTexture(sailsImages.up)
+        this.configureHullBody()
+        break
+      }
+      case Direction.DOWN: {
+        this.sailsSprite.setAlpha(0.5)
+        this.currDirection = Direction.DOWN
+        this.hullSprite.scaleX = 1
+        this.sailsSprite.scaleX = 1
+        this.sailsSprite.setTexture(sailsImages.down)
+        this.configureHullBody()
+        break
+      }
+    }
+    this.setupWheel(wheelConfig)
+    this.setupLadder(ladderConfig)
+    this.setupCannon(cannonConfig)
+    this.setupLandDetector(this.hullSprite.x, this.hullSprite.y, landDetectorConfig)
+    this.setupBoardableShipDetector(this.hullSprite.x, this.hullSprite.y)
   }
 
   public moveShip(direction: Direction) {

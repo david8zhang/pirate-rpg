@@ -6,11 +6,16 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Easy wins
 
-- Make enemies "de-aggro" after a certain amount of time has passed
+- Make player ship go to a certain place next to ship being boarded (so that the player ship doesn't clip through current ship)
 
 ## Meatier Stuff
 
 - Have enemy ships fire cannons when they "see" the player
+- Investigate lag spikes when:
+  1. Board enemy ship
+  2. Disembark enemy ship
+  3. Board old ship
+  4. Sail around
 
 ## Must haves for Alpha release:
 

@@ -64,6 +64,7 @@ export default class Game extends Phaser.Scene {
 
   // Ships
   public ships!: Phaser.GameObjects.Group
+  public shipGroupings!: Phaser.GameObjects.Container
   public enemyShips!: Phaser.GameObjects.Group
 
   // Structures

@@ -34,6 +34,7 @@ export class Mob {
   drops: string[] = []
   mobConfig: any
   isHit: boolean = false
+  currShip: Ship | null = null
 
   // Components
   activeBehavior: Behavior
@@ -230,6 +231,7 @@ export class Mob {
   destroy() {
     const gameScene = this.scene as Game
     gameScene.removeMobFromPool(this)
+    this.currShip = null
     this.activeBehavior.stop()
     this.healthBar.destroy()
     this.sprite.destroy()
@@ -262,6 +264,7 @@ export class Mob {
   startSailing(ship: EnemyShip) {
     if (this.mobConfig.canSail) {
       this.setActiveBehavior(new SailingBehavior(this, ship))
+      this.currShip = ship
     }
   }
 
@@ -352,11 +355,7 @@ export class Mob {
   // Take control of the ship and start sailing it if not currently sailing and collides with wheel
   takeControlOfShip(ship: Ship) {
     const gameScene = this.scene as Game
-    if (
-      this.mobConfig.canSail &&
-      this.activeBehavior.name !== 'SAIL' &&
-      ship !== gameScene.player.ship
-    ) {
+    if (this.mobConfig.canSail && this.activeBehavior.name !== 'SAIL') {
       ship.destroy()
       const newEnemyShip = new EnemyShip(
         gameScene,

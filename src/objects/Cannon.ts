@@ -55,7 +55,7 @@ export class Cannon {
     this.setScale(config.scaleX, config.scaleY)
     this.setBody(config.body ? config.body : null)
     this.playerOverlap = this.scene.physics.add.overlap(this.sprite, this.scene.player, () => {
-      if (this.scene.player.ship) {
+      if (this.canFire()) {
         this.scene.hoverText.showText(
           '(E) Fire',
           this.scene.player.x - this.scene.player.width / 2,
@@ -72,6 +72,14 @@ export class Cannon {
       }
     })
     this.sourceShip = ship
+  }
+
+  canFire() {
+    return (
+      this.scene.player.ship &&
+      this.sourceShip === this.scene.player.ship &&
+      this.sourceShip.passengers.length === 0
+    )
   }
 
   fireCannon() {
