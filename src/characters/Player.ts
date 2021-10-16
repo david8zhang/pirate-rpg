@@ -117,7 +117,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   configureKeyPresses() {
-    const gameScene = this.scene as Game
     this.scene.input.keyboard.on(
       'keydown',
       (keycode: any) => {
@@ -203,13 +202,68 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     return this.stateMachine.getState()
   }
 
+  dockCurrShipNextToShipToBoard() {
+    const gameScene = this.scene as Game
+    if (!this.ship || !this.ship.boardableShip) {
+      return
+    }
+    // dock ship next to boardableship
+    const boardableShip = this.ship.boardableShip
+    switch (boardableShip.currDirection) {
+      case Direction.UP:
+      case Direction.DOWN: {
+        const xDiff = Math.round(boardableShip.hullSprite.width / 2)
+
+        // Check if where we're placing the ship is valid
+        const leftX = boardableShip.hullSprite.x - xDiff
+        const rightX = boardableShip.hullSprite.x + xDiff
+        const y = boardableShip.hullSprite.y
+
+        const isLeftOcean = gameScene.getTileAt(leftX, y) === 'Ocean'
+        const isRightOcean = gameScene.getTileAt(rightX, y) === 'Ocean'
+        if (isLeftOcean && !isRightOcean) {
+          this.ship.setPosition(leftX, y)
+        } else if (!isLeftOcean && isRightOcean) {
+          this.ship.setPosition(rightX, y)
+        } else if (isLeftOcean && isRightOcean) {
+          const isLeft = boardableShip.hullSprite.x < Constants.BG_WIDTH / 2
+          this.ship.setPosition(isLeft ? rightX : leftX, y)
+        }
+        break
+      }
+      case Direction.LEFT:
+      case Direction.RIGHT: {
+        const yDiff = Math.round(boardableShip.hullSprite.height / 4)
+
+        // Check if where we're placing the ship is valid
+        const upY = boardableShip.hullSprite.y - yDiff
+        const downY = boardableShip.hullSprite.y + yDiff
+        const x = boardableShip.hullSprite.x
+
+        const isUpOcean = gameScene.getTileAt(x, upY) === 'Ocean'
+        const isDownOcean = gameScene.getTileAt(x, downY) === 'Ocean'
+        if (isUpOcean && !isDownOcean) {
+          this.ship.setPosition(x, upY)
+        } else if (!isUpOcean && isDownOcean) {
+          this.ship.setPosition(x, downY)
+        } else if (isUpOcean && isDownOcean) {
+          const isUp = boardableShip.hullSprite.y < Constants.BG_HEIGHT / 2
+          this.ship.setPosition(x, isUp ? downY : upY)
+        }
+        break
+      }
+    }
+    this.ship.setDirection(boardableShip.currDirection)
+  }
+
   boardEnemyShip() {
     if (this.ship && this.ship.boardableShip) {
+      this.dockCurrShipNextToShipToBoard()
       this.ship.anchor()
       this.ship.playerExitShip()
 
       this.isSteeringShip = false
-      this.ship.destroyBoardableShipDetector()
+      this.ship.disableBoardableShipDetector()
       const enemyShip = this.ship.boardableShip as EnemyShip
       if (enemyShip.mobInControl) {
         const newEnemyShip = enemyShip.stopControllingShip()

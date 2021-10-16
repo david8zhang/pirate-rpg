@@ -376,11 +376,16 @@ export class Ship {
     this.boardableShipDetectorImg.y = centerPoint.y
   }
 
-  destroyBoardableShipDetector() {
-    this.boardableShipDetectorImg?.destroy()
-    this.boardableShipOverlap?.destroy()
-    this.boardableShipDetectorImg = undefined
-    this.boardableShipOverlap = undefined
+  disableBoardableShipDetector() {
+    if (this.boardableShipOverlap) {
+      this.boardableShipOverlap.active = false
+    }
+  }
+
+  enableBoardableShipDetector() {
+    if (this.boardableShipOverlap) {
+      this.boardableShipOverlap.active = true
+    }
   }
 
   setupLandDetector(x: number, y: number, landDetectorConfig: any) {
@@ -745,6 +750,9 @@ export class Ship {
     // Follow the ship instead of the main character
     this.scene.cameras.main.startFollow(this.hullSprite, true)
     this.scene.enableShipCamera()
+
+    // Enable the detector that checks if we can board an enemy ship
+    this.enableBoardableShipDetector()
   }
 
   setPlayerAtWheelPosition() {
@@ -800,7 +808,6 @@ export class Ship {
         this.sailsSprite.scaleX = -1
         this.hullSprite.scaleX = -1
         this.wheelSprite.body.offset.x = this.wheelSprite.width
-        this.configureHullBody()
         break
       }
       case Direction.UP: {
@@ -809,7 +816,6 @@ export class Ship {
         this.hullSprite.scaleX = 1
         this.sailsSprite.scaleX = 1
         this.sailsSprite.setTexture(sailsImages.up)
-        this.configureHullBody()
         break
       }
       case Direction.DOWN: {
@@ -818,15 +824,11 @@ export class Ship {
         this.hullSprite.scaleX = 1
         this.sailsSprite.scaleX = 1
         this.sailsSprite.setTexture(sailsImages.down)
-        this.configureHullBody()
         break
       }
     }
-    this.setupWheel(wheelConfig)
-    this.setupLadder(ladderConfig)
-    this.setupCannon(cannonConfig)
-    this.setupLandDetector(this.hullSprite.x, this.hullSprite.y, landDetectorConfig)
-    this.setupBoardableShipDetector(this.hullSprite.x, this.hullSprite.y)
+    this.configureHullBody()
+    this.reconfigureAllSpritesAndColliders()
   }
 
   public moveShip(direction: Direction) {
@@ -858,7 +860,6 @@ export class Ship {
         this.hullSprite.scaleX = 1
         this.sailsSprite.scaleX = 1
         this.sailsSprite.setTexture(sailsImages.up)
-        this.configureHullBody()
         this.setAllVelocity(0, -speed)
         break
       case Direction.LEFT:
@@ -877,7 +878,6 @@ export class Ship {
         this.sailsSprite.setTexture(sailsImages.side)
         this.hullSprite.scaleX = 1
         this.sailsSprite.scaleX = 1
-        this.configureHullBody()
         this.setAllVelocity(-speed, 0)
         break
       case Direction.RIGHT:
@@ -897,7 +897,6 @@ export class Ship {
         this.sailsSprite.scaleX = -1
         this.hullSprite.scaleX = -1
         this.wheelSprite.body.offset.x = this.wheelSprite.width
-        this.configureHullBody()
         this.setAllVelocity(speed, 0)
         break
       case Direction.DOWN:
@@ -916,10 +915,10 @@ export class Ship {
         this.hullSprite.scaleX = 1
         this.sailsSprite.scaleX = 1
         this.sailsSprite.setTexture(sailsImages.down)
-        this.configureHullBody()
         this.setAllVelocity(0, speed)
         break
     }
+    this.configureHullBody()
     this.setupWheel(wheelConfig)
     this.setupLadder(ladderConfig)
     this.setupCannon(cannonConfig)
@@ -1014,12 +1013,20 @@ export class Ship {
     })
   }
 
-  setPosition(x: number, y: number) {
-    const { wheelConfig, ladderConfig, cannonConfig } = this.shipConfig
-    this.hullSprite.setPosition(x, y)
-    this.sailsSprite.setPosition(x, y)
+  reconfigureAllSpritesAndColliders() {
+    const { wheelConfig, ladderConfig, cannonConfig, landDetectorConfig, colliderConfig } =
+      this.shipConfig
     this.setupWheel(wheelConfig)
     this.setupLadder(ladderConfig)
     this.setupCannon(cannonConfig)
+    this.setupWalls(colliderConfig)
+    this.setupLandDetector(this.hullSprite.x, this.hullSprite.y, landDetectorConfig)
+    this.setupBoardableShipDetector(this.hullSprite.x, this.hullSprite.y)
+  }
+
+  setPosition(x: number, y: number) {
+    this.hullSprite.setPosition(x, y)
+    this.sailsSprite.setPosition(x, y)
+    this.reconfigureAllSpritesAndColliders()
   }
 }

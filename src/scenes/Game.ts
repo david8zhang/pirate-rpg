@@ -167,6 +167,17 @@ export default class Game extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys()
   }
 
+  getTileAt(x: number, y: number) {
+    const layers = this.getAllTileLayers()
+    for (let i = 0; i < layers.length; i++) {
+      const layer = layers[i]
+      const check = layer.getTileAtWorldXY(x, y)
+      if (check) {
+        return check.layer.name
+      }
+    }
+  }
+
   create(): void {
     createCharacterAnims(this.anims)
     createMobAnims(ALL_MOBS, this.anims)
