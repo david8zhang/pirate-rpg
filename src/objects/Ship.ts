@@ -3,6 +3,7 @@ import { Mob } from '~/mobs/Mob'
 import { ShipUIScene } from '~/scenes/ShipUIScene'
 import Game from '../scenes/Game'
 import { Cannon } from './Cannon'
+import { EnemyShip } from './EnemyShip'
 
 export interface ShipConfig {
   defaultHealth: number
@@ -366,6 +367,10 @@ export class Ship {
           const ship: Ship = obj2.getData('ref')
           if (ship !== this && this.scene.player.ship === this) {
             this.boardableShip = ship
+            const enemyShip: EnemyShip = this.boardableShip as EnemyShip
+            if (enemyShip.mobInControl) {
+              enemyShip.followPlayer()
+            }
           }
         }
       )

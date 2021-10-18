@@ -116,7 +116,7 @@ export class SailingBehavior implements Behavior {
   }
 
   // If damage is taken, follow the player ship
-  takeDamage() {
+  followPlayer() {
     this.moveShipEvent.destroy()
     this.followingPlayer = true
   }

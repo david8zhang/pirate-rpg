@@ -38,11 +38,20 @@ export class EnemyShip extends Ship {
     this.scene.cameras.main.shake(100, 0.005)
     if (this.mobInControl) {
       const behavior: SailingBehavior = this.mobInControl?.activeBehavior as SailingBehavior
-      behavior.takeDamage()
+      behavior.followPlayer()
     }
 
     if (this.health <= 0) {
       this.stopControllingShip()
+    }
+  }
+
+  followPlayer() {
+    if (this.mobInControl) {
+      const behavior: SailingBehavior = this.mobInControl?.activeBehavior as SailingBehavior
+      if (!behavior.followingPlayer) {
+        behavior.followPlayer()
+      }
     }
   }
 
