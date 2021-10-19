@@ -1,5 +1,11 @@
 import Phaser, { Physics } from 'phaser'
-import { ALL_EFFECTS, ALL_SHIP_TYPES, Constants, OVERWORLD_CONFIG } from '../utils/Constants'
+import {
+  ALL_EFFECTS,
+  ALL_SHIP_TYPES,
+  CAPTAIN_TO_CREW_TYPE,
+  Constants,
+  OVERWORLD_CONFIG,
+} from '../utils/Constants'
 import '../characters/Player'
 import Player, { Direction } from '../characters/Player'
 import { createCharacterAnims } from '../anims/CharacterAnims'
@@ -432,6 +438,7 @@ export default class Game extends Phaser.Scene {
               x: obj.x as number,
               y: obj.y as number,
             })
+            enemyShip.setCrew(CAPTAIN_TO_CREW_TYPE[captainMobType], shipConfig.numCrew)
             enemyShip.setMobInControl(enemyShipCaptain)
             enemyShipCaptain.startSailing(enemyShip)
             this.ships.add(enemyShip.hullSprite)

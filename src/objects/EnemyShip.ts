@@ -1,13 +1,15 @@
 import { Direction } from '~/characters/Player'
 import { SailingBehavior } from '~/lib/components/SailingBehavior'
 import { Mob } from '~/mobs/Mob'
-import { AnimationType } from '~/utils/Constants'
+import { AnimationType, Constants } from '~/utils/Constants'
 import Game from '../scenes/Game'
 import { Ship, ShipConfig } from './Ship'
 
 export class EnemyShip extends Ship {
   public mobInControl: Mob | null = null
   public moveSpeed: number = 150
+  public numCrew: number = 0
+  public crewType: string[] = []
 
   constructor(
     scene: Game,
@@ -21,6 +23,11 @@ export class EnemyShip extends Ship {
 
   setupLadder() {
     return
+  }
+
+  setCrew(crewType: string[], numCrew: number) {
+    this.numCrew = numCrew
+    this.crewType = crewType
   }
 
   setMobInControl(mobInControl: Mob) {
@@ -72,11 +79,26 @@ export class EnemyShip extends Ship {
       ship.addPassenger(newMob)
       this.scene.addMob(newMob)
     }
+    // Spawn the crew to defend the ship
+    this.spawnCrew(ship)
     if (this.mobInControl) {
       ;(this.mobInControl as Mob).destroy()
       this.mobInControl = null
     }
     return ship
+  }
+
+  spawnCrew(ship: Ship) {
+    for (let i = 0; i < this.numCrew; i++) {
+      const randIndex = Constants.getRandomNum(0, 1)
+      const mobConfig = Constants.getMob(this.crewType[randIndex])
+      const { x, y } = this.getCenterPoint()
+      if (mobConfig) {
+        const mob = new Mob(this.scene, x, y, mobConfig)
+        this.scene.addMob(mob)
+        ship.addPassenger(mob)
+      }
+    }
   }
 
   setupBoardableShipDetector() {

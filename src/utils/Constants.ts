@@ -104,6 +104,7 @@ export const ALL_SHIP_TYPES = [
   {
     defaultHealth: 1000,
     name: 'Sloop',
+    numCrew: 5,
     hullImages: {
       up: 'sloop-up',
       down: 'sloop-down',
@@ -1292,6 +1293,7 @@ export const ALL_SHIP_TYPES = [
   {
     defaultHealth: 500,
     name: 'Sailboat',
+    numCrew: 1,
     hullImages: {
       up: 'sailboat-up',
       down: 'sailboat-down',
@@ -2430,3 +2432,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     type: ItemTypes.weapon,
   },
 ]
+
+export const CAPTAIN_TO_CREW_TYPE = {
+  Skeleton: ['Skeleton', 'Monkey'],
+}

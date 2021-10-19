@@ -619,6 +619,11 @@
                  "name":"skeleton-ship",
                  "properties":[
                         {
+                         "name":"numCrew",
+                         "type":"int",
+                         "value":5
+                        }, 
+                        {
                          "name":"shipType",
                          "type":"string",
                          "value":"Sloop"
@@ -627,8 +632,8 @@
                  "type":"Skeleton",
                  "visible":true,
                  "width":0,
-                 "x":2987.53339269813,
-                 "y":2275.15583259127
+                 "x":2987.53,
+                 "y":2275.16
                 }],
          "opacity":1,
          "type":"objectgroup",

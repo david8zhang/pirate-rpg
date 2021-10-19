@@ -3,7 +3,7 @@ import { HealthBar } from '../ui/HealthBar'
 import { Behavior, Direction } from '../lib/components/Behavior'
 import Game from '../scenes/Game'
 import { ItemFactory } from '~/objects/ItemFactory'
-import { AnimationType, Constants } from '~/utils/Constants'
+import { AnimationType, CAPTAIN_TO_CREW_TYPE, Constants } from '~/utils/Constants'
 import { MeleeAttackBehavior } from '~/lib/components/MeleeAttackBehavior'
 import { ParticleSpawner } from '~/lib/components/ParticleSpawner'
 import { SailingBehavior } from '~/lib/components/SailingBehavior'
@@ -233,6 +233,7 @@ export class Mob {
     gameScene.removeMobFromPool(this)
     this.currShip = null
     this.activeBehavior.stop()
+    this.activeBehavior.destroy()
     this.healthBar.destroy()
     this.sprite.destroy()
   }
@@ -371,6 +372,7 @@ export class Mob {
       gameScene.addMob(newMob)
       newMob.startSailing(newEnemyShip)
       newEnemyShip.setMobInControl(newMob)
+      newEnemyShip.setCrew(CAPTAIN_TO_CREW_TYPE[this.mobConfig.name], ship.shipConfig.numCrew)
       this.destroy()
     }
   }

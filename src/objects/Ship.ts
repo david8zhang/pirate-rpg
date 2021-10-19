@@ -8,6 +8,7 @@ import { EnemyShip } from './EnemyShip'
 export interface ShipConfig {
   defaultHealth: number
   name: string
+  numCrew: number
   hullImages: {
     up: string
     down: string
@@ -299,7 +300,7 @@ export class Ship {
       cannon.destroy()
     })
     this.passengers.forEach((p) => {
-      p.die()
+      p.destroy()
     })
     if (this.wheelCollider) this.wheelCollider.destroy()
     if (this.ladderCollider) this.ladderCollider.destroy()
