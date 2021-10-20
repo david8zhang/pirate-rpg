@@ -35,7 +35,7 @@ export class Projectile {
   public onHitShip(ship: Ship) {
     EffectSpawner.instance.spawnEffect(ALL_EFFECTS[0], this.sprite.x, this.sprite.y)
     this.sprite.destroy()
-    if (ship) {
+    if (ship && ship !== this.sourceShip) {
       ship.takeDamage(this.damage)
     }
   }

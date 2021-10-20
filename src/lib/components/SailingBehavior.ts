@@ -121,6 +121,17 @@ export class SailingBehavior implements Behavior {
     this.followingPlayer = true
   }
 
+  stopFollowingPlayer() {
+    this.moveShipEvent = this.mob.scene.time.addEvent({
+      delay: 2000,
+      callback: () => {
+        this.moveShipRandomly()
+      },
+      loop: true,
+    })
+    this.followingPlayer = false
+  }
+
   stop() {
     this.moveShipEvent.destroy()
     this.isStopped = true

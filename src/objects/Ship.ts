@@ -368,10 +368,6 @@ export class Ship {
           const ship: Ship = obj2.getData('ref')
           if (ship !== this && this.scene.player.ship === this) {
             this.boardableShip = ship
-            const enemyShip: EnemyShip = this.boardableShip as EnemyShip
-            if (enemyShip.mobInControl) {
-              enemyShip.followPlayer()
-            }
           }
         }
       )

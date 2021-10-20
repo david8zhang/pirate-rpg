@@ -6,6 +6,7 @@ import Game from '../scenes/Game'
 import { Ship, ShipConfig } from './Ship'
 
 export class EnemyShip extends Ship {
+  public static SIGHT_RANGE = 100
   public mobInControl: Mob | null = null
   public moveSpeed: number = 150
   public numCrew: number = 0
@@ -62,6 +63,15 @@ export class EnemyShip extends Ship {
     }
   }
 
+  stopFollowingPlayer() {
+    if (this.mobInControl) {
+      const behavior: SailingBehavior = this.mobInControl?.activeBehavior as SailingBehavior
+      if (behavior.followingPlayer) {
+        behavior.stopFollowingPlayer()
+      }
+    }
+  }
+
   stopControllingShip() {
     this.stop()
     if (this.mobInControl) {
@@ -94,7 +104,10 @@ export class EnemyShip extends Ship {
       const mobConfig = Constants.getMob(this.crewType[randIndex])
       const { x, y } = this.getCenterPoint()
       if (mobConfig) {
-        const mob = new Mob(this.scene, x, y, mobConfig)
+        const xDiff = Constants.getRandomNum(-10, 10)
+        const yDiff = Constants.getRandomNum(-10, 10)
+        const mob = new Mob(this.scene, x + xDiff, y + yDiff, mobConfig)
+        mob.makeAggro()
         this.scene.addMob(mob)
         ship.addPassenger(mob)
       }
@@ -118,9 +131,24 @@ export class EnemyShip extends Ship {
     return ship
   }
 
+  isPlayerVisible() {
+    const ship = this.scene.player.ship
+    if (ship) {
+      const xDiff = Math.abs(this.hullSprite.x - ship.hullSprite.x)
+      const yDiff = Math.abs(this.hullSprite.y - ship.hullSprite.y)
+      return xDiff < 50 || yDiff < 50
+    }
+    return false
+  }
+
   update() {
     if (this.mobInControl) {
       this.mobInControl.sprite.setDepth(this.sailsSprite.depth)
+    }
+    if (this.isPlayerVisible()) {
+      this.followPlayer()
+    } else {
+      this.stopFollowingPlayer()
     }
     super.update()
   }

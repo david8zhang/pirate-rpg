@@ -314,6 +314,18 @@ export class Mob {
     }
   }
 
+  makeAggro() {
+    this.isAggro = true
+    const behaviorMapping = {
+      Melee: MeleeAttackBehavior,
+    }
+    const Behavior = behaviorMapping[this.mobConfig.aggroBehavior]
+    if (Behavior) {
+      this.setActiveBehavior(new Behavior(this))
+      this.isAggro = true
+    }
+  }
+
   update() {
     if (!this.sprite.active) {
       return
