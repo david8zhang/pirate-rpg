@@ -165,7 +165,7 @@ export default class Game extends Phaser.Scene {
   }
 
   restart() {
-    this.player.respawn(200, 200)
+    this.player.respawn(Game.PLAYER_SPAWN_POS.x, Game.PLAYER_SPAWN_POS.y)
   }
 
   preload(): void {
