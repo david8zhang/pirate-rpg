@@ -69,29 +69,29 @@ export default class Preloader extends Phaser.Scene {
     this.load.atlas('skeleton', 'mobs/skeleton/skeleton.png', 'mobs/skeleton/skeleton.json')
 
     // Ship Objects
-    this.load.image('wheel-up', 'transport/sloop/wheel-up.png')
-    this.load.image('wheel-down', 'transport/sloop/wheel-down.png')
-    this.load.image('wheel-side', 'transport/sloop/wheel-side.png')
-    this.load.image('ladder-side', 'transport/sloop/ladder-side.png')
-    this.load.image('ladder-up', 'transport/sloop/ladder-up.png')
-    this.load.image('ladder-down', 'transport/sloop/ladder-down.png')
-    this.load.image('cannon-side', 'transport/sloop/cannon-side.png')
-    this.load.image('cannon-up', 'transport/sloop/cannon-up.png')
-    this.load.image('cannon-down', 'transport/sloop/cannon-down.png')
-    this.load.image('cannonball', 'transport/sloop/cannonball.png')
+    this.load.image('wheel-up', 'transport/brig/wheel-up.png')
+    this.load.image('wheel-down', 'transport/brig/wheel-down.png')
+    this.load.image('wheel-side', 'transport/brig/wheel-side.png')
+    this.load.image('ladder-side', 'transport/brig/ladder-side.png')
+    this.load.image('ladder-up', 'transport/brig/ladder-up.png')
+    this.load.image('ladder-down', 'transport/brig/ladder-down.png')
+    this.load.image('cannon-side', 'transport/brig/cannon-side.png')
+    this.load.image('cannon-up', 'transport/brig/cannon-up.png')
+    this.load.image('cannon-down', 'transport/brig/cannon-down.png')
+    this.load.image('cannonball', 'transport/brig/cannonball.png')
 
-    // Sloop
-    this.load.image('sloop-icon', 'transport/sloop/sloop-icon.png')
-    this.load.image('sloop-side', 'transport/sloop/sloop-side.png')
-    this.load.image('sloop-up', 'transport/sloop/sloop-up.png')
-    this.load.image('sloop-down', 'transport/sloop/sloop-down.png')
-    this.load.image('sails-side', 'transport/sloop/sails-side.png')
-    this.load.image('sails-up', 'transport/sloop/sails-up.png')
-    this.load.image('sails-down', 'transport/sloop/sails-down.png')
+    // brig
+    this.load.image('brig-icon', 'transport/brig/brig-icon.png')
+    this.load.image('brig-side', 'transport/brig/brig-side.png')
+    this.load.image('brig-up', 'transport/brig/brig-up.png')
+    this.load.image('brig-down', 'transport/brig/brig-down.png')
+    this.load.image('sails-side', 'transport/brig/sails-side.png')
+    this.load.image('sails-up', 'transport/brig/sails-up.png')
+    this.load.image('sails-down', 'transport/brig/sails-down.png')
     this.load.atlas(
-      'sloop',
-      'transport/sloop/animations/sloop.png',
-      'transport/sloop/animations/sloop.json'
+      'brig',
+      'transport/brig/animations/brig.png',
+      'transport/brig/animations/brig.json'
     )
 
     // Sailboat

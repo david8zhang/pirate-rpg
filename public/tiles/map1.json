@@ -626,7 +626,7 @@
                         {
                          "name":"shipType",
                          "type":"string",
-                         "value":"Sloop"
+                         "value":"Brig"
                         }],
                  "rotation":0,
                  "type":"Skeleton",
@@ -752,7 +752,7 @@
          "y":0
         }],
  "nextlayerid":14,
- "nextobjectid":192,
+ "nextobjectid":194,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",

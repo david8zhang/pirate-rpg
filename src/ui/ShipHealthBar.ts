@@ -19,7 +19,7 @@ export class ShipHealthBar {
     }
     this.healthBar = new HealthBar(this.scene, healthBarConfig)
     this.healthBar.setVisible(true)
-    const sprite = this.scene.add.sprite(50, height - 56, 'sloop-icon')
+    const sprite = this.scene.add.sprite(50, height - 56, 'brig-icon')
     sprite.setScale(4, 4)
     sprite.setDepth(2000)
   }

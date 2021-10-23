@@ -103,12 +103,12 @@ export const OVERWORLD_CONFIG = [
 export const ALL_SHIP_TYPES = [
   {
     defaultHealth: 1000,
-    name: 'Sloop',
+    name: 'Brig',
     numCrew: 5,
     hullImages: {
-      up: 'sloop-up',
-      down: 'sloop-down',
-      side: 'sloop-side',
+      up: 'brig-up',
+      down: 'brig-down',
+      side: 'brig-side',
     },
     sailsImages: {
       up: 'sails-up',
@@ -116,14 +116,14 @@ export const ALL_SHIP_TYPES = [
       side: 'sails-side',
     },
     animMapping: {
-      moveSide: 'sloop-move-side',
-      moveUp: 'sloop-move-up',
-      moveDown: 'sloop-move-down',
+      moveSide: 'brig-move-side',
+      moveUp: 'brig-move-up',
+      moveDown: 'brig-move-down',
     },
-    animFrameName: 'sloop',
+    animFrameName: 'brig',
     animations: [
       {
-        key: 'sloop-move-down',
+        key: 'brig-move-down',
         frames: {
           start: 0,
           end: 3,
@@ -133,7 +133,7 @@ export const ALL_SHIP_TYPES = [
         frameRate: 10,
       },
       {
-        key: 'sloop-move-side',
+        key: 'brig-move-side',
         frames: {
           start: 4,
           end: 7,
@@ -143,7 +143,7 @@ export const ALL_SHIP_TYPES = [
         frameRate: 10,
       },
       {
-        key: 'sloop-move-up',
+        key: 'brig-move-up',
         frames: {
           start: 8,
           end: 11,
