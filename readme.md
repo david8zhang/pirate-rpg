@@ -5,6 +5,7 @@ A top down pirate themed survival/crafting game build using Phaser 3
 ## Bugs to fix
 
 - when enemy ship turns, player can be trapped "inside" the ship due to collider weird-ness
+- rowboat gets trapped "inside" the ship
 
 ## Easy wins
 

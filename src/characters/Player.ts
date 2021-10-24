@@ -215,9 +215,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         const xDiff = Math.round(boardableShip.hullSprite.width / 2)
 
         // Check if where we're placing the ship is valid
-        const leftX = boardableShip.hullSprite.x - xDiff
-        const rightX = boardableShip.hullSprite.x + xDiff
-        const y = boardableShip.hullSprite.y
+        const centerPoint = boardableShip.getCenterPoint()
+        const leftX = centerPoint.x - xDiff
+        const rightX = centerPoint.x + xDiff
+        const y = centerPoint.y
 
         const isLeftOcean = gameScene.getTileAt(leftX, y) === 'Ocean'
         const isRightOcean = gameScene.getTileAt(rightX, y) === 'Ocean'
@@ -233,12 +234,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       }
       case Direction.LEFT:
       case Direction.RIGHT: {
-        const yDiff = Math.round(boardableShip.hullSprite.height / 4)
+        const yDiff = Math.round(boardableShip.hullSprite.height / 2)
 
         // Check if where we're placing the ship is valid
-        const upY = boardableShip.hullSprite.y - yDiff
-        const downY = boardableShip.hullSprite.y + yDiff
-        const x = boardableShip.hullSprite.x
+        const centerPoint = boardableShip.getCenterPoint()
+        const upY = centerPoint.y - yDiff
+        const downY = centerPoint.y + yDiff
+        const x = centerPoint.x
 
         const isUpOcean = gameScene.getTileAt(x, upY) === 'Ocean'
         const isDownOcean = gameScene.getTileAt(x, downY) === 'Ocean'
