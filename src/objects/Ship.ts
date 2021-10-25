@@ -1,4 +1,4 @@
-import { Direction } from '~/characters/Player'
+import Player, { Direction } from '~/characters/Player'
 import { Mob } from '~/mobs/Mob'
 import { ShipUIScene } from '~/scenes/ShipUIScene'
 import Game from '../scenes/Game'
@@ -982,6 +982,14 @@ export class Ship {
     )
     this.hullSprite.body.offset.y = this.hullSprite.height * config.yOffset
     this.hullSprite.body.offset.x = this.hullSprite.width * config.xOffset
+    const playerCollider = this.scene.physics.overlap(
+      this.hullSprite,
+      this.scene.player,
+      (obj1, obj2) => {
+        const player = obj2 as Player
+        player.takeDamage(100)
+      }
+    )
   }
 
   setCurrHealth(health: number) {
