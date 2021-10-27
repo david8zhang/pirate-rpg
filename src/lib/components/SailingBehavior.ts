@@ -1,6 +1,6 @@
 import { Mob } from '~/mobs/Mob'
 import { Behavior } from './Behavior'
-import { Direction } from '../../characters/player'
+import { Direction } from '~/characters/Player'
 import { EnemyShip } from '~/objects/EnemyShip'
 import Game from '~/scenes/Game'
 
