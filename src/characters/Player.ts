@@ -44,7 +44,7 @@ export interface Equipment {
 }
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
-  public static UNARMED_DAMAGE = 100
+  public static UNARMED_DAMAGE = 10
 
   public stateMachine: StateMachine
   public direction: Direction = Direction.DOWN

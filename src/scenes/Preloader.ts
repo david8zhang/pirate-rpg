@@ -68,17 +68,17 @@ export default class Preloader extends Phaser.Scene {
     this.load.atlas('crab', 'mobs/crab/crab.png', 'mobs/crab/crab.json')
     this.load.atlas('skeleton', 'mobs/skeleton/skeleton.png', 'mobs/skeleton/skeleton.json')
 
-    // Ship Objects
-    this.load.image('wheel-up', 'transport/brig/wheel-up.png')
-    this.load.image('wheel-down', 'transport/brig/wheel-down.png')
-    this.load.image('wheel-side', 'transport/brig/wheel-side.png')
-    this.load.image('ladder-side', 'transport/brig/ladder-side.png')
-    this.load.image('ladder-up', 'transport/brig/ladder-up.png')
-    this.load.image('ladder-down', 'transport/brig/ladder-down.png')
-    this.load.image('cannon-side', 'transport/brig/cannon-side.png')
-    this.load.image('cannon-up', 'transport/brig/cannon-up.png')
-    this.load.image('cannon-down', 'transport/brig/cannon-down.png')
-    this.load.image('cannonball', 'transport/brig/cannonball.png')
+    // Common ship objects
+    this.load.image('wheel-up', 'transport/common/wheel-up.png')
+    this.load.image('wheel-down', 'transport/common/wheel-down.png')
+    this.load.image('wheel-side', 'transport/common/wheel-side.png')
+    this.load.image('ladder-side', 'transport/common/ladder-side.png')
+    this.load.image('ladder-up', 'transport/common/ladder-up.png')
+    this.load.image('ladder-down', 'transport/common/ladder-down.png')
+    this.load.image('cannon-side', 'transport/common/cannon-side.png')
+    this.load.image('cannon-up', 'transport/common/cannon-up.png')
+    this.load.image('cannon-down', 'transport/common/cannon-down.png')
+    this.load.image('cannonball', 'transport/common/cannonball.png')
 
     // brig
     this.load.image('brig-icon', 'transport/brig/brig-icon.png')

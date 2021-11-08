@@ -982,14 +982,14 @@ export class Ship {
     )
     this.hullSprite.body.offset.y = this.hullSprite.height * config.yOffset
     this.hullSprite.body.offset.x = this.hullSprite.width * config.xOffset
-    const playerCollider = this.scene.physics.overlap(
-      this.hullSprite,
-      this.scene.player,
-      (obj1, obj2) => {
-        const player = obj2 as Player
-        player.takeDamage(100)
+
+    // If the ship is moving and the player is not in their own ship, kill player
+    this.scene.physics.overlap(this.hullSprite, this.scene.player, (obj1, obj2) => {
+      const player = obj2 as Player
+      if (!player.ship || player.ship !== this) {
+        player.takeDamage(player.currHealth)
       }
-    )
+    })
   }
 
   setCurrHealth(health: number) {
