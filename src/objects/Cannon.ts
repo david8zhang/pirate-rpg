@@ -1,5 +1,5 @@
 import { Direction } from '~/characters/Player'
-import { ALL_EFFECTS } from '~/utils/Constants'
+import { ALL_EFFECTS, Constants } from '~/utils/Constants'
 import Game from '../scenes/Game'
 import { EffectSpawner } from './Effect'
 import { Projectile } from './Projectile'
@@ -136,13 +136,16 @@ export class Cannon {
           break
         }
       }
-      EffectSpawner.instance.spawnEffect(
-        ALL_EFFECTS[1],
-        xPos + offsets.x,
-        yPos + offsets.y,
-        rotationAngle,
-        scale
-      )
+      const cannonFlashEffect = Constants.getEffect('cannon-flash')
+      if (cannonFlashEffect) {
+        EffectSpawner.instance.spawnEffect(
+          cannonFlashEffect,
+          xPos + offsets.x,
+          yPos + offsets.y,
+          rotationAngle,
+          scale
+        )
+      }
     }
   }
 

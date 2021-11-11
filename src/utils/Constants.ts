@@ -39,6 +39,15 @@ export class Constants {
     )
   }
 
+  static getEffect(effectName: string) {
+    if (!effectName) {
+      return undefined
+    }
+    return ALL_EFFECTS.find(
+      (effectConfig) => effectConfig.name.toLowerCase() === effectName.toLowerCase()
+    )
+  }
+
   static getHarvestable(harvestableName: string) {
     if (!harvestableName) {
       return undefined
@@ -2224,6 +2233,24 @@ export const ALL_EFFECTS = [
       frames: {
         start: 0,
         end: 8,
+        suffix: '.png',
+      },
+      repeat: 0,
+      frameRate: 15,
+    },
+  },
+  {
+    scale: {
+      x: 5,
+      y: 5,
+    },
+    ttl: 690,
+    name: 'explosion-large',
+    animation: {
+      key: 'explosion-large-anim',
+      frames: {
+        start: 0,
+        end: 7,
         suffix: '.png',
       },
       repeat: 0,

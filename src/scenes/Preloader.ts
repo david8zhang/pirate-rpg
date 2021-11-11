@@ -128,6 +128,11 @@ export default class Preloader extends Phaser.Scene {
       'effects/explosion/explosion.json'
     )
     this.load.atlas(
+      'explosion-large',
+      'effects/explosion/big-explosion.png',
+      'effects/explosion/big-explosion.json'
+    )
+    this.load.atlas(
       'cannon-flash',
       'effects/cannon/cannon-flash.png',
       'effects/cannon/cannon-flash.json'

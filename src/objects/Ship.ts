@@ -1,8 +1,10 @@
 import Player, { Direction } from '~/characters/Player'
 import { Mob } from '~/mobs/Mob'
 import { ShipUIScene } from '~/scenes/ShipUIScene'
+import { Constants } from '~/utils/Constants'
 import Game from '../scenes/Game'
 import { Cannon } from './Cannon'
+import { EffectSpawner } from './Effect'
 import { EnemyShip } from './EnemyShip'
 
 export interface ShipConfig {
@@ -236,6 +238,11 @@ export class Ship {
       ShipUIScene.instance.shipHealthBar.setMaxHealth(this.maxHealth)
     }
     if (this.health === 0) {
+      const largeExplosionEffectConfig = Constants.getEffect('explosion-large')
+      if (largeExplosionEffectConfig) {
+        const { x, y } = this.getCenterPoint()
+        EffectSpawner.instance.spawnEffect(largeExplosionEffectConfig, x, y)
+      }
       this.destroy()
       if (this.scene.player.ship && this.scene.player.ship === this) {
         if (!this.isAnchored) {
