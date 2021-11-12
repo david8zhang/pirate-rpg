@@ -101,6 +101,8 @@ export class Ship {
   public canEnterShip: boolean = false
   public isFiringRightCannon: boolean = false
   public isFiringLeftCannon: boolean = false
+  public isSinking: boolean = false
+  public isMoving: boolean = false
   public health: number
   public maxHealth: number
   public moveSpeed: number = 200
@@ -237,22 +239,66 @@ export class Ship {
       ShipUIScene.instance.shipHealthBar.setCurrHealth(this.health)
       ShipUIScene.instance.shipHealthBar.setMaxHealth(this.maxHealth)
     }
-    if (this.health === 0) {
-      const largeExplosionEffectConfig = Constants.getEffect('explosion-large')
-      if (largeExplosionEffectConfig) {
-        const { x, y } = this.getCenterPoint()
-        EffectSpawner.instance.spawnEffect(largeExplosionEffectConfig, x, y)
-      }
-      this.destroy()
-      if (this.scene.player.ship && this.scene.player.ship === this) {
-        if (!this.isAnchored) {
-          this.anchor()
-        }
-        this.playerExitShip()
-        this.scene.player.ship = null
-        this.scene.player.takeDamage(this.scene.player.currHealth)
-      }
+    if (this.health === 0 && !this.isSinking) {
+      this.sink()
     }
+  }
+
+  sink() {
+    this.isSinking = true
+    const largeExplosionEffectConfig = Constants.getEffect('explosion-large')
+    if (largeExplosionEffectConfig) {
+      const { x, y } = this.getCenterPoint()
+      const positions =
+        this.currDirection === Direction.LEFT || this.currDirection === Direction.RIGHT
+          ? [
+              { x: x + 100, y },
+              { x: x - 100, y },
+              { x: x + 50, y },
+              { x: x - 50, y },
+              { x, y },
+            ]
+          : [
+              { x, y: y + 100 },
+              { x, y: y - 100 },
+              { x, y: y + 50 },
+              { x, y: y - 50 },
+              { x, y },
+            ]
+      EffectSpawner.instance.spawnMultiEffect(largeExplosionEffectConfig, 200, positions)
+    }
+
+    // Fade out
+    const opacityScale = [1, 0.9, 0.6, 0.3, 0]
+    let index = 0
+    const helper = () => {
+      if (index == opacityScale.length) {
+        this.destroy()
+        if (this.scene.player.ship && this.scene.player.ship === this) {
+          if (!this.isAnchored) {
+            this.anchor()
+          }
+          this.playerExitShip()
+          this.scene.player.ship = null
+          this.scene.player.takeDamage(this.scene.player.currHealth)
+        }
+        return
+      }
+      const currOpacity = opacityScale[index++]
+      this.setOpacity(currOpacity)
+      this.scene.time.delayedCall(200, () => {
+        helper()
+      })
+    }
+    helper()
+  }
+
+  setOpacity(opacity) {
+    this.hullSprite.setAlpha(opacity)
+    this.sailsSprite.setAlpha(opacity)
+    this.cannons.forEach((cannon) => cannon.sprite.setAlpha(opacity))
+    this.ladderSprite.setAlpha(opacity)
+    this.wheelSprite.setAlpha(opacity)
   }
 
   getCannons(direction: 'left' | 'right'): Cannon[] {
@@ -789,6 +835,7 @@ export class Ship {
   }
 
   public stop() {
+    this.isMoving = false
     const { hullImages } = this.shipConfig
     this.setAllVelocity(0, 0)
     if (this.currDirection == Direction.LEFT || this.currDirection == Direction.RIGHT) {
@@ -851,6 +898,7 @@ export class Ship {
       landDetectorConfig,
     } = this.shipConfig
     const speed = this.moveSpeed
+    this.isMoving = true
     this.setupHitbox(hitboxConfig)
     switch (direction) {
       case Direction.UP:
@@ -993,7 +1041,7 @@ export class Ship {
     // If the ship is moving and the player is not in their own ship, kill player
     this.scene.physics.overlap(this.hullSprite, this.scene.player, (obj1, obj2) => {
       const player = obj2 as Player
-      if (!player.ship || player.ship !== this) {
+      if (this.isMoving && (!player.ship || player.ship !== this)) {
         player.takeDamage(player.currHealth)
       }
     })

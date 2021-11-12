@@ -49,6 +49,25 @@ export class EffectSpawner {
     })
   }
 
+  spawnMultiEffect(
+    effectConfig: EffectConfig,
+    delay: number,
+    positions: { x: number; y: number }[]
+  ) {
+    let index = 0
+    const helper = () => {
+      if (index == positions.length) {
+        return
+      }
+      const position = positions[index++]
+      this.spawnEffect(effectConfig, position.x, position.y)
+      Game.instance.time.delayedCall(delay, () => {
+        helper()
+      })
+    }
+    helper()
+  }
+
   public spawnPersistentEffect(
     effectConfig: EffectConfig,
     x: number,
