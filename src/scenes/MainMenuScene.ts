@@ -43,6 +43,28 @@ export class MainMenuScene extends Phaser.Scene {
         this.scene.start('ship-ui')
       })
 
+    if (hasSaveFile) {
+      const startNewGame = button('New Game', {
+        fontFamily: 'GraphicPixel',
+        fontSize: '12px',
+        width: 100,
+        height: 20,
+      }) as HTMLElement
+
+      const startNewGameDom = this.add
+        .dom(this.scale.width / 2 - 50, this.scale.height / 2 + 35, startNewGame)
+        .setOrigin(0, 0)
+        .addListener('click')
+        .on('click', () => {
+          localStorage.clear()
+          this.scene.start('game')
+          this.scene.start('ui')
+          this.scene.start('ship-ui')
+        })
+
+      this.domElementsContainer.add(startNewGameDom)
+    }
+
     const gameOverTextDom = this.add
       .dom(this.scale.width / 2 - 42, this.scale.height / 2 - 60, gameOverText)
       .setOrigin(0)

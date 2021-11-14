@@ -151,10 +151,7 @@ export default class Game extends Phaser.Scene {
 
       this.player.setX(player.x)
       this.player.setY(player.y)
-      this.player.setInventory({
-        ...player.inventory,
-        Sailboat: { count: 1, texture: 'sailboat-inventory' },
-      })
+      this.player.setInventory(player.inventory)
       this.player.setEquipment(player.equipment)
       this.player.setCurrHealth(player.health)
     }
