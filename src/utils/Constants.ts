@@ -1669,14 +1669,19 @@ export const ALL_HARVESTABLES = [
     onDropItem: (harvestable: Harvestable) => {
       harvestable.sprite.setFrame(0)
     },
-    droppedItems: ['Coconut'],
+    droppedItems: [
+      {
+        name: 'Coconut',
+        quantity: 2,
+      },
+    ],
     onDestroyDrops: [
       {
         name: 'Wood',
         quantity: 5,
       },
       {
-        name: 'Palm Frond',
+        name: 'Frond',
         quantity: 3,
       },
     ],
@@ -1729,6 +1734,43 @@ export const ALL_HARVESTABLES = [
         max: 2,
       },
     ],
+  },
+  {
+    name: 'Banana-tree',
+    texture: 'banana-tree-with-banana',
+    health: 150,
+    defaultFrame: 0,
+    onDropItem: (harvestable: Harvestable) => {
+      harvestable.sprite.setTexture('banana-tree-without-banana')
+    },
+    particle: {
+      type: 'wood-particle',
+      dropLength: 500,
+    },
+    bodyResize: {
+      width: 0.2,
+      height: 0.1,
+      offset: {
+        y: 53,
+      },
+    },
+    droppedItems: [
+      {
+        name: 'Banana',
+        quantity: 4,
+      },
+    ],
+    onDestroyDrops: [
+      {
+        name: 'Wood',
+        quantity: 3,
+      },
+      {
+        name: 'Frond',
+        quantity: 5,
+      },
+    ],
+    proximityItems: [],
   },
 ]
 
@@ -2286,7 +2328,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     description: "It's not much, but it's an honest home",
     recipe: {
       Wood: 5,
-      'Palm Frond': 3,
+      Frond: 3,
     },
   },
   {
@@ -2299,7 +2341,16 @@ export const ALL_ITEMS: ItemConfig[] = [
     description: 'A tasty coconut. Heals 20 HP',
   },
   {
-    name: 'Palm Frond',
+    name: 'Banana',
+    image: 'banana',
+    type: ItemTypes.consumable,
+    effects: {
+      health: 30,
+    },
+    description: 'B-A-N-A-N-A-S. Heals 30 HP',
+  },
+  {
+    name: 'Frond',
     image: 'palm-frond',
     type: ItemTypes.resource,
     description: 'Great for fanning',
@@ -2308,7 +2359,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     name: 'Wood',
     image: 'wood',
     type: ItemTypes.resource,
-    description: 'Some woody wood',
+    description: 'Wood you like to build?',
     recipe: {
       Stick: 10,
     },
@@ -2319,7 +2370,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     type: ItemTypes.resource,
     description: 'This world is but a canvas to our imagination',
     recipe: {
-      'Palm Frond': 5,
+      Frond: 5,
     },
   },
   {
@@ -2327,7 +2378,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     image: 'rope',
     type: ItemTypes.resource,
     recipe: {
-      'Palm Frond': 5,
+      Frond: 5,
     },
     description: "I'm at the end of my rope!",
   },

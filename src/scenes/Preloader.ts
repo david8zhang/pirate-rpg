@@ -7,7 +7,6 @@ export default class Preloader extends Phaser.Scene {
 
   preload() {
     // Fonts
-
     this.load.atlas('player', 'character/player.png', 'character/player.json')
     this.load.image('heart', 'ui/pixel-heart.png')
 
@@ -19,6 +18,14 @@ export default class Preloader extends Phaser.Scene {
       endFrame: 1,
     })
     this.load.image('boulder', 'harvestables/boulder.png')
+    this.load.image(
+      'banana-tree-with-banana',
+      'harvestables/banana-tree/banana-tree_with_banana.png'
+    )
+    this.load.image(
+      'banana-tree-without-banana',
+      'harvestables/banana-tree/banana-tree_without_banana.png'
+    )
 
     // Particles
     this.load.image('wood-particle', 'particles/wood-particle.png')
@@ -46,6 +53,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('iron-bar', 'items/iron-bar.png')
     this.load.image('rope', 'items/rope.png')
     this.load.image('canvas', 'items/canvas.png')
+    this.load.image('banana', 'items/banana.png')
 
     // Weapons
     this.load.image('axe', 'weapons/axe/axe.png')

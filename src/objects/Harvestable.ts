@@ -21,7 +21,10 @@ export interface HarvestableConfig {
       y?: number
     }
   }
-  droppedItems?: string[]
+  droppedItems?: {
+    name: string
+    quantity: number
+  }[]
   onDestroyDrops?: {
     name: string
     quantity: number
@@ -177,22 +180,22 @@ export class Harvestable {
     const { onDestroyDrops } = this.config
     if (onDestroyDrops) {
       onDestroyDrops.forEach((drop) => {
-        for (let i = 0; i < drop.quantity; i++) {
-          this.dropItem(drop.name)
-        }
+        this.dropItem(drop.name, drop.quantity)
       })
     }
     this.sprite.destroy()
   }
 
-  dropItem(itemName: string) {
-    const dropItem = ItemFactory.instance.createItem(
-      itemName,
-      this.sprite.x,
-      this.sprite.y - this.sprite.height / 2 + 10
-    )
-    if (dropItem) {
-      dropItem.drop()
+  dropItem(itemName: string, quantity: number) {
+    for (let i = 0; i < quantity; i++) {
+      const dropItem = ItemFactory.instance.createItem(
+        itemName,
+        this.sprite.x,
+        this.sprite.y - this.sprite.height / 2 + 10
+      )
+      if (dropItem) {
+        dropItem.drop()
+      }
     }
   }
 
@@ -201,8 +204,8 @@ export class Harvestable {
   dropItems() {
     const { droppedItems } = this.config
     if (droppedItems) {
-      const dropItemName = droppedItems[Math.floor(Math.random() * droppedItems.length)]
-      this.dropItem(dropItemName)
+      const droppableItem = droppedItems[Math.floor(Math.random() * droppedItems.length)]
+      this.dropItem(droppableItem.name, droppableItem.quantity)
     }
   }
 }
