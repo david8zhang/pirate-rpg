@@ -2345,9 +2345,9 @@ export const ALL_ITEMS: ItemConfig[] = [
     image: 'banana',
     type: ItemTypes.consumable,
     effects: {
-      health: 30,
+      health: 10,
     },
-    description: 'B-A-N-A-N-A-S. Heals 30 HP',
+    description: 'B-A-N-A-N-A-S. Heals 10 HP',
   },
   {
     name: 'Frond',
