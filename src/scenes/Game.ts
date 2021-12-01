@@ -293,6 +293,7 @@ export default class Game extends Phaser.Scene {
     this.sandLayer.setCollisionByProperty({ collides: true })
     this.oceanLayer.setCollisionByProperty({ collides: true })
     this.grassLayer.setCollisionByProperty({ collides: true })
+    console.log(this.map)
   }
 
   initPlayer() {
@@ -407,6 +408,9 @@ export default class Game extends Phaser.Scene {
         projectile.onHitShip(ship)
       }
     })
+    const ship = new Ship(this, Constants.getShip('brig') as any, { x: 2000, y: 1000 })
+    this.ships.add(ship.hullSprite)
+
     const shipsLayer = this.map.getObjectLayer('Ships')
     if (shipsLayer) {
       shipsLayer.objects.forEach((obj) => {
