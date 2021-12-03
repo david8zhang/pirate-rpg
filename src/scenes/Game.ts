@@ -27,6 +27,7 @@ import { EnemyShip } from '~/objects/EnemyShip'
 import { createEffectsAnims } from '~/anims/EffectsAnims'
 import { EffectSpawner } from '~/objects/Effect'
 import { createShipAnims } from '~/anims/ShipAnims'
+import { MapGenerator } from '~/lib/ MapGenerator'
 
 export default class Game extends Phaser.Scene {
   private static PLAYER_SPAWN_POS = { x: 2500, y: 2500 }
@@ -285,15 +286,18 @@ export default class Game extends Phaser.Scene {
   }
 
   initTilemap() {
+    const generatedMap = MapGenerator.getTileMap()
+    const layerMapping = MapGenerator.splitIntoLayers(generatedMap)
+    console.log(generatedMap, layerMapping)
+
     this.map = this.make.tilemap({ key: this.currMapKey })
     const tileset = this.map.addTilesetImage('beach-tiles', 'beach-tiles')
     this.oceanLayer = this.map.createLayer('Ocean', tileset).setName('Ocean')
     this.sandLayer = this.map.createLayer('Sand', tileset).setName('Sand')
     this.grassLayer = this.map.createLayer('Grass', tileset).setName('Grass')
-    this.sandLayer.setCollisionByProperty({ collides: true })
-    this.oceanLayer.setCollisionByProperty({ collides: true })
-    this.grassLayer.setCollisionByProperty({ collides: true })
-    console.log(this.map)
+    this.oceanLayer.setCollisionByExclusion([-1])
+    this.sandLayer.setCollisionByExclusion([-1])
+    this.grassLayer.setCollisionByExclusion([-1])
   }
 
   initPlayer() {
