@@ -6,7 +6,12 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Easy wins
 
+- Adjust player spawn based on first landmass found
+- Save map seed when player does "save and quit"
+
 ## Meatier Stuff
+
+- Procedurally place plants and animals based on land masses
 
 ## Must haves for Alpha release:
 
