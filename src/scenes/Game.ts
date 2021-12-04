@@ -285,16 +285,26 @@ export default class Game extends Phaser.Scene {
     })
   }
 
+  createLayer(layerName: string, layerMapping: any, tileset: Phaser.Tilemaps.Tileset) {
+    const newLayer = this.map.createBlankLayer(layerName, tileset, 0, 0)
+    console.log(newLayer)
+    newLayer.putTilesAt(layerMapping[layerName], 0, 0)
+    return newLayer
+  }
+
   initTilemap() {
     const generatedMap = MapGenerator.getTileMap()
     const layerMapping = MapGenerator.splitIntoLayers(generatedMap)
-    console.log(generatedMap, layerMapping)
-
-    this.map = this.make.tilemap({ key: this.currMapKey })
+    this.map = this.make.tilemap({
+      height: Constants.GAME_HEIGHT,
+      width: Constants.GAME_WIDTH,
+      tileHeight: Constants.TILE_SIZE,
+      tileWidth: Constants.TILE_SIZE,
+    })
     const tileset = this.map.addTilesetImage('beach-tiles', 'beach-tiles')
-    this.oceanLayer = this.map.createLayer('Ocean', tileset).setName('Ocean')
-    this.sandLayer = this.map.createLayer('Sand', tileset).setName('Sand')
-    this.grassLayer = this.map.createLayer('Grass', tileset).setName('Grass')
+    this.oceanLayer = this.createLayer('Ocean', layerMapping, tileset)
+    this.sandLayer = this.createLayer('Sand', layerMapping, tileset)
+    this.grassLayer = this.createLayer('Grass', layerMapping, tileset)
     this.oceanLayer.setCollisionByExclusion([-1])
     this.sandLayer.setCollisionByExclusion([-1])
     this.grassLayer.setCollisionByExclusion([-1])
@@ -313,7 +323,6 @@ export default class Game extends Phaser.Scene {
 
   lazyLoadHarvestables() {
     const harvestablesLayer = this.map.getObjectLayer('Harvestables')
-
     const locations = harvestablesLayer.objects
       .sort((a, b) => {
         return a.y! - b.y!
@@ -325,7 +334,6 @@ export default class Game extends Phaser.Scene {
           type: obj.type,
         }
       })
-
     const isInHarvestablesList = (x: number, y: number) => {
       return (
         this.harvestableList.find((h: Harvestable) => {
@@ -775,9 +783,9 @@ export default class Game extends Phaser.Scene {
     this.mobPool.forEach((mob: Mob) => {
       mob.update()
     })
-    this.lazyLoadSpawners()
-    this.lazyLoadItems()
-    this.lazyLoadHarvestables()
+    // this.lazyLoadSpawners()
+    // this.lazyLoadItems()
+    // this.lazyLoadHarvestables()
     this.updateSortingLayers()
     this.ships.children.entries.forEach((child) => {
       const ship = child.getData('ref')

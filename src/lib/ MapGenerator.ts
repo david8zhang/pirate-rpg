@@ -25,7 +25,7 @@ export class MapGenerator {
       octaves: 4,
       persistence: 0.1,
       lacunarity: 1,
-      seed: 200,
+      seed: Math.floor(Math.random() * 200),
       offset,
     }
     const perlinTileGrid = MapGenerator.generatePerlinTilegrid(perlinConfig)
