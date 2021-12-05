@@ -352,6 +352,31 @@ export class Constants {
     }
     return 0
   }
+
+  public static getSpawnPosFromMap(mapData: number[][]) {
+    const landTiles = [
+      this.GRASS_1,
+      this.GRASS_2,
+      this.GRASS_3,
+      this.SAND_1,
+      this.SAND_2,
+      this.WET_SAND_TILE,
+    ]
+    for (let i = 100; i < mapData.length; i++) {
+      for (let j = 100; j < mapData[i].length; j++) {
+        if (landTiles.includes(mapData[i][j])) {
+          return {
+            x: j * this.TILE_SIZE,
+            y: i * this.TILE_SIZE,
+          }
+        }
+      }
+    }
+    return {
+      x: 100,
+      y: 100,
+    }
+  }
 }
 
 export enum AnimationType {

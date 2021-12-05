@@ -30,7 +30,7 @@ import { createShipAnims } from '~/anims/ShipAnims'
 import { MapGenerator } from '~/lib/ MapGenerator'
 
 export default class Game extends Phaser.Scene {
-  private static PLAYER_SPAWN_POS = { x: 2500, y: 2500 }
+  public spawnPos!: { x: number; y: number }
 
   public player!: Player
   public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -163,7 +163,7 @@ export default class Game extends Phaser.Scene {
   }
 
   restart() {
-    this.player.respawn(Game.PLAYER_SPAWN_POS.x, Game.PLAYER_SPAWN_POS.y)
+    this.player.respawn(this.spawnPos.x, this.spawnPos.y)
   }
 
   preload(): void {
@@ -212,7 +212,7 @@ export default class Game extends Phaser.Scene {
     )
     this.physics.world.on('worldbounds', (obj) => {
       if (obj.gameObject === this.player) {
-        this.handlePlayerCollideWorldBounds()
+        // this.handlePlayerCollideWorldBounds()
       }
     })
   }
@@ -287,13 +287,13 @@ export default class Game extends Phaser.Scene {
 
   createLayer(layerName: string, layerMapping: any, tileset: Phaser.Tilemaps.Tileset) {
     const newLayer = this.map.createBlankLayer(layerName, tileset, 0, 0)
-    console.log(newLayer)
     newLayer.putTilesAt(layerMapping[layerName], 0, 0)
     return newLayer
   }
 
   initTilemap() {
     const generatedMap = MapGenerator.getTileMap()
+    this.spawnPos = Constants.getSpawnPosFromMap(generatedMap)
     const layerMapping = MapGenerator.splitIntoLayers(generatedMap)
     this.map = this.make.tilemap({
       height: Constants.GAME_HEIGHT,
@@ -311,7 +311,8 @@ export default class Game extends Phaser.Scene {
   }
 
   initPlayer() {
-    const { x, y } = Game.PLAYER_SPAWN_POS
+    console.log(this.spawnPos)
+    const { x, y } = this.spawnPos
     this.player = this.add.player(x, y, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
@@ -420,8 +421,6 @@ export default class Game extends Phaser.Scene {
         projectile.onHitShip(ship)
       }
     })
-    const ship = new Ship(this, Constants.getShip('brig') as any, { x: 2000, y: 1000 })
-    this.ships.add(ship.hullSprite)
 
     const shipsLayer = this.map.getObjectLayer('Ships')
     if (shipsLayer) {
