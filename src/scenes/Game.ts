@@ -42,6 +42,7 @@ export default class Game extends Phaser.Scene {
   public grassLayer!: Phaser.Tilemaps.TilemapLayer
   public sandLayer!: Phaser.Tilemaps.TilemapLayer
   public currMapKey: string = 'map1'
+  public mapSeed: number = 0
 
   // colliders
   public playerHarvestableCollider!: Physics.Arcade.Collider
@@ -99,6 +100,15 @@ export default class Game extends Phaser.Scene {
     this.particleSpawner = new ParticleSpawner(this)
     Game._instance = this
     this.effectSpawner = new EffectSpawner()
+  }
+
+  getSavedMapSeed(): number {
+    const rawSaveData = localStorage.getItem('saveFile')
+    if (rawSaveData) {
+      const saveFile = JSON.parse(rawSaveData)
+      return saveFile.mapSeed
+    }
+    return Math.floor(Math.random() * 200)
   }
 
   loadSaveFile() {
@@ -292,7 +302,9 @@ export default class Game extends Phaser.Scene {
   }
 
   initTilemap() {
-    const generatedMap = MapGenerator.getTileMap()
+    const mapSeed = this.getSavedMapSeed()
+    this.mapSeed = mapSeed
+    const generatedMap = MapGenerator.getTileMap(mapSeed)
     this.spawnPos = Constants.getSpawnPosFromMap(generatedMap)
     const layerMapping = MapGenerator.splitIntoLayers(generatedMap)
     this.map = this.make.tilemap({
@@ -547,6 +559,7 @@ export default class Game extends Phaser.Scene {
 
   public saveAndQuit() {
     const saveObject: any = {
+      mapSeed: this.mapSeed,
       player: {
         health: this.player.currHealth,
         x: this.player.x,

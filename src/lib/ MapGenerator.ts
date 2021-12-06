@@ -16,7 +16,7 @@ export class MapGenerator {
   public static OFFSET_X = Constants.GAME_WIDTH
   public static OFFSET_Y = 0
 
-  static getTileMap() {
+  static getTileMap(seed: number) {
     const offset = { x: this.OFFSET_X, y: this.OFFSET_Y }
     const perlinConfig = {
       height: Constants.GAME_HEIGHT,
@@ -25,7 +25,7 @@ export class MapGenerator {
       octaves: 4,
       persistence: 0.1,
       lacunarity: 1,
-      seed: Math.floor(Math.random() * 200),
+      seed,
       offset,
     }
     const perlinTileGrid = MapGenerator.generatePerlinTilegrid(perlinConfig)
