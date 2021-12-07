@@ -1982,6 +1982,8 @@ export const ALL_HARVESTABLES = [
     name: 'Palm-Tree',
     texture: 'palm-trees',
     health: 100,
+    placeRate: 0.01,
+    layers: ['Sand', 'Grass'],
     defaultFrame: 1,
     onDropItem: (harvestable: Harvestable) => {
       harvestable.sprite.setFrame(0)
@@ -2024,6 +2026,8 @@ export const ALL_HARVESTABLES = [
     name: 'Boulder',
     texture: 'boulder',
     health: 200,
+    placeRate: 0.01,
+    layers: ['Grass'],
     onDestroyDrops: [
       {
         name: 'Rock',
@@ -2055,7 +2059,9 @@ export const ALL_HARVESTABLES = [
   {
     name: 'Banana-tree',
     texture: 'banana-tree-with-banana',
+    layers: ['Grass'],
     health: 150,
+    placeRate: 0.01,
     defaultFrame: 0,
     onDropItem: (harvestable: Harvestable) => {
       harvestable.sprite.setTexture('banana-tree-without-banana')

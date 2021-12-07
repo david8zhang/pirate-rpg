@@ -76,7 +76,7 @@ export class Harvestable {
     }
     this.sprite.setData('ref', this)
     this.sprite.setPushable(false)
-    this.initProximityItems()
+    // this.initProximityItems()
   }
 
   initProximityItems() {

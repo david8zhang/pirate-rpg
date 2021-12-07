@@ -27,22 +27,21 @@ import { EnemyShip } from '~/objects/EnemyShip'
 import { createEffectsAnims } from '~/anims/EffectsAnims'
 import { EffectSpawner } from '~/objects/Effect'
 import { createShipAnims } from '~/anims/ShipAnims'
-import { MapGenerator } from '~/lib/ MapGenerator'
+import { MapGenerator } from '~/lib/MapGenerator'
+import { Map } from '~/lib/Map'
 
 export default class Game extends Phaser.Scene {
-  public spawnPos!: { x: number; y: number }
-
   public player!: Player
   public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
-  public map!: Phaser.Tilemaps.Tilemap
   private static _instance: Game
 
   // Tilemap layers
-  public oceanLayer!: Phaser.Tilemaps.TilemapLayer
-  public grassLayer!: Phaser.Tilemaps.TilemapLayer
-  public sandLayer!: Phaser.Tilemaps.TilemapLayer
+  // public oceanLayer!: Phaser.Tilemaps.TilemapLayer
+  // public grassLayer!: Phaser.Tilemaps.TilemapLayer
+  // public sandLayer!: Phaser.Tilemaps.TilemapLayer
   public currMapKey: string = 'map1'
-  public mapSeed: number = 0
+  // public mapSeed: number = 0
+  public map!: Map
 
   // colliders
   public playerHarvestableCollider!: Physics.Arcade.Collider
@@ -58,7 +57,7 @@ export default class Game extends Phaser.Scene {
 
   // Harvestables (Trees, bushes, etc.)
   public harvestableList: Harvestable[] = []
-  public static MAX_HARVESTABLES_IN_POOL = 50
+  public static MAX_HARVESTABLES_IN_POOL = 1000
   public harvestables!: Phaser.GameObjects.Group
 
   // Items
@@ -100,15 +99,6 @@ export default class Game extends Phaser.Scene {
     this.particleSpawner = new ParticleSpawner(this)
     Game._instance = this
     this.effectSpawner = new EffectSpawner()
-  }
-
-  getSavedMapSeed(): number {
-    const rawSaveData = localStorage.getItem('saveFile')
-    if (rawSaveData) {
-      const saveFile = JSON.parse(rawSaveData)
-      return saveFile.mapSeed
-    }
-    return Math.floor(Math.random() * 200)
   }
 
   loadSaveFile() {
@@ -173,7 +163,8 @@ export default class Game extends Phaser.Scene {
   }
 
   restart() {
-    this.player.respawn(this.spawnPos.x, this.spawnPos.y)
+    const spawnPos = this.map.spawnPos
+    this.player.respawn(spawnPos.x, spawnPos.y)
   }
 
   preload(): void {
@@ -276,7 +267,7 @@ export default class Game extends Phaser.Scene {
   }
 
   lazyLoadSpawners() {
-    const spawnerLayer = this.map.getObjectLayer('Spawners')
+    const spawnerLayer = this.map.tileMap.getObjectLayer('Spawners')
     spawnerLayer.objects.forEach((spawnerObj) => {
       const config = Constants.getMob(spawnerObj.type)
       const xPos = spawnerObj.x! + spawnerObj.width! * 0.5
@@ -295,36 +286,12 @@ export default class Game extends Phaser.Scene {
     })
   }
 
-  createLayer(layerName: string, layerMapping: any, tileset: Phaser.Tilemaps.Tileset) {
-    const newLayer = this.map.createBlankLayer(layerName, tileset, 0, 0)
-    newLayer.putTilesAt(layerMapping[layerName], 0, 0)
-    return newLayer
-  }
-
   initTilemap() {
-    const mapSeed = this.getSavedMapSeed()
-    this.mapSeed = mapSeed
-    const generatedMap = MapGenerator.getTileMap(mapSeed)
-    this.spawnPos = Constants.getSpawnPosFromMap(generatedMap)
-    const layerMapping = MapGenerator.splitIntoLayers(generatedMap)
-    this.map = this.make.tilemap({
-      height: Constants.GAME_HEIGHT,
-      width: Constants.GAME_WIDTH,
-      tileHeight: Constants.TILE_SIZE,
-      tileWidth: Constants.TILE_SIZE,
-    })
-    const tileset = this.map.addTilesetImage('beach-tiles', 'beach-tiles')
-    this.oceanLayer = this.createLayer('Ocean', layerMapping, tileset)
-    this.sandLayer = this.createLayer('Sand', layerMapping, tileset)
-    this.grassLayer = this.createLayer('Grass', layerMapping, tileset)
-    this.oceanLayer.setCollisionByExclusion([-1])
-    this.sandLayer.setCollisionByExclusion([-1])
-    this.grassLayer.setCollisionByExclusion([-1])
+    this.map = new Map(this)
   }
 
   initPlayer() {
-    console.log(this.spawnPos)
-    const { x, y } = this.spawnPos
+    const { x, y } = this.map.spawnPos
     this.player = this.add.player(x, y, 'player')
     this.player.setDepth(1)
     this.player.setOnEquipWeaponHandler(() => {
@@ -335,15 +302,14 @@ export default class Game extends Phaser.Scene {
   }
 
   lazyLoadHarvestables() {
-    const harvestablesLayer = this.map.getObjectLayer('Harvestables')
-    const locations = harvestablesLayer.objects
+    const locations = this.map.harvestables
       .sort((a, b) => {
         return a.y! - b.y!
       })
       .map((obj) => {
         return {
-          x: obj.x! + obj.width! * 0.5,
-          y: obj.y! - obj.height! * 0.5,
+          x: obj.x!,
+          y: obj.y!,
           type: obj.type,
         }
       })
@@ -363,7 +329,7 @@ export default class Game extends Phaser.Scene {
       if (this.cameras.main.worldView.contains(x, y)) {
         if (!isInHarvestablesList(x, y)) {
           const harvestableConfig = Constants.getHarvestable(type)
-          if (this.harvestableList.length >= 50) {
+          if (this.harvestableList.length >= Game.MAX_HARVESTABLES_IN_POOL) {
             const recyclableHarvestable = getAvailableHarvestable()
             if (recyclableHarvestable && harvestableConfig) {
               recyclableHarvestable.initNewConfig({
@@ -434,7 +400,7 @@ export default class Game extends Phaser.Scene {
       }
     })
 
-    const shipsLayer = this.map.getObjectLayer('Ships')
+    const shipsLayer = this.map.tileMap.getObjectLayer('Ships')
     if (shipsLayer) {
       shipsLayer.objects.forEach((obj) => {
         const shipConfig = Constants.getShip(obj.type)
@@ -447,7 +413,7 @@ export default class Game extends Phaser.Scene {
   }
 
   initEnemyShips() {
-    const enemyShipLayer = this.map.getObjectLayer('EnemyShips')
+    const enemyShipLayer = this.map.tileMap.getObjectLayer('EnemyShips')
     if (enemyShipLayer) {
       enemyShipLayer.objects.forEach((obj) => {
         const captainMobType = obj.type
@@ -559,7 +525,7 @@ export default class Game extends Phaser.Scene {
 
   public saveAndQuit() {
     const saveObject: any = {
-      mapSeed: this.mapSeed,
+      mapSeed: this.map.mapSeed,
       player: {
         health: this.player.currHealth,
         x: this.player.x,
@@ -673,7 +639,7 @@ export default class Game extends Phaser.Scene {
       return null
     }
 
-    const objectLayer = this.map.getObjectLayer('Objects')
+    const objectLayer = this.map.tileMap.getObjectLayer('Objects')
     const allItemTypes = ['Rock', 'Stick']
     const locations = objectLayer.objects.map((obj) => ({
       x: obj.x! + obj.width! * 0.5,
@@ -741,7 +707,7 @@ export default class Game extends Phaser.Scene {
   }
 
   getAllTileLayers(): Phaser.Tilemaps.TilemapLayer[] {
-    return [this.oceanLayer, this.sandLayer, this.grassLayer]
+    return this.map.layers
   }
 
   getAllObjectGroups(): Phaser.GameObjects.Group[] {
@@ -797,7 +763,7 @@ export default class Game extends Phaser.Scene {
     })
     // this.lazyLoadSpawners()
     // this.lazyLoadItems()
-    // this.lazyLoadHarvestables()
+    this.lazyLoadHarvestables()
     this.updateSortingLayers()
     this.ships.children.entries.forEach((child) => {
       const ship = child.getData('ref')
