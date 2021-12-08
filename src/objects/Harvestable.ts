@@ -76,7 +76,7 @@ export class Harvestable {
     }
     this.sprite.setData('ref', this)
     this.sprite.setPushable(false)
-    // this.initProximityItems()
+    this.initProximityItems()
   }
 
   initProximityItems() {
@@ -86,11 +86,12 @@ export class Harvestable {
         const itemConfig = Constants.getItem(config.name)
         if (itemConfig) {
           const randXDiff = Constants.getRandomNum(-50, 20)
-          const randYDiff = Constants.getRandomNum(-50, 20)
+          const randYDiff = Constants.getRandomNum(10, 20)
+          const baseY = this.sprite.y + this.sprite.displayHeight / 2
           const item = ItemFactory.instance.createItem(
             itemConfig.name,
             this.sprite.x + randXDiff,
-            this.sprite.y + randYDiff
+            baseY + randYDiff
           )
           if (item) {
             this.scene.addItem(item)
