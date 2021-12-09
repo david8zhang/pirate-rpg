@@ -8,8 +8,7 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Meatier Stuff
 
-- Procedurally place plants and animals based on land masses
-- Handle perlin map offset when player collides with world bounds
+- Fix object placement when going off world bounds
 
 ## Must haves for Alpha release:
 
