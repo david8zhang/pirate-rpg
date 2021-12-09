@@ -1,11 +1,5 @@
 import Phaser, { Physics } from 'phaser'
-import {
-  ALL_EFFECTS,
-  ALL_SHIP_TYPES,
-  CAPTAIN_TO_CREW_TYPE,
-  Constants,
-  OVERWORLD_CONFIG,
-} from '../utils/Constants'
+import { ALL_EFFECTS, ALL_SHIP_TYPES, CAPTAIN_TO_CREW_TYPE, Constants } from '../utils/Constants'
 import '../characters/Player'
 import Player, { Direction } from '../characters/Player'
 import { createCharacterAnims } from '../anims/CharacterAnims'
@@ -35,12 +29,7 @@ export default class Game extends Phaser.Scene {
   public cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private static _instance: Game
 
-  // Tilemap layers
-  // public oceanLayer!: Phaser.Tilemaps.TilemapLayer
-  // public grassLayer!: Phaser.Tilemaps.TilemapLayer
-  // public sandLayer!: Phaser.Tilemaps.TilemapLayer
-  public currMapKey: string = 'map1'
-  // public mapSeed: number = 0
+  // Map
   public map!: Map
 
   // colliders
@@ -213,57 +202,9 @@ export default class Game extends Phaser.Scene {
     )
     this.physics.world.on('worldbounds', (obj) => {
       if (obj.gameObject === this.player) {
-        // this.handlePlayerCollideWorldBounds()
+        this.map.handlePlayerCollideBounds()
       }
     })
-  }
-
-  handlePlayerCollideWorldBounds() {
-    const leftBorder = 0
-    const rightBorder = Constants.BG_WIDTH
-    const downBorder = Constants.BG_HEIGHT
-    const upBorder = 0
-    const bufferZone = 20
-    const currMapConfig = OVERWORLD_CONFIG.find((config) => {
-      return config.key === this.currMapKey
-    })
-    if (currMapConfig) {
-      let toTransitionMapKey = ''
-      let spawnBuffer = 50
-      if (this.player.ship) {
-        const shipDirection = this.player.ship.currDirection
-        const height = this.player.ship.hullSprite.body.height
-        const width = this.player.ship.hullSprite.body.width
-        spawnBuffer +=
-          shipDirection === Direction.UP || shipDirection === Direction.DOWN ? height : width
-      }
-
-      const positionToSpawn = {
-        left: { x: rightBorder - spawnBuffer, y: this.player.y },
-        right: { x: leftBorder + spawnBuffer, y: this.player.y },
-        up: { x: this.player.x, y: downBorder - spawnBuffer },
-        down: { x: this.player.x, y: upBorder + spawnBuffer },
-      }
-      if (this.player.x <= leftBorder + bufferZone) {
-        toTransitionMapKey = 'left'
-      } else if (this.player.x >= rightBorder - bufferZone) {
-        toTransitionMapKey = 'right'
-      } else if (this.player.y <= upBorder + bufferZone) {
-        toTransitionMapKey = 'up'
-      } else if (this.player.y >= downBorder - bufferZone) {
-        toTransitionMapKey = 'down'
-      }
-      if (currMapConfig.neighbors[toTransitionMapKey]) {
-        this.currMapKey = currMapConfig.neighbors[toTransitionMapKey]
-        const posToSpawn = positionToSpawn[toTransitionMapKey]
-        if (this.player.ship) {
-          this.player.ship.setPosition(posToSpawn.x, posToSpawn.y)
-        } else {
-          this.player.setPosition(posToSpawn.x, posToSpawn.y)
-        }
-        this.initTilemap()
-      }
-    }
   }
 
   lazyLoadSpawners() {

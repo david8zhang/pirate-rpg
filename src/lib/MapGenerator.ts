@@ -13,11 +13,7 @@ interface PerlinConfig {
 }
 
 export class MapGenerator {
-  public static OFFSET_X = Constants.GAME_WIDTH
-  public static OFFSET_Y = 0
-
-  static getTileMap(seed: number) {
-    const offset = { x: this.OFFSET_X, y: this.OFFSET_Y }
+  static getTileMap(seed: number, offsetsConfig: { x: number; y: number }) {
     const perlinConfig = {
       height: Constants.GAME_HEIGHT,
       width: Constants.GAME_WIDTH,
@@ -25,8 +21,11 @@ export class MapGenerator {
       octaves: 4,
       persistence: 0.1,
       lacunarity: 1,
-      seed,
-      offset,
+      seed: 200,
+      offset: {
+        x: offsetsConfig.x * Constants.GAME_HEIGHT,
+        y: offsetsConfig.y * Constants.GAME_WIDTH,
+      },
     }
     const perlinTileGrid = MapGenerator.generatePerlinTilegrid(perlinConfig)
     const tileMap = MapGenerator.generateTileMapFromPerlinNoise(perlinTileGrid)
@@ -46,8 +45,8 @@ export class MapGenerator {
     for (let i = 0; i < height; i++) {
       tileGrid[i] = new Array(width)
       for (let j = 0; j < width; j++) {
-        const x = (i - halfHeight) / scale + offset.x
-        const y = (j - halfWidth) / scale + offset.y
+        const x = (i + offset.x - halfHeight) / scale
+        const y = (j + offset.y - halfWidth) / scale
         const perlinValue = noise.perlin2(x, y)
         maxNoiseHeight = Math.max(maxNoiseHeight, perlinValue)
         minNoiseHeight = Math.min(minNoiseHeight, perlinValue)
@@ -323,13 +322,21 @@ export class MapGenerator {
     for (let i = 0; i < map.length; i++) {
       for (let j = 0; j < map[0].length; j++) {
         const currTile = map[i][j]
-        const currPerlinTile = perlinTileMap[i][j]
 
         // Check if the tile is an edge or corner tile
         const left = [i, j - 1]
         const right = [i, j + 1]
         const upper = [i - 1, j]
         const lower = [i + 1, j]
+        if (!isInBounds(lower) && isInBounds(upper)) {
+          const upperTile = map[upper[0]][upper[1]]
+          if (
+            Constants.getLayerIndex(upperTile) < Constants.getLayerIndex(currTile) &&
+            newMap[i][j] == map[i][j]
+          ) {
+            newMap[i][j] = Constants.getEdgeTile(currTile, 'upper')
+          }
+        }
         if (!isInBounds(upper) && isInBounds(lower)) {
           const lowerTile = map[lower[0]][lower[1]]
           if (

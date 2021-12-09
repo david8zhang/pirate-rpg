@@ -38,7 +38,7 @@ export class ObjectPlacer {
             const randomItem = objectsForLayer[Math.floor(Math.random() * objectsForLayer.length)]
             const randomNumber = Constants.getRandomNum(1, 100)
             const placeRate = 100 * randomItem.placement[layer.toLowerCase()]
-            if (randomNumber <= placeRate) {
+            if (1000 <= placeRate) {
               objectMap.push({
                 x: j * Constants.TILE_SIZE + Constants.getRandomNum(-5, 5),
                 y: i * Constants.TILE_SIZE - 16 + Constants.getRandomNum(-5, 5),

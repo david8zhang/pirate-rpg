@@ -397,35 +397,6 @@ export enum AnimationType {
   DIE_SIDE = 'dieSide',
 }
 
-export const OVERWORLD_CONFIG = [
-  {
-    key: 'map1',
-    neighbors: {
-      up: 'map2',
-      left: 'map3',
-      down: 'map4',
-    },
-  },
-  {
-    key: 'map2',
-    neighbors: {
-      down: 'map1',
-    },
-  },
-  {
-    key: 'map3',
-    neighbors: {
-      right: 'map1',
-    },
-  },
-  {
-    key: 'map4',
-    neighbors: {
-      up: 'map1',
-    },
-  },
-]
-
 export const ALL_SHIP_TYPES = [
   {
     defaultHealth: 1000,
