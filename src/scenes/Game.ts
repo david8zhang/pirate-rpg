@@ -295,6 +295,12 @@ export default class Game extends Phaser.Scene {
     })
   }
 
+  clearHarvestables() {
+    this.harvestableList.forEach((h) => h.cleanup())
+    this.harvestables.clear()
+    this.harvestableList = []
+  }
+
   initHarvestables() {
     // initialize harvestables (things that drop stuff when the player hits them)
     this.harvestables = this.physics.add.group({

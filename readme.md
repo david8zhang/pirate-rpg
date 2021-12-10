@@ -8,7 +8,7 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Meatier Stuff
 
-- Fix object placement when going off world bounds
+- Persist harvestable placement when going between map zones, or make random placement deterministic somehow
 
 ## Must haves for Alpha release:
 

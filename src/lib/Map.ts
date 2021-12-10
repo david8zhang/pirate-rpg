@@ -106,6 +106,7 @@ export class Map {
       this.scene.player.setPosition(posToSpawn.x, posToSpawn.y)
     }
     const generatedMap = this.setupTileMap(this.mapSeed)
-    // this.harvestables = ObjectPlacer.placeObjectsFromTilemap(ALL_HARVESTABLES, generatedMap)
+    this.scene.clearHarvestables()
+    this.harvestables = ObjectPlacer.placeObjectsFromTilemap(ALL_HARVESTABLES, generatedMap)
   }
 }

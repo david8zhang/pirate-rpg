@@ -48,6 +48,7 @@ export class Harvestable {
   public onDropItem?: Function
   public isAttacked: boolean = false
   public currPlayerWeapon: string = 'unarmed'
+  public proximityItems: Item[] = []
 
   constructor(scene: Game, config: HarvestableConfig) {
     const { xPos, yPos, texture, bodyResize, health, defaultFrame, onDropItem } = config
@@ -94,6 +95,7 @@ export class Harvestable {
             baseY + randYDiff
           )
           if (item) {
+            this.proximityItems.push(item)
             this.scene.addItem(item)
           }
         }
@@ -174,6 +176,11 @@ export class Harvestable {
     }
     UINumber.createNumber(`-${damage}`, this.scene, this.sprite.x, this.sprite.y, 'red')
     this.scene.cameras.main.shake(Constants.ATTACK_DURATION / 2, 0.002)
+  }
+
+  cleanup() {
+    this.proximityItems.map((item) => item.destroy())
+    this.sprite.destroy()
   }
 
   // Items to be dropped when broken completely
