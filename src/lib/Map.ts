@@ -10,6 +10,7 @@ export class Map {
   public spawnPos: { x: number; y: number }
   public tileMap!: Phaser.Tilemaps.Tilemap
   public layers: Phaser.Tilemaps.TilemapLayer[] = []
+  public perlinTileGrid!: number[][]
   public harvestables: any[]
   public currMapOffset: { x: number; y: number } = { x: 0, y: 0 }
 
@@ -20,18 +21,23 @@ export class Map {
     const generatedMap = this.setupTileMap(mapSeed)
     this.spawnPos = Constants.getSpawnPosFromMap(generatedMap)
 
-    this.harvestables = ObjectPlacer.placeObjectsFromTilemap(ALL_HARVESTABLES, generatedMap)
+    this.harvestables = ObjectPlacer.placeObjectsFromTilemap(
+      ALL_HARVESTABLES,
+      generatedMap,
+      this.perlinTileGrid
+    )
   }
 
   setupTileMap(seed: number) {
-    const generatedMap = MapGenerator.getTileMap(seed, this.currMapOffset)
+    const { tileMap, perlinTileGrid } = MapGenerator.getTileMap(seed, this.currMapOffset)
+    this.perlinTileGrid = perlinTileGrid
     this.tileMap = this.scene.make.tilemap({
       height: Constants.GAME_HEIGHT,
       width: Constants.GAME_WIDTH,
       tileHeight: Constants.TILE_SIZE,
       tileWidth: Constants.TILE_SIZE,
     })
-    const layerMapping = MapGenerator.splitIntoLayers(generatedMap)
+    const layerMapping = MapGenerator.splitIntoLayers(tileMap)
     const tileset = this.tileMap.addTilesetImage('beach-tiles', 'beach-tiles')
     const oceanLayer = this.createLayer('Ocean', layerMapping, tileset)
     const sandLayer = this.createLayer('Sand', layerMapping, tileset)
@@ -46,7 +52,7 @@ export class Map {
     this.layers.push(oceanLayer)
     this.layers.push(sandLayer)
     this.layers.push(grassLayer)
-    return generatedMap
+    return tileMap
   }
 
   createLayer(layerName: string, layerMapping: any, tileset: Phaser.Tilemaps.Tileset) {
@@ -107,6 +113,10 @@ export class Map {
     }
     const generatedMap = this.setupTileMap(this.mapSeed)
     this.scene.clearHarvestables()
-    this.harvestables = ObjectPlacer.placeObjectsFromTilemap(ALL_HARVESTABLES, generatedMap)
+    this.harvestables = ObjectPlacer.placeObjectsFromTilemap(
+      ALL_HARVESTABLES,
+      generatedMap,
+      this.perlinTileGrid
+    )
   }
 }

@@ -1,4 +1,5 @@
 import { Constants } from '~/utils/Constants'
+import seedrng from 'seedrandom'
 
 export class ObjectPlacer {
   static groupObjectsIntoLayer(objects: any[]) {
@@ -26,7 +27,7 @@ export class ObjectPlacer {
     return false
   }
 
-  static placeObjectsFromTilemap(objects: any[], tileMap: number[][]) {
+  static placeObjectsFromTilemap(objects: any[], tileMap: number[][], perlinMap: number[][]) {
     const layerMapping = this.groupObjectsIntoLayer(objects)
     const objectMap: any[] = []
     for (let i = 0; i < tileMap.length; i++) {
@@ -35,13 +36,14 @@ export class ObjectPlacer {
         if (layer && this.isInnerTile(tileMap[i][j])) {
           const objectsForLayer = layerMapping[layer.toLowerCase()]
           if (objectsForLayer) {
-            const randomItem = objectsForLayer[Math.floor(Math.random() * objectsForLayer.length)]
-            const randomNumber = Constants.getRandomNum(1, 100)
+            const perlinMapSeed = `${perlinMap[i][j]}`
+            const randomItem = objectsForLayer[(i + j) % objectsForLayer.length]
+            const randomNumber = Constants.getSeedRandomNum(1, 100, perlinMapSeed)
             const placeRate = 100 * randomItem.placement[layer.toLowerCase()]
             if (randomNumber < placeRate) {
               objectMap.push({
-                x: j * Constants.TILE_SIZE + Constants.getRandomNum(-5, 5),
-                y: i * Constants.TILE_SIZE - 16 + Constants.getRandomNum(-5, 5),
+                x: j * Constants.TILE_SIZE + Constants.getSeedRandomNum(-5, 5, perlinMapSeed),
+                y: i * Constants.TILE_SIZE - 16 + Constants.getSeedRandomNum(-5, 5, perlinMapSeed),
                 type: randomItem.name,
               })
             }

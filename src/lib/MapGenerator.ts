@@ -13,7 +13,7 @@ interface PerlinConfig {
 }
 
 export class MapGenerator {
-  static getTileMap(seed: number, offsetsConfig: { x: number; y: number }) {
+  static getTileMap(seed, offsetsConfig: { x: number; y: number }) {
     const perlinConfig = {
       height: Constants.GAME_HEIGHT,
       width: Constants.GAME_WIDTH,
@@ -29,7 +29,7 @@ export class MapGenerator {
     }
     const perlinTileGrid = MapGenerator.generatePerlinTilegrid(perlinConfig)
     const tileMap = MapGenerator.generateTileMapFromPerlinNoise(perlinTileGrid)
-    return tileMap
+    return { tileMap, perlinTileGrid }
   }
 
   static generatePerlinTilegrid(config: PerlinConfig) {

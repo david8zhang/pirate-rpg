@@ -1,6 +1,7 @@
 import { Direction } from '~/characters/Player'
 import { Harvestable } from '../objects/Harvestable'
 import { ItemConfig, ItemTypes } from '../objects/ItemConfig'
+import seedrandom from 'seedrandom'
 
 export class Constants {
   // Tile codes
@@ -239,6 +240,11 @@ export class Constants {
       return Math.random() * (max - min) + min
     }
     return Math.floor(Math.random() * (max - min) + min)
+  }
+
+  static getSeedRandomNum(min: number, max: number, seed: string) {
+    const seedRng = new seedrandom(seed)
+    return Math.floor(seedRng() * (max - min) + min)
   }
 
   static inverseLerp(a: number, b: number, v: number) {
@@ -2011,7 +2017,7 @@ export const ALL_HARVESTABLES = [
     texture: 'boulder',
     health: 200,
     placement: {
-      sand: 0.01,
+      sand: 0.05,
     },
     onDestroyDrops: [
       {
