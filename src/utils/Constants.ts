@@ -188,6 +188,14 @@ export class Constants {
     return 575
   }
 
+  static getSquaredDistance(point1: { x: number; y: number }, point2: { x: number; y: number }) {
+    const diff = {
+      x: point1.x - point2.x,
+      y: point1.y - point2.y,
+    }
+    return diff.x * diff.x + diff.y * diff.y
+  }
+
   static getMob(mobName: string) {
     return ALL_MOBS.find((mobConfig) => mobConfig.name.toLowerCase() === mobName.toLowerCase())
   }
@@ -226,7 +234,10 @@ export class Constants {
     )
   }
 
-  static getRandomNum(min: number, max: number) {
+  static getRandomNum(min: number, max: number, isFloat: boolean = false) {
+    if (isFloat) {
+      return Math.random() * (max - min) + min
+    }
     return Math.floor(Math.random() * (max - min) + min)
   }
 
@@ -2000,7 +2011,6 @@ export const ALL_HARVESTABLES = [
     texture: 'boulder',
     health: 200,
     placement: {
-      grass: 0.01,
       sand: 0.01,
     },
     onDestroyDrops: [

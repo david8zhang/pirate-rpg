@@ -27,7 +27,7 @@ export class ObjectPlacer {
   }
 
   static placeObjectsFromTilemap(objects: any[], tileMap: number[][]) {
-    const layerMapping = ObjectPlacer.groupObjectsIntoLayer(objects)
+    const layerMapping = this.groupObjectsIntoLayer(objects)
     const objectMap: any[] = []
     for (let i = 0; i < tileMap.length; i++) {
       for (let j = 0; j < tileMap[0].length; j++) {
