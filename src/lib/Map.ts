@@ -1,6 +1,6 @@
 import { Direction } from '~/characters/Player'
 import Game from '~/scenes/Game'
-import { ALL_HARVESTABLES, Constants } from '~/utils/Constants'
+import { ALL_HARVESTABLES, ALL_MOBS, Constants } from '~/utils/Constants'
 import { MapGenerator } from './MapGenerator'
 import { ObjectPlacer } from './ObjectPlacer'
 
@@ -12,6 +12,7 @@ export class Map {
   public layers: Phaser.Tilemaps.TilemapLayer[] = []
   public perlinTileGrid!: number[][]
   public harvestables: any[]
+  public spawners: any[]
   public currMapOffset: { x: number; y: number } = { x: 0, y: 0 }
 
   constructor(scene: Game) {
@@ -21,11 +22,12 @@ export class Map {
     const generatedMap = this.setupTileMap(mapSeed)
     this.spawnPos = Constants.getSpawnPosFromMap(generatedMap)
 
-    this.harvestables = ObjectPlacer.placeObjectsFromTilemap(
+    this.harvestables = ObjectPlacer.placeHarvestablesFromTilemap(
       ALL_HARVESTABLES,
       generatedMap,
       this.perlinTileGrid
     )
+    this.spawners = ObjectPlacer.placeMobsFromTilemap(ALL_MOBS, generatedMap, this.harvestables)
   }
 
   setupTileMap(seed: number) {
@@ -113,10 +115,12 @@ export class Map {
     }
     const generatedMap = this.setupTileMap(this.mapSeed)
     this.scene.clearHarvestables()
-    this.harvestables = ObjectPlacer.placeObjectsFromTilemap(
+    this.scene.clearSpawnersAndMobs()
+    this.harvestables = ObjectPlacer.placeHarvestablesFromTilemap(
       ALL_HARVESTABLES,
       generatedMap,
       this.perlinTileGrid
     )
+    this.spawners = ObjectPlacer.placeMobsFromTilemap(ALL_MOBS, generatedMap, this.harvestables)
   }
 }

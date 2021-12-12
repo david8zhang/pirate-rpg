@@ -187,6 +187,7 @@ export default class Game extends Phaser.Scene {
     this.initShips()
     this.initEnemyShips()
     this.loadSaveFile()
+    console.log(this.map.layers)
   }
 
   initWorldCollider() {
@@ -208,18 +209,28 @@ export default class Game extends Phaser.Scene {
   }
 
   lazyLoadSpawners() {
-    const spawnerLayer = this.map.tileMap.getObjectLayer('Spawners')
-    spawnerLayer.objects.forEach((spawnerObj) => {
+    const locations = this.map.spawners
+      .sort((a, b) => {
+        return a.y! - b.y!
+      })
+      .map((obj) => {
+        return {
+          x: obj.x!,
+          y: obj.y!,
+          type: obj.type,
+        }
+      })
+    locations.forEach((spawnerObj) => {
       const config = Constants.getMob(spawnerObj.type)
-      const xPos = spawnerObj.x! + spawnerObj.width! * 0.5
-      const yPos = spawnerObj.y! - spawnerObj.height! * 0.5
-      if (this.cameras.main.worldView.contains(xPos, yPos)) {
+      const xPos = spawnerObj.x!
+      const yPos = spawnerObj.y!
+      if (this.cameras.main.worldView.contains(xPos, yPos) && config) {
         if (!this.spawnersPool[`${xPos},${yPos}`]) {
           const newSpawner = new MobSpawner(this, {
             position: { x: xPos, y: yPos },
-            spawnDelay: 1000,
+            spawnDelay: 20000,
             mobConfig: config,
-            mobLimit: 5,
+            mobLimit: Constants.getRandomNum(config.spawn.lowerLimit, config.spawn.upperLimit),
           })
           this.spawnersPool[`${xPos},${yPos}`] = newSpawner
         }
@@ -299,6 +310,14 @@ export default class Game extends Phaser.Scene {
     this.harvestableList.forEach((h) => h.cleanup())
     this.harvestables.clear()
     this.harvestableList = []
+  }
+
+  clearSpawnersAndMobs() {
+    this.mobs.clear()
+    Object.keys(this.spawnersPool).forEach((key) => this.spawnersPool[key].destroy())
+    this.mobPool.forEach((mob) => mob.destroy())
+    this.spawnersPool = {}
+    this.mobPool = []
   }
 
   initHarvestables() {
@@ -708,7 +727,7 @@ export default class Game extends Phaser.Scene {
     this.mobPool.forEach((mob: Mob) => {
       mob.update()
     })
-    // this.lazyLoadSpawners()
+    this.lazyLoadSpawners()
     // this.lazyLoadItems()
     this.lazyLoadHarvestables()
     this.updateSortingLayers()

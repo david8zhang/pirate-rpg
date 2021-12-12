@@ -2108,6 +2108,13 @@ export const ALL_MOBS = [
   {
     name: 'Monkey',
     animFrameName: 'monkey',
+    placement: {
+      grass: 0.005,
+    },
+    spawn: {
+      lowerLimit: 1,
+      upperLimit: 3,
+    },
     animMapping: {
       walkFront: 'monkey-walk-front',
       walkSide: 'monkey-walk-side',
@@ -2308,6 +2315,13 @@ export const ALL_MOBS = [
   {
     name: 'Crab',
     animFrameName: 'crab',
+    placement: {
+      sand: 0.01,
+    },
+    spawn: {
+      lowerLimit: 3,
+      upperLimit: 5,
+    },
     animMapping: {
       walkFront: 'crab-walk-side',
       walkSide: 'crab-walk-front',
@@ -2405,6 +2419,9 @@ export const ALL_MOBS = [
   {
     name: 'Skeleton',
     animFrameName: 'skeleton',
+    placement: {
+      sand: 0.002,
+    },
     animMapping: {
       walkFront: 'skeleton-walk-front',
       walkSide: 'skeleton-walk-side',
@@ -2554,6 +2571,10 @@ export const ALL_MOBS = [
         frameRate: 8,
       },
     ],
+    spawn: {
+      lowerLimit: 1,
+      upperLimit: 2,
+    },
     health: 150,
     body: {
       width: 0.25,
@@ -2703,8 +2724,8 @@ export const ALL_ITEMS: ItemConfig[] = [
     type: ItemTypes.resource,
     description: 'Now all you need is a hull!',
     recipe: {
-      Canvas: 2,
-      Rope: 2,
+      Canvas: 1,
+      Rope: 1,
       Wood: 10,
     },
   },
@@ -2715,7 +2736,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     description: 'The "hull" enchilada',
     recipe: {
       Wood: 20,
-      'Iron Bar': 5,
+      'Iron Bar': 1,
     },
   },
   {
@@ -2762,7 +2783,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     description: 'Do you see the iron-y?',
     type: ItemTypes.resource,
     recipe: {
-      'Iron Ore': 15,
+      'Iron Ore': 5,
     },
   },
   {

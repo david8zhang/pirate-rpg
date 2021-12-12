@@ -88,7 +88,9 @@ export class Mob {
     this.healthBar = new HealthBar(scene, healthBarConfig)
     this.healthBar.setVisible(false)
     collidableLayers?.forEach((layerName: string) => {
-      const layer = (this.scene as Game).getAllTileLayers().find((l) => l.name === layerName)
+      const layer = (this.scene as Game)
+        .getAllTileLayers()
+        .find((l) => l.layer.name.toLowerCase() === layerName.toLowerCase())
       if (layer) {
         const collider = this.scene.physics.add.collider(
           layer,
@@ -155,7 +157,9 @@ export class Mob {
     })
     this.tileColliders = []
     collidableLayers?.forEach((layerName: string) => {
-      const layer = (this.scene as Game).getAllTileLayers().find((l) => l.name === layerName)
+      const layer = (this.scene as Game)
+        .getAllTileLayers()
+        .find((l) => l.layer.name.toLowerCase() === layerName.toLowerCase())
       if (layer) {
         const collider = this.scene.physics.add.collider(
           layer,

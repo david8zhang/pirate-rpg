@@ -28,7 +28,6 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "fast-2d-poisson-disk-sampling": "^1.0.1",
     "jsx-dom": "^7.0.0-beta.4",
     "phaser": "^3.52.0",
     "phaser3-nineslice": "^0.5.0",

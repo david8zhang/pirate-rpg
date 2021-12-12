@@ -67,7 +67,7 @@ export class Placeable {
   getWithinValidBounds() {
     let isWithinValidBounds = false
     this.scene.getAllTileLayers().forEach((tileMap) => {
-      if (this.nonCollidableLayers.includes(tileMap.name)) {
+      if (this.nonCollidableLayers.includes(tileMap.layer.name)) {
         const check = tileMap.getTileAtWorldXY(this.previewSprite.x, this.previewSprite.y)
         if (check) {
           isWithinValidBounds = true

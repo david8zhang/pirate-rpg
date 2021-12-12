@@ -30,6 +30,7 @@ export class MobSpawner {
     this.spawnPos = mobSpawnerConfig.position
     this.mobLimit = mobSpawnerConfig.mobLimit
 
+    this.spawnMobs()
     this.spawnMobsEvent = this.scene.time.addEvent({
       callback: () => {
         this.spawnMobs()
