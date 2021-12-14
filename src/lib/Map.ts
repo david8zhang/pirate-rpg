@@ -14,6 +14,7 @@ export class Map {
   public harvestables: any[]
   public spawners: any[]
   public currMapOffset: { x: number; y: number } = { x: 0, y: 0 }
+  public removedHarvestables!: number[][]
 
   constructor(scene: Game) {
     this.scene = scene
@@ -21,13 +22,42 @@ export class Map {
     this.mapSeed = mapSeed
     const generatedMap = this.setupTileMap(mapSeed)
     this.spawnPos = Constants.getSpawnPosFromMap(generatedMap)
+    this.configureRemovedHarvestables()
 
     this.harvestables = ObjectPlacer.placeHarvestablesFromTilemap(
       ALL_HARVESTABLES,
       generatedMap,
-      this.perlinTileGrid
+      this.perlinTileGrid,
+      this.removedHarvestables
     )
     this.spawners = ObjectPlacer.placeMobsFromTilemap(ALL_MOBS, generatedMap, this.harvestables)
+  }
+
+  public configureRemovedHarvestables() {
+    this.removedHarvestables = new Array(Constants.GAME_WIDTH)
+      .fill(0)
+      .map(() => new Array(Constants.GAME_HEIGHT).fill(0))
+    const rawSaveData = localStorage.getItem('saveFile')
+    if (rawSaveData) {
+      const saveFile = JSON.parse(rawSaveData)
+      const removedHarvestablesList = saveFile.map.removedHarvestables
+      console.log(removedHarvestablesList)
+      removedHarvestablesList.forEach(([x, y]) => {
+        this.removedHarvestables[x][y] = 1
+      })
+    }
+  }
+
+  public getRemovedHarvestablesAsFlatList() {
+    const removedHarvestablesList: number[][] = []
+    for (let i = 0; i < this.removedHarvestables.length; i++) {
+      for (let j = 0; j < this.removedHarvestables[0].length; j++) {
+        if (this.removedHarvestables[i][j]) {
+          removedHarvestablesList.push([i, j])
+        }
+      }
+    }
+    return removedHarvestablesList
   }
 
   setupTileMap(seed: number) {
@@ -116,11 +146,17 @@ export class Map {
     const generatedMap = this.setupTileMap(this.mapSeed)
     this.scene.clearHarvestables()
     this.scene.clearSpawnersAndMobs()
+    this.scene.clearItemPool()
     this.harvestables = ObjectPlacer.placeHarvestablesFromTilemap(
       ALL_HARVESTABLES,
       generatedMap,
-      this.perlinTileGrid
+      this.perlinTileGrid,
+      this.removedHarvestables
     )
     this.spawners = ObjectPlacer.placeMobsFromTilemap(ALL_MOBS, generatedMap, this.harvestables)
+  }
+
+  public addToRemovedHarvestables(tileX: number, tileY: number) {
+    this.removedHarvestables[tileX][tileY] = 1
   }
 }

@@ -94,7 +94,6 @@ export default class Game extends Phaser.Scene {
     const rawSaveData = localStorage.getItem('saveFile')
     if (rawSaveData) {
       const saveFile = JSON.parse(rawSaveData)
-
       // Configure player
       const { player } = saveFile
 
@@ -187,7 +186,6 @@ export default class Game extends Phaser.Scene {
     this.initShips()
     this.initEnemyShips()
     this.loadSaveFile()
-    console.log(this.map.layers)
   }
 
   initWorldCollider() {
@@ -263,6 +261,8 @@ export default class Game extends Phaser.Scene {
           x: obj.x!,
           y: obj.y!,
           type: obj.type,
+          tileX: obj.tileX,
+          tileY: obj.tileY,
         }
       })
     const isInHarvestablesList = (x: number, y: number) => {
@@ -277,7 +277,7 @@ export default class Game extends Phaser.Scene {
         return !this.cameras.main.worldView.contains(h.sprite.x, h.sprite.y)
       })
     }
-    locations.forEach(({ x, y, type }) => {
+    locations.forEach(({ x, y, type, tileX, tileY }) => {
       if (this.cameras.main.worldView.contains(x, y)) {
         if (!isInHarvestablesList(x, y)) {
           const harvestableConfig = Constants.getHarvestable(type)
@@ -292,11 +292,18 @@ export default class Game extends Phaser.Scene {
             }
           } else {
             if (harvestableConfig) {
-              const harvestable = new Harvestable(this, {
-                ...harvestableConfig,
-                xPos: x,
-                yPos: y,
-              })
+              const harvestable = new Harvestable(
+                this,
+                {
+                  ...harvestableConfig,
+                  xPos: x,
+                  yPos: y,
+                },
+                {
+                  x: tileX,
+                  y: tileY,
+                }
+              )
               this.harvestableList.push(harvestable)
               this.harvestables.add(harvestable.sprite)
             }
@@ -484,6 +491,10 @@ export default class Game extends Phaser.Scene {
     })
   }
 
+  public removeHarvestable(tileX: number, tileY: number) {
+    this.map.addToRemovedHarvestables(tileX, tileY)
+  }
+
   public addMob(mob: Mob) {
     this.mobs.add(mob.sprite)
     this.mobPool.push(mob)
@@ -491,7 +502,11 @@ export default class Game extends Phaser.Scene {
 
   public saveAndQuit() {
     const saveObject: any = {
-      mapSeed: this.map.mapSeed,
+      map: {
+        seed: this.map.mapSeed,
+        offset: this.map.currMapOffset,
+        removedHarvestables: this.map.getRemovedHarvestablesAsFlatList(),
+      },
       player: {
         health: this.player.currHealth,
         x: this.player.x,

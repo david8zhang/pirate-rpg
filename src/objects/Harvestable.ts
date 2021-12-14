@@ -43,6 +43,13 @@ export interface HarvestableConfig {
 export class Harvestable {
   public health: number
   private scene: Game
+  public tileCoords: {
+    x: number
+    y: number
+  } = {
+    x: 0,
+    y: 0,
+  }
   public sprite: Phaser.Physics.Arcade.Sprite
   public config: HarvestableConfig
   public onDropItem?: Function
@@ -50,8 +57,9 @@ export class Harvestable {
   public currPlayerWeapon: string = 'unarmed'
   public proximityItems: Item[] = []
 
-  constructor(scene: Game, config: HarvestableConfig) {
+  constructor(scene: Game, config: HarvestableConfig, tileCoords: { x: number; y: number }) {
     const { xPos, yPos, texture, bodyResize, health, defaultFrame, onDropItem } = config
+    this.tileCoords = tileCoords
     this.scene = scene
     this.config = config
     this.sprite = this.scene.physics.add.sprite(xPos, yPos, texture, defaultFrame)
@@ -191,6 +199,7 @@ export class Harvestable {
         this.dropItem(drop.name, drop.quantity)
       })
     }
+    this.scene.removeHarvestable(this.tileCoords.x, this.tileCoords.y)
     this.sprite.destroy()
   }
 

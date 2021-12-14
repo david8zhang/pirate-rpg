@@ -29,14 +29,15 @@ export class ObjectPlacer {
   static placeHarvestablesFromTilemap(
     harvestables: any[],
     tileMap: number[][],
-    perlinMap: number[][]
+    perlinMap: number[][],
+    toIgnore: number[][]
   ) {
     const layerMapping = this.groupObjectsIntoLayer(harvestables)
     const objectMap: any[] = []
     for (let i = 0; i < tileMap.length; i++) {
       for (let j = 0; j < tileMap[0].length; j++) {
         const layer = Constants.getLayer(tileMap[i][j])
-        if (layer && this.isInnerTile(tileMap[i][j])) {
+        if (layer && this.isInnerTile(tileMap[i][j]) && toIgnore[i][j] === 0) {
           const objectsForLayer = layerMapping[layer.toLowerCase()]
           if (objectsForLayer) {
             const perlinMapSeed = `${perlinMap[i][j]}`
