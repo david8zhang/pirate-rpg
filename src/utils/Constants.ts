@@ -2746,8 +2746,9 @@ export const ALL_ITEMS: ItemConfig[] = [
     description: 'How the hell are you able to fit this in your pockets?!',
     inWorldImage: 'sailboat-preview',
     recipe: {
-      'Sailboat Hull': 1,
-      'Sailboat Sail': 1,
+      Stick: 1,
+      // 'Sailboat Hull': 1,
+      // 'Sailboat Sail': 1,
     },
   },
   {

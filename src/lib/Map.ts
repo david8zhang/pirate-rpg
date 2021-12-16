@@ -20,6 +20,10 @@ export class Map {
     this.scene = scene
     const mapSeed = this.getSavedMapSeed()
     this.mapSeed = mapSeed
+
+    const currMapOffset = this.getSavedMapOffset()
+    this.currMapOffset = currMapOffset
+
     const generatedMap = this.setupTileMap(mapSeed)
     this.spawnPos = Constants.getSpawnPosFromMap(generatedMap)
     this.configureRemovedHarvestables()
@@ -60,6 +64,7 @@ export class Map {
   }
 
   setupTileMap(seed: number) {
+    console.log(this.currMapOffset)
     const { tileMap, perlinTileGrid } = MapGenerator.getTileMap(seed, this.currMapOffset)
     this.perlinTileGrid = perlinTileGrid
     this.tileMap = this.scene.make.tilemap({
@@ -96,9 +101,18 @@ export class Map {
     const rawSaveData = localStorage.getItem('saveFile')
     if (rawSaveData) {
       const saveFile = JSON.parse(rawSaveData)
-      return saveFile.mapSeed
+      return saveFile.map.mapSeed
     }
     return Math.floor(Math.random() * 200)
+  }
+
+  getSavedMapOffset() {
+    const rawSaveData = localStorage.getItem('saveFile')
+    if (rawSaveData) {
+      const saveFile = JSON.parse(rawSaveData)
+      return saveFile.map.offset
+    }
+    return { x: 0, y: 0 }
   }
 
   handlePlayerCollideBounds() {
