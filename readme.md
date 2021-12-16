@@ -11,7 +11,7 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Meatier Stuff
 
-- Figure out how to generate chunks of perlin map on demand
+- Retain player's placed sailboat, ship
 
 ## Must haves for Alpha release:
 

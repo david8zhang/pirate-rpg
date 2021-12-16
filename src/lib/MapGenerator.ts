@@ -23,8 +23,8 @@ export class MapGenerator {
       lacunarity: 1,
       seed: 200,
       offset: {
-        x: offsetsConfig.x * Constants.GAME_HEIGHT,
-        y: offsetsConfig.y * Constants.GAME_WIDTH,
+        x: offsetsConfig.x * (Constants.GAME_HEIGHT / 2),
+        y: offsetsConfig.y * (Constants.GAME_WIDTH / 2),
       },
     }
     const perlinTileGrid = MapGenerator.generatePerlinTilegrid(perlinConfig)

@@ -41,7 +41,6 @@ export class Map {
     if (rawSaveData) {
       const saveFile = JSON.parse(rawSaveData)
       const removedHarvestablesList = saveFile.map.removedHarvestables
-      console.log(removedHarvestablesList)
       removedHarvestablesList.forEach(([x, y]) => {
         this.removedHarvestables[x][y] = 1
       })
@@ -118,10 +117,10 @@ export class Map {
         shipDirection === Direction.UP || shipDirection === Direction.DOWN ? height : width
     }
     const positionToSpawn = {
-      left: { x: rightBorder - spawnBuffer, y: this.scene.player.y },
-      right: { x: leftBorder + spawnBuffer, y: this.scene.player.y },
-      up: { x: this.scene.player.x, y: downBorder - spawnBuffer },
-      down: { x: this.scene.player.x, y: upBorder + spawnBuffer },
+      left: { x: Constants.BG_WIDTH / 2, y: this.scene.player.y },
+      right: { x: Constants.BG_WIDTH / 2, y: this.scene.player.y },
+      up: { x: this.scene.player.x, y: Constants.BG_HEIGHT / 2 },
+      down: { x: this.scene.player.x, y: Constants.BG_HEIGHT / 2 },
     }
     let toTransitionMapKey = ''
     if (this.scene.player.x <= leftBorder + bufferZone) {
