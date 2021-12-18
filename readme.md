@@ -4,14 +4,11 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Bugs to fix
 
-- When navigating to the next "zone" of the map, if the player is in a ship, the player can get stuck in an island
-- If the player turns the ship and goes offscreen, then the player will sometimes go to the previous map chunk
-
 ## Easy wins
 
 ## Meatier Stuff
 
-- Retain player's placed sailboat, ship
+- Fix map inconsistencies after map re-adjustment offset
 
 ## Must haves for Alpha release:
 
