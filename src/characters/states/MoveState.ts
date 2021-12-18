@@ -1,6 +1,5 @@
 import Player, { Direction } from '../Player'
 import { State } from '../../lib/StateMachine'
-import Game from '../../scenes/Game'
 
 export class MoveState extends State {
   execute(cursors: Phaser.Types.Input.Keyboard.CursorKeys, player: Player) {

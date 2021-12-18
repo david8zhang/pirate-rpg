@@ -64,7 +64,6 @@ export class Map {
   }
 
   setupTileMap(seed: number) {
-    console.log(this.currMapOffset)
     const { tileMap, perlinTileGrid } = MapGenerator.getTileMap(seed, this.currMapOffset)
     this.perlinTileGrid = perlinTileGrid
     this.tileMap = this.scene.make.tilemap({
@@ -120,16 +119,7 @@ export class Map {
     const rightBorder = Constants.BG_WIDTH
     const downBorder = Constants.BG_HEIGHT
     const upBorder = 0
-    const bufferZone = 20
-
-    let spawnBuffer = 50
-    if (this.scene.player.ship) {
-      const shipDirection = this.scene.player.ship.currDirection
-      const height = this.scene.player.ship.hullSprite.body.height
-      const width = this.scene.player.ship.hullSprite.body.width
-      spawnBuffer +=
-        shipDirection === Direction.UP || shipDirection === Direction.DOWN ? height : width
-    }
+    const bufferZone = 30
     const positionToSpawn = {
       left: { x: Constants.BG_WIDTH / 2, y: this.scene.player.y },
       right: { x: Constants.BG_WIDTH / 2, y: this.scene.player.y },
@@ -157,9 +147,12 @@ export class Map {
       this.scene.player.setPosition(posToSpawn.x, posToSpawn.y)
     }
     const generatedMap = this.setupTileMap(this.mapSeed)
+
+    // Clean up items, harvestables, etc. based on map readjustment
     this.scene.clearHarvestables()
     this.scene.clearSpawnersAndMobs()
     this.scene.clearItemPool()
+    this.scene.moveShipsBasedOnMapOffset(toTransitionMapKey)
     this.harvestables = ObjectPlacer.placeHarvestablesFromTilemap(
       ALL_HARVESTABLES,
       generatedMap,

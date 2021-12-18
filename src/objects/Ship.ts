@@ -407,6 +407,17 @@ export class Ship {
     this.wheelSprite.setVisible(isVisible)
   }
 
+  setShipEnablement(stage: boolean) {
+    this.setVisible(stage)
+    this.hullSprite.body.enable = stage
+    this.sailsSprite.body.enable = stage
+    this.cannons.forEach((c) => {
+      c.sprite.body.enable = stage
+    })
+    this.ladderSprite.body.enable = stage
+    this.wheelSprite.body.enable = stage
+  }
+
   setupBoardableShipDetector(x: number, y: number) {
     if (!this.boardableShipDetectorImg) {
       this.boardableShipDetectorImg = this.scene.physics.add.image(x, y, '').setVisible(false)

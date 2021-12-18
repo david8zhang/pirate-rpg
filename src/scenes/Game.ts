@@ -372,17 +372,6 @@ export default class Game extends Phaser.Scene {
         projectile.onHitShip(ship)
       }
     })
-
-    const shipsLayer = this.map.tileMap.getObjectLayer('Ships')
-    if (shipsLayer) {
-      shipsLayer.objects.forEach((obj) => {
-        const shipConfig = Constants.getShip(obj.type)
-        if (shipConfig) {
-          const ship = new Ship(this, shipConfig, { x: obj.x as number, y: obj.y as number })
-          this.ships.add(ship.hullSprite)
-        }
-      })
-    }
   }
 
   initEnemyShips() {
@@ -714,6 +703,33 @@ export default class Game extends Phaser.Scene {
     return allGroups
   }
 
+  moveShipsBasedOnMapOffset(toTransitionMapKey: string) {
+    this.ships.children.entries.forEach((shipObj) => {
+      const ship: Ship = shipObj.getData('ref')
+      const currShipPos = { x: ship.hullSprite.x, y: ship.hullSprite.y }
+      switch (toTransitionMapKey) {
+        case 'up': {
+          currShipPos.y += Constants.BG_HEIGHT / 2
+          break
+        }
+        case 'down': {
+          currShipPos.y -= Constants.BG_HEIGHT / 2
+          break
+        }
+        case 'left': {
+          currShipPos.x += Constants.BG_WIDTH / 2
+          break
+        }
+        case 'right': {
+          currShipPos.x -= Constants.BG_WIDTH / 2
+          break
+        }
+      }
+      ship.setShipEnablement(true)
+      ship.setPosition(currShipPos.x, currShipPos.y)
+    })
+  }
+
   addShip(ship: Ship) {
     this.ships.add(ship.hullSprite)
   }
@@ -743,7 +759,6 @@ export default class Game extends Phaser.Scene {
       mob.update()
     })
     this.lazyLoadSpawners()
-    // this.lazyLoadItems()
     this.lazyLoadHarvestables()
     this.updateSortingLayers()
     this.ships.children.entries.forEach((child) => {
