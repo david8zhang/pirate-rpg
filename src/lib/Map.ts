@@ -91,7 +91,7 @@ export class Map {
   }
 
   createLayer(layerName: string, layerMapping: any, tileset: Phaser.Tilemaps.Tileset) {
-    const newLayer = this.tileMap.createBlankLayer(layerName, tileset, 0, 0)
+    const newLayer = this.tileMap.createBlankLayer(layerName, tileset)
     newLayer.putTilesAt(layerMapping[layerName], 0, 0)
     return newLayer
   }
@@ -119,34 +119,54 @@ export class Map {
     const rightBorder = Constants.BG_WIDTH
     const downBorder = Constants.BG_HEIGHT
     const upBorder = 0
-    const bufferZone = 30
-    const positionToSpawn = {
-      left: { x: Constants.BG_WIDTH / 2, y: this.scene.player.y },
-      right: { x: Constants.BG_WIDTH / 2, y: this.scene.player.y },
-      up: { x: this.scene.player.x, y: Constants.BG_HEIGHT / 2 },
-      down: { x: this.scene.player.x, y: Constants.BG_HEIGHT / 2 },
+
+    let detectionBuffer = 30
+    let spawnBuffer = 60
+    const player = this.scene.player
+    if (player.ship) {
+      const shipDirection = player.ship.currDirection
+      const height = player.ship.hullSprite.body.height
+      const width = player.ship.hullSprite.body.width
+      spawnBuffer +=
+        shipDirection === Direction.UP || shipDirection === Direction.DOWN ? height : width
+      detectionBuffer +=
+        shipDirection === Direction.UP || shipDirection === Direction.DOWN ? height : width
     }
+    const positionToSpawn = {
+      left: { x: rightBorder - spawnBuffer, y: player.y },
+      right: { x: leftBorder + spawnBuffer, y: player.y },
+      up: { x: player.x, y: downBorder - spawnBuffer },
+      down: { x: player.x, y: upBorder + spawnBuffer },
+    }
+
+    const xCollisionPos = player.ship ? player.ship.getCenterPoint().x : player.x
+    const yCollisionPos = player.ship ? player.ship.getCenterPoint().y : player.y
     let toTransitionMapKey = ''
-    if (this.scene.player.x <= leftBorder + bufferZone) {
+    if (xCollisionPos <= leftBorder + detectionBuffer) {
       this.currMapOffset.y -= 1
       toTransitionMapKey = 'left'
-    } else if (this.scene.player.x >= rightBorder - bufferZone) {
+    } else if (xCollisionPos >= rightBorder - detectionBuffer) {
       this.currMapOffset.y += 1
       toTransitionMapKey = 'right'
-    } else if (this.scene.player.y <= upBorder + bufferZone) {
+    } else if (yCollisionPos <= upBorder + detectionBuffer) {
       this.currMapOffset.x -= 1
       toTransitionMapKey = 'up'
-    } else if (this.scene.player.y >= downBorder - bufferZone) {
+    } else if (yCollisionPos >= downBorder - detectionBuffer) {
       this.currMapOffset.x += 1
       toTransitionMapKey = 'down'
     }
-    const posToSpawn = positionToSpawn[toTransitionMapKey]
-    if (this.scene.player.ship) {
-      this.scene.player.ship.setPosition(posToSpawn.x, posToSpawn.y)
-    } else {
-      this.scene.player.setPosition(posToSpawn.x, posToSpawn.y)
-    }
+
     const generatedMap = this.setupTileMap(this.mapSeed)
+    const posToSpawn = positionToSpawn[toTransitionMapKey]
+
+    if (player.ship) {
+      // If the player is in a ship, make sure that the ship is spawning into an area of ocean in the
+      // next tilemap
+      const modifiedSpawnPos = this.getSpawnInOcean(posToSpawn, generatedMap, toTransitionMapKey)
+      player.ship.setPosition(modifiedSpawnPos.x, modifiedSpawnPos.y)
+    } else {
+      player.setPosition(posToSpawn.x, posToSpawn.y)
+    }
 
     // Clean up items, harvestables, etc. based on map readjustment
     this.scene.clearHarvestables()
@@ -164,5 +184,53 @@ export class Map {
 
   public addToRemovedHarvestables(tileX: number, tileY: number) {
     this.removedHarvestables[tileX][tileY] = 1
+  }
+
+  public getSpawnInOcean(
+    posToSpawn: { x: number; y: number },
+    generatedMap: number[][],
+    toTransitionKey: string
+  ) {
+    const tileToSpawnIn = {
+      col: Math.floor(posToSpawn.x / Constants.TILE_SIZE),
+      row: Math.floor(posToSpawn.y / Constants.TILE_SIZE),
+    }
+    const tileCode = generatedMap[tileToSpawnIn.row][tileToSpawnIn.col]
+    if (Constants.getLayer(tileCode) !== 'OCEAN') {
+      switch (toTransitionKey) {
+        case 'left':
+        case 'right': {
+          for (
+            let i = Math.max(0, tileToSpawnIn.row - 20);
+            i < Math.min(tileToSpawnIn.row + 20, Constants.GAME_HEIGHT);
+            i++
+          ) {
+            const newTileCode = generatedMap[i][tileToSpawnIn.col]
+            if (Constants.getLayer(newTileCode) === 'OCEAN') {
+              const data = {
+                x: tileToSpawnIn.col * Constants.TILE_SIZE,
+                y: i * Constants.TILE_SIZE,
+              }
+              return data
+            }
+          }
+        }
+        case 'up':
+        case 'down':
+          for (
+            let i = Math.max(0, tileToSpawnIn.col - 20);
+            i < Math.min(tileToSpawnIn.col + 20, Constants.GAME_WIDTH);
+            i++
+          ) {
+            const newTileCode = generatedMap[tileToSpawnIn.row][i]
+            if (Constants.getLayer(newTileCode) === 'OCEAN') {
+              return { y: tileToSpawnIn.row * Constants.TILE_SIZE, x: i * Constants.TILE_SIZE }
+            }
+          }
+        default:
+          return posToSpawn
+      }
+    }
+    return posToSpawn
   }
 }

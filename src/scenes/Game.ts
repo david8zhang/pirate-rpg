@@ -1,7 +1,7 @@
 import Phaser, { Physics } from 'phaser'
 import { ALL_EFFECTS, ALL_SHIP_TYPES, CAPTAIN_TO_CREW_TYPE, Constants } from '../utils/Constants'
 import '../characters/Player'
-import Player, { Direction } from '../characters/Player'
+import Player from '../characters/Player'
 import { createCharacterAnims } from '../anims/CharacterAnims'
 import { Mob } from '../mobs/Mob'
 import { Item } from '~/objects/Item'
@@ -21,7 +21,6 @@ import { EnemyShip } from '~/objects/EnemyShip'
 import { createEffectsAnims } from '~/anims/EffectsAnims'
 import { EffectSpawner } from '~/objects/Effect'
 import { createShipAnims } from '~/anims/ShipAnims'
-import { MapGenerator } from '~/lib/MapGenerator'
 import { Map } from '~/lib/Map'
 
 export default class Game extends Phaser.Scene {
@@ -200,7 +199,10 @@ export default class Game extends Phaser.Scene {
       true
     )
     this.physics.world.on('worldbounds', (obj) => {
-      if (obj.gameObject === this.player) {
+      if (
+        obj.gameObject === this.player ||
+        (this.player.ship && obj.gameObject === this.player.ship.landDetectorImg)
+      ) {
         this.map.handlePlayerCollideBounds()
       }
     })
@@ -706,27 +708,29 @@ export default class Game extends Phaser.Scene {
   moveShipsBasedOnMapOffset(toTransitionMapKey: string) {
     this.ships.children.entries.forEach((shipObj) => {
       const ship: Ship = shipObj.getData('ref')
-      const currShipPos = { x: ship.hullSprite.x, y: ship.hullSprite.y }
-      switch (toTransitionMapKey) {
-        case 'up': {
-          currShipPos.y += Constants.BG_HEIGHT / 2
-          break
+      if (ship !== this.player.ship) {
+        const currShipPos = { x: ship.hullSprite.x, y: ship.hullSprite.y }
+        switch (toTransitionMapKey) {
+          case 'up': {
+            currShipPos.y += Constants.BG_HEIGHT
+            break
+          }
+          case 'down': {
+            currShipPos.y -= Constants.BG_HEIGHT
+            break
+          }
+          case 'left': {
+            currShipPos.x += Constants.BG_WIDTH
+            break
+          }
+          case 'right': {
+            currShipPos.x -= Constants.BG_WIDTH
+            break
+          }
         }
-        case 'down': {
-          currShipPos.y -= Constants.BG_HEIGHT / 2
-          break
-        }
-        case 'left': {
-          currShipPos.x += Constants.BG_WIDTH / 2
-          break
-        }
-        case 'right': {
-          currShipPos.x -= Constants.BG_WIDTH / 2
-          break
-        }
+        ship.setShipEnablement(true)
+        ship.setPosition(currShipPos.x, currShipPos.y)
       }
-      ship.setShipEnablement(true)
-      ship.setPosition(currShipPos.x, currShipPos.y)
     })
   }
 
