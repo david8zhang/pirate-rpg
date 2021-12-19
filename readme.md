@@ -6,9 +6,9 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Easy wins
 
-## Meatier Stuff
+- Instead of continuing with old map, have the player spawn into a completely new "zoned" map
 
-- Fix map inconsistencies after map re-adjustment offset
+## Meatier Stuff
 
 ## Must haves for Alpha release:
 
