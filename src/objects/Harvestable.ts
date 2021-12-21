@@ -21,15 +21,19 @@ export interface HarvestableConfig {
       y?: number
     }
   }
-  droppedItems?: {
-    name: string
-    quantity: number
-  }[]
-  onDestroyDrops?: {
-    name: string
-    quantity: number
-  }[]
-  onDropItem?: Function
+  dropConfig: {
+    withDropTexture?: string
+    hasDropRate?: number
+    droppedItems?: {
+      name: string
+      quantity: number
+    }[]
+    onDestroyDrops?: {
+      name: string
+      quantity: number
+    }[]
+    onDropItem?: Function
+  }
   particle?: {
     type: string
     dropLength: number
@@ -56,13 +60,15 @@ export class Harvestable {
   public isAttacked: boolean = false
   public currPlayerWeapon: string = 'unarmed'
   public proximityItems: Item[] = []
+  public canDrop: boolean = false
 
   constructor(scene: Game, config: HarvestableConfig, tileCoords: { x: number; y: number }) {
-    const { xPos, yPos, texture, bodyResize, health, defaultFrame, onDropItem } = config
+    const { xPos, yPos, texture, bodyResize, health, dropConfig } = config
+    const { onDropItem } = dropConfig
     this.tileCoords = tileCoords
     this.scene = scene
     this.config = config
-    this.sprite = this.scene.physics.add.sprite(xPos, yPos, texture, defaultFrame)
+    this.sprite = this.scene.physics.add.sprite(xPos, yPos, texture)
     this.scene.physics.world.enableBody(this.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.health = health
 
@@ -86,6 +92,20 @@ export class Harvestable {
     this.sprite.setData('ref', this)
     this.sprite.setPushable(false)
     this.initProximityItems()
+    this.setHasDrops()
+  }
+
+  setHasDrops() {
+    const { hasDropRate, withDropTexture } = this.config.dropConfig
+    if (hasDropRate && withDropTexture) {
+      const randomNum = Constants.getRandomNum(0, 1000)
+      if (randomNum < hasDropRate * 1000) {
+        this.sprite.setTexture(withDropTexture)
+        this.canDrop = true
+      }
+    } else {
+      this.canDrop = true
+    }
   }
 
   initProximityItems() {
@@ -112,7 +132,8 @@ export class Harvestable {
   }
 
   initNewConfig(config: HarvestableConfig) {
-    const { xPos, yPos, texture, bodyResize, health, defaultFrame, onDropItem } = config
+    const { xPos, yPos, texture, bodyResize, health, defaultFrame, dropConfig } = config
+    const { onDropItem } = dropConfig
     this.config = config
     this.sprite.setTexture(texture, defaultFrame)
     this.sprite.x = xPos
@@ -174,8 +195,10 @@ export class Harvestable {
 
   takeDamage(damage: number) {
     if (this.health === this.config.health) {
-      if (this.onDropItem) this.onDropItem(this)
-      this.dropItems()
+      if (this.canDrop) {
+        if (this.onDropItem) this.onDropItem(this)
+        this.dropItems()
+      }
     }
     this.health -= damage
     this.health = Math.max(0, this.health)
@@ -193,7 +216,7 @@ export class Harvestable {
 
   // Items to be dropped when broken completely
   destroy() {
-    const { onDestroyDrops } = this.config
+    const { onDestroyDrops } = this.config.dropConfig
     if (onDestroyDrops) {
       onDestroyDrops.forEach((drop) => {
         this.dropItem(drop.name, drop.quantity)
@@ -219,7 +242,7 @@ export class Harvestable {
   // Items to be dropped when hit (trees, bushes, etc. dropping berries/fruits)
   // Interesting idea: Drop mobs when hitting trees, like coconut crabs or bees
   dropItems() {
-    const { droppedItems } = this.config
+    const { droppedItems } = this.config.dropConfig
     if (droppedItems) {
       const droppableItem = droppedItems[Math.floor(Math.random() * droppedItems.length)]
       this.dropItem(droppableItem.name, droppableItem.quantity)

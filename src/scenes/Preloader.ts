@@ -11,12 +11,11 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('heart', 'ui/pixel-heart.png')
 
     // Plants
-    this.load.spritesheet('palm-trees', 'harvestables/palm-trees.png', {
-      frameHeight: 64,
-      frameWidth: 64,
-      startFrame: 0,
-      endFrame: 1,
-    })
+    this.load.image('palm-tree-with-coconut', 'harvestables/palm-tree/palm-tree_with_coconut.png')
+    this.load.image(
+      'palm-tree-without-coconut',
+      'harvestables/palm-tree/palm-tree_without_coconut.png'
+    )
     this.load.image('boulder', 'harvestables/boulder.png')
     this.load.image(
       'banana-tree-with-banana',

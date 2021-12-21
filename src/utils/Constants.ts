@@ -1968,32 +1968,36 @@ export const ALL_SHIP_TYPES = [
 export const ALL_HARVESTABLES = [
   {
     name: 'Palm-Tree',
-    texture: 'palm-trees',
+    texture: 'palm-tree-without-coconut',
     health: 100,
     placement: {
-      grass: 0.25,
-      sand: 0.05,
+      grass: 0.15,
+      sand: 0.025,
     },
-    defaultFrame: 1,
-    onDropItem: (harvestable: Harvestable) => {
-      harvestable.sprite.setFrame(0)
+    dropConfig: {
+      hasDropRate: 0.2,
+      withDropTexture: 'palm-tree-with-coconut',
+      onDropItem: (harvestable: Harvestable) => {
+        harvestable.sprite.setTexture('palm-tree-without-coconut')
+      },
+      droppedItems: [
+        {
+          name: 'Coconut',
+          quantity: 2,
+        },
+      ],
+      onDestroyDrops: [
+        {
+          name: 'Wood',
+          quantity: 5,
+        },
+        {
+          name: 'Frond',
+          quantity: 3,
+        },
+      ],
     },
-    droppedItems: [
-      {
-        name: 'Coconut',
-        quantity: 2,
-      },
-    ],
-    onDestroyDrops: [
-      {
-        name: 'Wood',
-        quantity: 5,
-      },
-      {
-        name: 'Frond',
-        quantity: 3,
-      },
-    ],
+    defaultFrame: 0,
     bodyResize: {
       width: 0.2,
       height: 0.1,
@@ -2017,18 +2021,20 @@ export const ALL_HARVESTABLES = [
     texture: 'boulder',
     health: 200,
     placement: {
-      sand: 0.05,
+      sand: 0.025,
     },
-    onDestroyDrops: [
-      {
-        name: 'Rock',
-        quantity: 5,
-      },
-      {
-        name: 'Iron Ore',
-        quantity: 1,
-      },
-    ],
+    dropConfig: {
+      onDestroyDrops: [
+        {
+          name: 'Rock',
+          quantity: 5,
+        },
+        {
+          name: 'Iron Ore',
+          quantity: 1,
+        },
+      ],
+    },
     bodyResize: {
       width: 0.5,
       height: 0.3,
@@ -2049,15 +2055,35 @@ export const ALL_HARVESTABLES = [
   },
   {
     name: 'Banana-tree',
-    texture: 'banana-tree-with-banana',
+    texture: 'banana-tree-without-banana',
     health: 150,
     placement: {
-      grass: 0.25,
+      grass: 0.05,
+    },
+    dropConfig: {
+      hasDropRate: 0.1,
+      withDropTexture: 'banana-tree-with-banana',
+      onDropItem: (harvestable: Harvestable) => {
+        harvestable.sprite.setTexture('banana-tree-without-banana')
+      },
+      droppedItems: [
+        {
+          name: 'Banana',
+          quantity: 4,
+        },
+      ],
+      onDestroyDrops: [
+        {
+          name: 'Wood',
+          quantity: 3,
+        },
+        {
+          name: 'Frond',
+          quantity: 5,
+        },
+      ],
     },
     defaultFrame: 0,
-    onDropItem: (harvestable: Harvestable) => {
-      harvestable.sprite.setTexture('banana-tree-without-banana')
-    },
     particle: {
       type: 'wood-particle',
       dropLength: 500,
@@ -2069,22 +2095,6 @@ export const ALL_HARVESTABLES = [
         y: 53,
       },
     },
-    droppedItems: [
-      {
-        name: 'Banana',
-        quantity: 4,
-      },
-    ],
-    onDestroyDrops: [
-      {
-        name: 'Wood',
-        quantity: 3,
-      },
-      {
-        name: 'Frond',
-        quantity: 5,
-      },
-    ],
     proximityItems: [],
   },
 ]
@@ -2419,9 +2429,7 @@ export const ALL_MOBS = [
   {
     name: 'Skeleton',
     animFrameName: 'skeleton',
-    placement: {
-      sand: 0.002,
-    },
+    placement: {},
     animMapping: {
       walkFront: 'skeleton-walk-front',
       walkSide: 'skeleton-walk-side',
