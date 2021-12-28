@@ -142,6 +142,7 @@ export default class Game extends Phaser.Scene {
       this.player.setInventory(player.inventory)
       this.player.setEquipment(player.equipment)
       this.player.setCurrHealth(player.health)
+      this.player.setCurrStamina(player.stamina)
     }
   }
 
@@ -500,6 +501,7 @@ export default class Game extends Phaser.Scene {
       },
       player: {
         health: this.player.currHealth,
+        stamina: this.player.currStamina,
         x: this.player.x,
         y: this.player.y,
         inventory: this.player.inventory,

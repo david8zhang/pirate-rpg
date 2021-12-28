@@ -8,11 +8,14 @@ import Game from './Game'
 import { text } from '~/ui/components/Text'
 import { ShipUIScene } from './ShipUIScene'
 import { MainMenuScene } from './MainMenuScene'
+import { HealthBar } from '~/ui/HealthBar'
+import { StaminaBar } from '~/ui/StaminaBar'
 
 export default class UIScene extends Phaser.Scene {
   private static _instance: UIScene
   public inventoryMenu!: InventoryMenu
   public playerHealth!: PlayerHealthBar
+  public playerStamina!: HealthBar
   public itemTooltip!: ItemTooltip
   public craftingMenu!: CraftingMenu
   public equipMenu!: EquipmentMenu
@@ -30,7 +33,8 @@ export default class UIScene extends Phaser.Scene {
   preload() {
     this.inventoryMenu = new InventoryMenu(this)
     this.inventoryMenu.initialize()
-    this.playerHealth = new PlayerHealthBar(this)
+    this.playerHealth = new PlayerHealthBar(this, 27, this.scale.height - 34)
+    this.playerStamina = new StaminaBar(this, 27, this.scale.height - 64)
     this.itemTooltip = new ItemTooltip(this, 0, 0)
     this.equipMenu = new EquipmentMenu(this)
     this.initGameOverElements()
@@ -129,6 +133,8 @@ export default class UIScene extends Phaser.Scene {
 
   update() {
     this.itemTooltip.update()
+    const player = Game.instance.player
+    this.playerStamina.setVisible(player.getIsSubmerged() || player.currStamina < player.maxStamina)
   }
 
   showPauseMenu() {

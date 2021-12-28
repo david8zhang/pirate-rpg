@@ -1,37 +1,25 @@
+import { Constants } from '~/utils/Constants'
 import { HealthBar } from './HealthBar'
 
-export class PlayerHealthBar {
+export class PlayerHealthBar extends HealthBar {
   private scene: Phaser.Scene
-  private healthBar: HealthBar
-  constructor(scene: Phaser.Scene) {
-    this.scene = scene
-    const height = this.scene.scale.height
+  constructor(scene: Phaser.Scene, x: number, y: number) {
     const healthBarConfig = {
-      x: 27,
-      y: height - 34,
-      width: 150,
-      height: 15,
-      maxValue: 100,
-      fillColor: 0x2ecc71,
+      x,
+      y,
+      width: Constants.HEALTH_BAR_WIDTH,
+      height: Constants.HEALTH_BAR_HEIGHT,
+      maxValue: Constants.MAX_HEALTH,
+      fillColor: Constants.HEALTH_BAR_FILL_COLOR,
       showBorder: true,
-      borderWidth: 4,
+      borderWidth: Constants.HEALTH_BAR_BORDER_WIDTH,
     }
-    this.healthBar = new HealthBar(this.scene, healthBarConfig)
-    this.healthBar.setVisible(true)
-    const sprite = this.scene.add.sprite(25, height - 28, 'heart')
+    super(scene, healthBarConfig)
+    this.scene = scene
+    // this.healthBar = new HealthBar(this.scene, healthBarConfig)
+    // this.healthBar.setVisible(true)
+    const sprite = this.scene.add.sprite(25, y + 6, 'heart')
     sprite.setScale(0.1)
     sprite.setDepth(2000)
-  }
-
-  public takeDamage(damage: number) {
-    this.healthBar.decrease(damage)
-  }
-
-  setMaxHealth(health: number) {
-    this.healthBar.setMaxHealth(health)
-  }
-
-  setCurrHealth(health: number) {
-    this.healthBar.setCurrHealth(health)
   }
 }

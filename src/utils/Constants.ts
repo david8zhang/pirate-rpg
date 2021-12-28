@@ -4,6 +4,15 @@ import { ItemConfig, ItemTypes } from '../objects/ItemConfig'
 import seedrandom from 'seedrandom'
 
 export class Constants {
+  // UI Constants
+  public static HEALTH_BAR_WIDTH = 150
+  public static HEALTH_BAR_HEIGHT = 15
+  public static MAX_HEALTH = 100
+  public static HEALTH_BAR_FILL_COLOR = 0x2ecc71
+  public static HEALTH_BAR_BORDER_WIDTH = 4
+  public static STAMINA_BAR_FILL_COLOR = 0x3c73a8
+  public static MAX_STAMINA = 100
+
   // Tile codes
   public static SAND_1 = 0
   public static SAND_2 = 1

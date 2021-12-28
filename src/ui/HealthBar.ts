@@ -50,6 +50,12 @@ export class HealthBar {
     return this.currValue === 0
   }
 
+  increase(amount: number) {
+    this.currValue = Math.min(this.maxValue, this.currValue + amount)
+    this.draw()
+    return this.currValue === this.maxValue
+  }
+
   setMaxHealth(maxHealth: number) {
     this.maxValue = maxHealth
     this.draw()

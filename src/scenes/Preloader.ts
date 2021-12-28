@@ -9,6 +9,7 @@ export default class Preloader extends Phaser.Scene {
     // Fonts
     this.load.atlas('player', 'character/player.png', 'character/player.json')
     this.load.image('heart', 'ui/pixel-heart.png')
+    this.load.image('lightning-bolt', 'ui/pixel-lightning.png')
 
     // Plants
     this.load.image('palm-tree-with-coconut', 'harvestables/palm-tree/palm-tree_with_coconut.png')

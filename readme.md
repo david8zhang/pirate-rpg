@@ -8,8 +8,6 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 - Make monkeys have drops, like pelts and bananas or something
 - Give crab claws a function, like making them edible
-- Make trees / banana plants that don't have coconuts and banans
-- Add a "stamina" meter for when swimming, once stamina reaches zero player begins to lose health every few seconds
 - Add fish and sharks that swim around in the ocean
 
 ## Meatier Stuff

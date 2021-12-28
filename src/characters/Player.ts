@@ -48,8 +48,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   public stateMachine: StateMachine
   public direction: Direction = Direction.DOWN
-  public maxHealth: number = 100
-  public currHealth: number = 100
+  public maxHealth: number = Constants.MAX_HEALTH
+  public currHealth: number = Constants.MAX_HEALTH
+  public maxStamina: number = Constants.MAX_STAMINA
+  public currStamina: number = Constants.MAX_STAMINA
+  public loseStaminaOrHealthOverTimeEvent: Phaser.Time.TimerEvent
+  public gainStaminaOverTimeEvent: Phaser.Time.TimerEvent
+
   public iFrameDuration: number = 500
   public isHit: boolean = false
   public itemOnHover: Item | null = null
@@ -86,6 +91,28 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.inventory = {}
     this.equipment = {}
     this.configureKeyPresses()
+
+    // Configure events
+    this.loseStaminaOrHealthOverTimeEvent = this.scene.time.addEvent({
+      delay: 500,
+      callback: () => {
+        if (this.currStamina > 0) {
+          this.takeStaminaDamage(5)
+        } else {
+          this.takeDamage(5)
+        }
+      },
+      loop: true,
+    })
+    this.loseStaminaOrHealthOverTimeEvent.paused = true
+    this.gainStaminaOverTimeEvent = this.scene.time.addEvent({
+      delay: 500,
+      callback: () => {
+        this.gainStamina(5)
+      },
+      loop: true,
+    })
+    this.gainStaminaOverTimeEvent.paused = true
   }
 
   getWeapon(): Weapon | undefined {
@@ -295,6 +322,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }, 100)
   }
 
+  setCurrStamina(stamina: number) {
+    this.currStamina = stamina
+    const interval = setInterval(() => {
+      if (UIScene.instance) {
+        UIScene.instance.playerStamina.setCurrHealth(this.currStamina)
+        clearInterval(interval)
+      }
+    }, 100)
+  }
+
   respawn(x: number, y: number) {
     this.currHealth = this.maxHealth
     UIScene.instance.playerHealth.setCurrHealth(this.currHealth)
@@ -329,6 +366,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  takeStaminaDamage(damage: number) {
+    this.currStamina = Math.max(0, this.currStamina - damage)
+    UIScene.instance.playerStamina.decrease(damage)
+  }
+
+  gainStamina(toGain: number) {
+    this.currStamina = Math.min(this.currStamina + toGain, Constants.MAX_STAMINA)
+    UIScene.instance.playerStamina.increase(toGain)
+  }
+
   takeDamage(damage: number) {
     this.currHealth -= damage
     this.setTint(0xff0000)
@@ -336,7 +383,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       this.setTint(0xffffff)
     })
     UINumber.createNumber(`-${damage}`, this.scene, this.x, this.y)
-    UIScene.instance.playerHealth.takeDamage(damage)
+    UIScene.instance.playerHealth.decrease(damage)
   }
 
   setStructureToEnter(structure: Structure) {
@@ -377,6 +424,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       return
     }
     this.isSubmerged = this.getIsSubmerged()
+
+    // Lose stamina over time if the player is currently submerged. Else, gain stamina over time
+    this.loseStaminaOrHealthOverTimeEvent.paused = !this.isSubmerged
+    this.gainStaminaOverTimeEvent.paused = this.isSubmerged
 
     if (this.structureToBePlaced) {
       this.structureToBePlaced.showPreview()
