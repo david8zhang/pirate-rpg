@@ -60,6 +60,8 @@ export class ObjectPlacer {
     return objectMap
   }
 
+  static placeShipsFromTilemap(tilemap: number[][]) {}
+
   static placeMobsFromTilemap(mobs: any[], tilemap: number[][], harvestables: any[]): any[] {
     const spawnerLocations: any[] = []
 

@@ -199,14 +199,6 @@ export default class Game extends Phaser.Scene {
       true,
       true
     )
-    this.physics.world.on('worldbounds', (obj) => {
-      if (
-        obj.gameObject === this.player ||
-        (this.player.ship && obj.gameObject === this.player.ship.landDetectorImg)
-      ) {
-        this.map.handlePlayerCollideBounds()
-      }
-    })
   }
 
   lazyLoadSpawners() {
@@ -489,6 +481,9 @@ export default class Game extends Phaser.Scene {
 
   public addMob(mob: Mob) {
     this.mobs.add(mob.sprite)
+    const spriteBody = mob.sprite.body as Phaser.Physics.Arcade.Body
+    spriteBody.setCollideWorldBounds(true)
+    spriteBody.onWorldBounds = true
     this.mobPool.push(mob)
   }
 
