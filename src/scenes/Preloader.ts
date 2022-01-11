@@ -75,6 +75,11 @@ export default class Preloader extends Phaser.Scene {
     this.load.atlas('monkey', 'mobs/monkey/monkey.png', 'mobs/monkey/monkey.json')
     this.load.atlas('crab', 'mobs/crab/crab.png', 'mobs/crab/crab.json')
     this.load.atlas('skeleton', 'mobs/skeleton/skeleton.png', 'mobs/skeleton/skeleton.json')
+    this.load.atlas(
+      'navy-sailor',
+      'mobs/navy-sailor/navy-sailor.png',
+      'mobs/navy-sailor/navy-sailor.json'
+    )
 
     // Common ship objects
     this.load.image('wheel-up', 'transport/common/wheel-up.png')

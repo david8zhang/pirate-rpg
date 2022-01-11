@@ -15,20 +15,28 @@ export class MeleeAttackBehavior extends AttackBehavior {
   public attackRange = 20
   private attackDamage = 5
 
-  private hitboxImage: Phaser.Physics.Arcade.Image
+  private hitboxImage: Phaser.Physics.Arcade.Sprite
   private hitboxCollider: Phaser.Physics.Arcade.Collider
   public name: string = 'MELEE_ATTACK'
 
   constructor(mob: Mob) {
     super()
     this.mob = mob
-    this.hitboxImage = this.mob.scene.physics.add.image(this.mob.sprite.x, this.mob.sprite.y, '')
+    this.hitboxImage = this.mob.scene.physics.add.sprite(this.mob.sprite.x, this.mob.sprite.y, '')
     this.hitboxImage.setVisible(false)
-    this.mob.scene.physics.world.enableBody(this.mob.sprite, Phaser.Physics.Arcade.DYNAMIC_BODY)
+    this.mob.scene.physics.world.enableBody(this.hitboxImage, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.hitboxImage.setPushable(false)
     this.hitboxImage.setSize(this.mob.sprite.body.width, this.mob.sprite.body.height)
     this.hitboxImage.setDebugBodyColor(0xffff00)
-    this.hitboxImage.body.offset.y = this.mob.sprite.body.offset.y
+
+    const mobConfig = this.mob.mobConfig
+
+    if (mobConfig.body.offsetY && mobConfig.body.offsetY) {
+      this.hitboxImage.body.offset.y = mobConfig.body.offsetY
+    }
+    if (mobConfig.body && mobConfig.offsetX) {
+      this.hitboxImage.body.offset.x = mobConfig.body.offsetX
+    }
 
     const { attackConfig } = this.mob.mobConfig
     if (attackConfig) {
@@ -86,7 +94,6 @@ export class MeleeAttackBehavior extends AttackBehavior {
         this.hitboxCollider.active = false
         if (this.mob.sprite.anims.getName() !== moveAnim) {
           this.mob.sprite.anims.play(moveAnim)
-          this.resetHurtboxes()
         }
         this.moveInDirection(direction)
       }
@@ -105,43 +112,10 @@ export class MeleeAttackBehavior extends AttackBehavior {
     if (this.mob.sprite.anims.getName() !== attackAnim) {
       this.mob.sprite.anims.play(attackAnim)
     }
-    this.setupAttackHurtboxes()
-  }
-
-  resetHurtboxes() {
-    const { body } = this.mob.mobConfig
-    if (body) {
-      this.mob.sprite.body.setSize(
-        this.mob.sprite.width * body.width,
-        this.mob.sprite.height * body.height
-      )
-      if (body.offsetY) {
-        this.mob.sprite.body.offset.y = body.offsetY
-      }
-      if (body.offsetX) {
-        this.mob.sprite.body.offset.x = body.offsetX
-      }
-    }
-  }
-
-  setupAttackHurtboxes() {
-    const { body } = this.mob.mobConfig
-    if (body && body.attackConfig) {
-      const { attackConfig } = body
-      this.mob.sprite.body.setSize(
-        this.mob.sprite.width * attackConfig.width,
-        this.mob.sprite.height * attackConfig.height
-      )
-      if (attackConfig.offsetX) {
-        this.mob.sprite.body.offset.x = attackConfig.offsetX
-      }
-      if (attackConfig.offsetY) {
-        this.mob.sprite.body.offset.y = attackConfig.offsetY
-      }
-    }
   }
 
   activateHitbox(direction: Direction) {
+    const { attackConfig } = this.mob.mobConfig
     this.hitboxImage.x = this.mob.sprite.x
     this.hitboxImage.y = this.mob.sprite.y
 
@@ -149,19 +123,19 @@ export class MeleeAttackBehavior extends AttackBehavior {
       this.hitboxCollider.active = true
       switch (direction) {
         case Direction.UP: {
-          this.hitboxImage.y = this.mob.sprite.y - this.mob.sprite.body.height
+          this.hitboxImage.y = this.mob.sprite.y - attackConfig.attackRange
           break
         }
         case Direction.DOWN: {
-          this.hitboxImage.y = this.mob.sprite.y + this.mob.sprite.body.height
+          this.hitboxImage.y = this.mob.sprite.y + attackConfig.attackRange
           break
         }
         case Direction.LEFT: {
-          this.hitboxImage.x = this.mob.sprite.x - this.mob.sprite.body.width
+          this.hitboxImage.x = this.mob.sprite.x - attackConfig.attackRange
           break
         }
         case Direction.RIGHT: {
-          this.hitboxImage.x = this.mob.sprite.x + this.mob.sprite.body.width
+          this.hitboxImage.x = this.mob.sprite.x + attackConfig.attackRange
           break
         }
       }

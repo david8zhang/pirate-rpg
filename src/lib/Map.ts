@@ -1,4 +1,3 @@
-import { Direction } from '~/characters/Player'
 import Game from '~/scenes/Game'
 import { ALL_HARVESTABLES, ALL_MOBS, Constants } from '~/utils/Constants'
 import { MapGenerator } from './MapGenerator'
@@ -35,6 +34,7 @@ export class Map {
       this.removedHarvestables
     )
     this.spawners = ObjectPlacer.placeMobsFromTilemap(ALL_MOBS, generatedMap, this.harvestables)
+    ObjectPlacer.placeShipsFromTilemap(generatedMap)
   }
 
   public configureRemovedHarvestables() {
