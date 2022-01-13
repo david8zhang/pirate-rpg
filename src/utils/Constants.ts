@@ -2334,12 +2334,14 @@ export const ALL_MOBS = [
   {
     name: 'Navy-Sailor',
     animFrameName: 'navy-sailor',
-    placement: {},
+    placement: {
+      // sand: 0.05,
+    },
     body: {
-      width: 0.5,
-      height: 0.5,
-      offsetX: 10,
-      offsetY: 20,
+      width: 0.25,
+      height: 0.75,
+      offsetY: 10,
+      offsetX: 25,
     },
     moveOffsets: {
       left: 25,
@@ -2373,7 +2375,7 @@ export const ALL_MOBS = [
     health: 150,
     attackConfig: {
       attackDamage: 20,
-      attackRange: 20,
+      attackRange: 35,
       chaseSpeed: 50,
     },
     animations: [
@@ -2381,8 +2383,8 @@ export const ALL_MOBS = [
         type: AnimationType.WALK_SIDE,
         key: 'navy-sailor-walk-side',
         frames: {
-          start: 0,
-          end: 3,
+          start: 24,
+          end: 27,
           suffix: '.png',
         },
         repeat: -1,
@@ -2403,8 +2405,8 @@ export const ALL_MOBS = [
         type: AnimationType.IDLE_BACK,
         key: 'navy-sailor-idle-back',
         frames: {
-          start: 8,
-          end: 11,
+          start: 12,
+          end: 15,
           suffix: '.png',
         },
         repeat: -1,
@@ -2414,8 +2416,8 @@ export const ALL_MOBS = [
         type: AnimationType.IDLE_SIDE,
         key: 'navy-sailor-idle-side',
         frames: {
-          start: 12,
-          end: 14,
+          start: 20,
+          end: 22,
           suffix: '.png',
         },
         repeat: -1,
@@ -2425,8 +2427,8 @@ export const ALL_MOBS = [
         type: AnimationType.WALK_FRONT,
         key: 'navy-sailor-walk-front',
         frames: {
-          start: 15,
-          end: 18,
+          start: 28,
+          end: 31,
           suffix: '.png',
         },
         repeat: -1,
@@ -2436,8 +2438,8 @@ export const ALL_MOBS = [
         type: AnimationType.WALK_BACK,
         key: 'navy-sailor-walk-back',
         frames: {
-          start: 19,
-          end: 22,
+          start: 32,
+          end: 35,
           suffix: '.png',
         },
         repeat: -1,
@@ -2447,8 +2449,8 @@ export const ALL_MOBS = [
         type: AnimationType.ATTACK_SIDE,
         key: 'navy-sailor-attack-side',
         frames: {
-          start: 24,
-          end: 27,
+          start: 0,
+          end: 3,
           suffix: '.png',
         },
         repeat: -1,
@@ -2458,8 +2460,8 @@ export const ALL_MOBS = [
         type: AnimationType.ATTACK_FRONT,
         key: 'navy-sailor-attack-front',
         frames: {
-          start: 28,
-          end: 31,
+          start: 8,
+          end: 11,
           suffix: '.png',
         },
         repeat: -1,
@@ -2469,8 +2471,8 @@ export const ALL_MOBS = [
         type: AnimationType.ATTACK_BACK,
         key: 'navy-sailor-attack-back',
         frames: {
-          start: 32,
-          end: 35,
+          start: 16,
+          end: 19,
           suffix: '.png',
         },
         repeat: -1,
@@ -2651,7 +2653,9 @@ export const ALL_MOBS = [
   {
     name: 'Skeleton',
     animFrameName: 'skeleton',
-    placement: {},
+    placement: {
+      // sand: 0.05,
+    },
     animMapping: {
       walkFront: 'skeleton-walk-front',
       walkSide: 'skeleton-walk-side',

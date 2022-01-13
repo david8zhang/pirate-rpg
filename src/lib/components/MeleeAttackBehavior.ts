@@ -15,28 +15,18 @@ export class MeleeAttackBehavior extends AttackBehavior {
   public attackRange = 20
   private attackDamage = 5
 
-  private hitboxImage: Phaser.Physics.Arcade.Sprite
+  private hitboxImage: Phaser.Physics.Arcade.Image
   private hitboxCollider: Phaser.Physics.Arcade.Collider
   public name: string = 'MELEE_ATTACK'
 
   constructor(mob: Mob) {
     super()
     this.mob = mob
-    this.hitboxImage = this.mob.scene.physics.add.sprite(this.mob.sprite.x, this.mob.sprite.y, '')
+    this.hitboxImage = this.mob.scene.physics.add.image(this.mob.sprite.x, this.mob.sprite.y, '')
     this.hitboxImage.setVisible(false)
     this.mob.scene.physics.world.enableBody(this.hitboxImage, Phaser.Physics.Arcade.DYNAMIC_BODY)
     this.hitboxImage.setPushable(false)
-    this.hitboxImage.setSize(this.mob.sprite.body.width, this.mob.sprite.body.height)
     this.hitboxImage.setDebugBodyColor(0xffff00)
-
-    const mobConfig = this.mob.mobConfig
-
-    if (mobConfig.body.offsetY && mobConfig.body.offsetY) {
-      this.hitboxImage.body.offset.y = mobConfig.body.offsetY
-    }
-    if (mobConfig.body && mobConfig.offsetX) {
-      this.hitboxImage.body.offset.x = mobConfig.body.offsetX
-    }
 
     const { attackConfig } = this.mob.mobConfig
     if (attackConfig) {
@@ -115,27 +105,44 @@ export class MeleeAttackBehavior extends AttackBehavior {
   }
 
   activateHitbox(direction: Direction) {
-    const { attackConfig } = this.mob.mobConfig
-    this.hitboxImage.x = this.mob.sprite.x
-    this.hitboxImage.y = this.mob.sprite.y
+    const { attackConfig, body } = this.mob.mobConfig
+    this.hitboxImage.setPosition(this.mob.sprite.x, this.mob.sprite.y)
+    if (body && body.offsetY) {
+      this.hitboxImage.body.offset.y = 0
+    }
+    if (body && body.offsetX) {
+      this.hitboxImage.body.offset.x = 0
+    }
 
     this.mob.scene.time.delayedCall(200, () => {
       this.hitboxCollider.active = true
       switch (direction) {
         case Direction.UP: {
-          this.hitboxImage.y = this.mob.sprite.y - attackConfig.attackRange
+          this.hitboxImage.setPosition(
+            this.mob.sprite.x,
+            this.mob.sprite.y - attackConfig.attackRange
+          )
           break
         }
         case Direction.DOWN: {
-          this.hitboxImage.y = this.mob.sprite.y + attackConfig.attackRange
+          this.hitboxImage.setPosition(
+            this.mob.sprite.x,
+            this.mob.sprite.y + attackConfig.attackRange
+          )
           break
         }
         case Direction.LEFT: {
-          this.hitboxImage.x = this.mob.sprite.x - attackConfig.attackRange
+          this.hitboxImage.setPosition(
+            this.mob.sprite.x - attackConfig.attackRange,
+            this.mob.sprite.y
+          )
           break
         }
         case Direction.RIGHT: {
-          this.hitboxImage.x = this.mob.sprite.x + attackConfig.attackRange
+          this.hitboxImage.setPosition(
+            this.mob.sprite.x + attackConfig.attackRange,
+            this.mob.sprite.y
+          )
           break
         }
       }
