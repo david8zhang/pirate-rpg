@@ -155,17 +155,6 @@ export class Ship {
     this.health = shipConfig.defaultHealth
     this.maxHealth = shipConfig.defaultHealth
 
-    this.scene.input.on(
-      'pointerdown',
-      function (pointer) {
-        if (pointer.leftButtonDown()) {
-          console.log('X:', Math.round(pointer.worldX - x))
-          console.log('Y:', Math.round(pointer.worldY - y))
-        }
-      },
-      this
-    )
-
     this.scene.input.keyboard.on('keydown', (keycode: any) => {
       if (keycode.code === 'KeyQ') {
         if (

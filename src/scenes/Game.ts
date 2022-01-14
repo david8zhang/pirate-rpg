@@ -186,6 +186,18 @@ export default class Game extends Phaser.Scene {
     this.initShips()
     this.initEnemyShips()
     this.loadSaveFile()
+    // this.scale.setGameSize(1200 * 5, 750 * 5)
+
+    this.input.on(
+      'pointerdown',
+      function (pointer) {
+        if (pointer.leftButtonDown()) {
+          console.log('X:', Math.round(pointer.worldX))
+          console.log('Y:', Math.round(pointer.worldY))
+        }
+      },
+      this
+    )
   }
 
   initWorldCollider() {
@@ -370,30 +382,23 @@ export default class Game extends Phaser.Scene {
   }
 
   initEnemyShips() {
-    const enemyShipLayer = this.map.tileMap.getObjectLayer('EnemyShips')
-    if (enemyShipLayer) {
-      enemyShipLayer.objects.forEach((obj) => {
-        const captainMobType = obj.type
-        const shipTypeProp = obj.properties.find((prop) => prop.name == 'shipType')
-        if (shipTypeProp) {
-          const shipType = shipTypeProp.value
-          const shipConfig = Constants.getShip(shipType)
-          const mobConfig = Constants.getMob(captainMobType)
-          if (shipConfig && mobConfig) {
-            const enemyShipCaptain = new Mob(this, 0, 0, mobConfig)
-            const enemyShip = new EnemyShip(this, shipConfig, {
-              x: obj.x as number,
-              y: obj.y as number,
-            })
-            enemyShip.setCrew(CAPTAIN_TO_CREW_TYPE[captainMobType], shipConfig.numCrew)
-            enemyShip.setMobInControl(enemyShipCaptain)
-            enemyShipCaptain.startSailing(enemyShip)
-            this.ships.add(enemyShip.hullSprite)
-            this.addMob(enemyShipCaptain)
-          }
-        }
-      })
-    }
+    this.map.enemyShipConfigs.forEach((config) => {
+      const { captainMobType, shipType, x, y } = config
+      const shipConfig = Constants.getShip(shipType)
+      const mobConfig = Constants.getMob(captainMobType)
+      if (shipConfig && mobConfig) {
+        const enemyShipCaptain = new Mob(this, 0, 0, mobConfig)
+        const enemyShip = new EnemyShip(this, shipConfig, {
+          x: x,
+          y: y,
+        })
+        enemyShip.setCrew(CAPTAIN_TO_CREW_TYPE[captainMobType], shipConfig.numCrew)
+        enemyShip.setMobInControl(enemyShipCaptain)
+        enemyShipCaptain.startSailing(enemyShip)
+        this.ships.add(enemyShip.hullSprite)
+        this.addMob(enemyShipCaptain)
+      }
+    })
   }
 
   public enableShipCamera() {

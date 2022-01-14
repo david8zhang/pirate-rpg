@@ -1974,6 +1974,13 @@ export const ALL_SHIP_TYPES = [
   },
 ]
 
+export const ALL_ENEMY_SHIPS = [
+  {
+    shipType: 'Brig',
+    captainMobType: 'navy-sailor',
+  },
+]
+
 export const ALL_HARVESTABLES = [
   {
     name: 'Palm-Tree',
@@ -2553,8 +2560,8 @@ export const ALL_MOBS = [
       sand: 0.01,
     },
     spawn: {
-      lowerLimit: 3,
-      upperLimit: 5,
+      lowerLimit: 1,
+      upperLimit: 3,
     },
     animMapping: {
       walkFront: 'crab-walk-side',
@@ -2891,17 +2898,6 @@ export const ALL_EFFECTS = [
 
 export const ALL_ITEMS: ItemConfig[] = [
   {
-    name: 'Tent',
-    inWorldImage: 'tent',
-    image: 'tent-inventory',
-    type: ItemTypes.structure,
-    description: "It's not much, but it's an honest home",
-    recipe: {
-      Wood: 5,
-      Frond: 3,
-    },
-  },
-  {
     name: 'Coconut',
     image: 'coconut',
     type: ItemTypes.consumable,
@@ -2958,9 +2954,9 @@ export const ALL_ITEMS: ItemConfig[] = [
     type: ItemTypes.resource,
     description: 'Now all you need is a hull!',
     recipe: {
-      Canvas: 1,
-      Rope: 1,
-      Wood: 10,
+      // Canvas: 1,
+      // Rope: 1,
+      // Wood: 10,
     },
   },
   {
@@ -2980,8 +2976,9 @@ export const ALL_ITEMS: ItemConfig[] = [
     description: 'How the hell are you able to fit this in your pockets?!',
     inWorldImage: 'sailboat-preview',
     recipe: {
-      'Sailboat Hull': 1,
-      'Sailboat Sail': 1,
+      Stick: 1,
+      // 'Sailboat Hull': 1,
+      // 'Sailboat Sail': 1,
     },
   },
   {

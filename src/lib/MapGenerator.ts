@@ -21,7 +21,7 @@ export class MapGenerator {
       octaves: 4,
       persistence: 0.1,
       lacunarity: 1,
-      seed: 200,
+      seed: seed,
       offset: {
         x: offsetsConfig.x * Constants.GAME_HEIGHT,
         y: offsetsConfig.y * Constants.GAME_WIDTH,

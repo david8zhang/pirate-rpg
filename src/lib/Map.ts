@@ -1,7 +1,9 @@
+import { Ship } from '~/objects/Ship'
 import Game from '~/scenes/Game'
 import { ALL_HARVESTABLES, ALL_MOBS, Constants } from '~/utils/Constants'
 import { MapGenerator } from './MapGenerator'
 import { ObjectPlacer } from './ObjectPlacer'
+import workerize from 'workerize'
 
 export class Map {
   public mapSeed!: number
@@ -14,6 +16,7 @@ export class Map {
   public spawners: any[]
   public currMapOffset: { x: number; y: number } = { x: 0, y: 0 }
   public removedHarvestables!: number[][]
+  public enemyShipConfigs: any[] = []
 
   constructor(scene: Game) {
     this.scene = scene
@@ -34,7 +37,7 @@ export class Map {
       this.removedHarvestables
     )
     this.spawners = ObjectPlacer.placeMobsFromTilemap(ALL_MOBS, generatedMap, this.harvestables)
-    ObjectPlacer.placeShipsFromTilemap(generatedMap)
+    this.enemyShipConfigs = ObjectPlacer.placeEnemyShipsFromTilemap(generatedMap, 2)
   }
 
   public configureRemovedHarvestables() {

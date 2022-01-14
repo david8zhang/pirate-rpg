@@ -4,6 +4,10 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Bugs to fix
 
+- Spawners are bugged sometimes, spawning way too many enemies
+- Boarding ships is broken
+- Crafting menu bug after player embarks on ship
+
 ## Easy wins
 
 - Make monkeys have drops, like pelts and bananas or something
@@ -12,14 +16,10 @@ A top down pirate themed survival/crafting game build using Phaser 3
 
 ## Meatier Stuff
 
-- Add a "circle gradient" to create self-contained maps
-  - Once this is done, remove the map transition logic
-  - Make the perlin map generation produce a giant (1000 x 1000) map and then chunk it for performance optimization
 - Add "medium" ship between Brig and Sailboat
 - Add "navy" ships which spawn in the ocean and randomly roam around and can be boarded and comandeered
   - Add navy sailors and captains
 - Add animated flags to ships
-- Add the ability to damage boats and ships with melee weapons (eventually breaking them back down into component parts)
 - Make certain enemies automatically aggro the player
 
 # Long Term stuff

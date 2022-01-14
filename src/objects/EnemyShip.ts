@@ -57,7 +57,7 @@ export class EnemyShip extends Ship {
   followPlayer() {
     if (this.mobInControl) {
       const behavior: SailingBehavior = this.mobInControl?.activeBehavior as SailingBehavior
-      if (!behavior.followingPlayer) {
+      if (!behavior.followingPlayer && behavior.followPlayer) {
         behavior.followPlayer()
       }
     }
@@ -66,7 +66,7 @@ export class EnemyShip extends Ship {
   stopFollowingPlayer() {
     if (this.mobInControl) {
       const behavior: SailingBehavior = this.mobInControl?.activeBehavior as SailingBehavior
-      if (behavior.followingPlayer) {
+      if (behavior.followingPlayer && behavior.stopFollowingPlayer) {
         behavior.stopFollowingPlayer()
       }
     }

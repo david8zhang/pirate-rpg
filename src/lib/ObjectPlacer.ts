@@ -1,4 +1,8 @@
-import { Constants } from '~/utils/Constants'
+import { Mob } from '~/mobs/Mob'
+import { EnemyShip } from '~/objects/EnemyShip'
+import { shuffle } from 'lodash'
+import Game from '~/scenes/Game'
+import { Constants, CAPTAIN_TO_CREW_TYPE, ALL_ENEMY_SHIPS } from '~/utils/Constants'
 
 export class ObjectPlacer {
   static groupObjectsIntoLayer(objects: any[]) {
@@ -24,6 +28,87 @@ export class ObjectPlacer {
       }
     }
     return false
+  }
+
+  private static addEnemyShip(
+    x: number,
+    y: number,
+    config: { shipType: string; captainMobType: string },
+    scene: Game
+  ) {
+    const { shipType, captainMobType } = config
+    const shipConfig = Constants.getShip(shipType)
+    const mobConfig = Constants.getMob(captainMobType)
+    if (shipConfig && mobConfig) {
+      const enemyShipCaptain = new Mob(scene, 0, 0, mobConfig)
+      const enemyShip = new EnemyShip(scene, shipConfig, { x, y })
+      enemyShip.setCrew(CAPTAIN_TO_CREW_TYPE[captainMobType], shipConfig.numCrew)
+      enemyShip.setMobInControl(enemyShipCaptain)
+      enemyShipCaptain.startSailing(enemyShip)
+      scene.ships.add(enemyShip.hullSprite)
+      scene.addMob(enemyShipCaptain)
+    }
+  }
+
+  static placeEnemyShipsFromTilemap(tileMap: number[][], numShips: number): any[] {
+    const isSurroundingOcean = (
+      tileMap: number[][],
+      x: number,
+      y: number,
+      searchArea: number,
+      shipPositions: any
+    ) => {
+      if (
+        x - searchArea < 0 ||
+        x + searchArea > tileMap.length ||
+        y - searchArea < 0 ||
+        y + searchArea > tileMap[0].length
+      ) {
+        return false
+      }
+      for (let i = x - searchArea; i < x + searchArea; i++) {
+        for (let j = y - searchArea; j < y + searchArea; j++) {
+          const tileCode = tileMap[i][j]
+          if (Constants.getLayer(tileCode) !== 'OCEAN' && !shipPositions.has(`${i},${j}`)) {
+            return false
+          }
+        }
+      }
+      return true
+    }
+
+    const shipsToAdd: any[] = []
+    const shipPositions = new Set()
+    const allOceanTiles: number[][] = []
+
+    for (let i = 0; i < tileMap.length; i++) {
+      for (let j = 0; j < tileMap[0].length; j++) {
+        const tileLayer = Constants.getLayer(tileMap[i][j])
+        if (tileLayer === 'OCEAN') {
+          allOceanTiles.push([i, j])
+        }
+      }
+    }
+
+    // For all ocean tiles, sample a fixed random number and check if they have enough space to hold a ship
+    const shuffledTiles = shuffle(allOceanTiles)
+
+    for (let i = 0; i < 1000; i++) {
+      const [x, y] = shuffledTiles[i]
+      if (isSurroundingOcean(tileMap, x, y, 20, shipPositions) && shipsToAdd.length < numShips) {
+        shipPositions.add(`${x},${y}`)
+        const randomShipConfig = ALL_ENEMY_SHIPS[Constants.getRandomNum(0, ALL_ENEMY_SHIPS.length)]
+        shipsToAdd.push({
+          ...randomShipConfig,
+          x: y * Constants.TILE_SIZE,
+          y: x * Constants.TILE_SIZE,
+        })
+      }
+    }
+
+    console.log(shipsToAdd)
+
+    return shipsToAdd
   }
 
   static placeHarvestablesFromTilemap(
@@ -60,8 +145,6 @@ export class ObjectPlacer {
     return objectMap
   }
 
-  static placeShipsFromTilemap(tilemap: number[][]) {}
-
   static placeMobsFromTilemap(mobs: any[], tilemap: number[][], harvestables: any[]): any[] {
     const spawnerLocations: any[] = []
 
@@ -83,7 +166,7 @@ export class ObjectPlacer {
       const endY = Math.min(j + yRange, tilemap[0].length)
       for (let i = startX; i <= endX; i++) {
         for (let j = startY; j <= endY; j++) {
-          if (harvestables[i][j]) {
+          if (harvestables[i] && harvestables[i][j]) {
             return false
           }
         }
