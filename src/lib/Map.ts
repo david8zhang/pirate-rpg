@@ -35,7 +35,6 @@ export class Map {
       this.removedHarvestables
     )
     this.spawners = ObjectPlacer.placeMobsFromTilemap(ALL_MOBS, generatedMap, this.harvestables)
-    // this.enemyShipConfigs = ObjectPlacer.placeEnemyShipsFromTilemap(generatedMap, 2)
   }
 
   public configureRemovedHarvestables() {

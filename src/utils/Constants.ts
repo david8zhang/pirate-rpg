@@ -2954,9 +2954,9 @@ export const ALL_ITEMS: ItemConfig[] = [
     type: ItemTypes.resource,
     description: 'Now all you need is a hull!',
     recipe: {
-      // Canvas: 1,
-      // Rope: 1,
-      // Wood: 10,
+      Canvas: 1,
+      Rope: 1,
+      Wood: 10,
     },
   },
   {
@@ -2976,9 +2976,8 @@ export const ALL_ITEMS: ItemConfig[] = [
     description: 'How the hell are you able to fit this in your pockets?!',
     inWorldImage: 'sailboat-preview',
     recipe: {
-      Stick: 1,
-      // 'Sailboat Hull': 1,
-      // 'Sailboat Sail': 1,
+      'Sailboat Hull': 1,
+      'Sailboat Sail': 1,
     },
   },
   {
@@ -3014,7 +3013,7 @@ export const ALL_ITEMS: ItemConfig[] = [
     description: 'Do you see the iron-y?',
     type: ItemTypes.resource,
     recipe: {
-      'Iron Ore': 5,
+      'Iron Ore': 3,
     },
   },
   {
