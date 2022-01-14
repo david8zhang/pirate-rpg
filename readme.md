@@ -5,8 +5,9 @@ A top down pirate themed survival/crafting game build using Phaser 3
 ## Bugs to fix
 
 - Spawners are bugged sometimes, spawning way too many enemies
-- Boarding ships is broken
 - Crafting menu bug after player embarks on ship
+- Boarding enemy ships is bugged
+- Player is still inside ship after dying, and cannot board a new ship
 
 ## Easy wins
 
@@ -17,8 +18,6 @@ A top down pirate themed survival/crafting game build using Phaser 3
 ## Meatier Stuff
 
 - Add "medium" ship between Brig and Sailboat
-- Add "navy" ships which spawn in the ocean and randomly roam around and can be boarded and comandeered
-  - Add navy sailors and captains
 - Add animated flags to ships
 - Make certain enemies automatically aggro the player
 
